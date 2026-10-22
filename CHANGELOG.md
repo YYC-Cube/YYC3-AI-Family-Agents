@@ -10,8 +10,27 @@
 
 ### Planned
 
-- **L7 · Histogram Exemplars**：指标 → trace 下钻（OpenMetrics 方案 A），默认关闭、逐字节兼容；详见 [L7/L8 落实计划](docs/YYC3-AI-Family-Agent-L7-L8落地计划.md)
 - **P1 · 真实 LLM Provider**：openai / zhipu HTTP 调用与重试退避，解锁千行意图链路与 llm 结构化提炼
+
+## [2.8.0] - 2026-10-23
+
+### Added
+
+- **L7 Histogram Exemplars**：`ExemplarOptions` / `Exemplar`；`Histogram.observe(value, labels, exemplar?)`；落点桶定位、每桶上限（默认 1，保留最新）、TTL 惰性清理、`family_exemplars_dropped_total`
+- `MetricsRegistry.renderOpenMetrics()`（OpenMetrics 1.0，`# EOF` 收尾）
+- `/metrics` 按 `Accept` 协商协议：`application/openmetrics-text` → 1.0；否则维持 0.0.4
+- `FamilyMetricsOptions.exemplars`；`observeMemoryRetrieval(ms, traceId?)` 与任务时长携带 `trace_id`
+- `startRuntime` 增 `exemplars` 选项；环境变量 `YYC3_EXEMPLARS_ENABLED=1`
+- `prometheus.yml` runtime 作业 `scrape_protocols`；Grafana 记忆 P95 / 任务 P99 面板启用 exemplars
+
+### Changed
+
+- 默认关闭 exemplar 时输出与 v2.7.2 一致：无 exemplar 行、不注册丢弃指标
+- `package.json` 版本 2.7.2 → 2.8.0
+
+### Tests
+
+- 新增 M9 / M10 / M10b / M10c；metrics-observability 12/12；全量门禁 **82/82**（显式跳过 5 例）
 
 ## [2.7.2] - 2026-10-23
 

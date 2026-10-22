@@ -16,6 +16,28 @@ export type MetricType = 'counter' | 'gauge' | 'histogram';
 /** 标签集合（键值均为字符串）。 */
 export type LabelSet = Readonly<Record<string, string>>;
 
+/** Exemplar 配置（v2.8.0 / L7）。默认关闭，关闭时不改变任何输出。 */
+export interface ExemplarOptions {
+  /** 是否启用 exemplar（默认 false）。 */
+  readonly enabled?: boolean;
+  /** 每个桶最多保留的 exemplar 数（默认 1，超出保留最新）。 */
+  readonly maxPerBucket?: number;
+  /** exemplar 存活毫秒（默认 60s，渲染时惰性清理）。 */
+  readonly ttlMs?: number;
+  /** 丢弃回调（内部用于累加 `family_exemplars_dropped_total`）。 */
+  readonly onDrop?: () => void;
+}
+
+/** 单条 exemplar（OpenMetrics：样本值 + 关联标签 + 时间戳）。 */
+export interface Exemplar {
+  /** 触发该 exemplar 的观测值。 */
+  readonly value: number;
+  /** 观测时刻（毫秒）。 */
+  readonly timestampMs: number;
+  /** 关联标签，约定只放 `trace_id` 等低基数、非敏感键。 */
+  readonly labels?: LabelSet;
+}
+
 /** 指标元信息。 */
 export interface MetricDescriptor {
   readonly name: string;
@@ -122,29 +144,53 @@ export class Gauge {
   }
 }
 
-/** Histogram（累积分桶 + 总和 + 计数）。 */
+/** 单个直方图序列的存储。 */
+interface HistogramSeries {
+  readonly labels: LabelSet;
+  readonly counts: number[];
+  sum: number;
+  count: number;
+  /** 桶索引 → exemplar 列表（索引 = buckets.length 表示 +Inf 桶）。 */
+  readonly exemplars: Map<number, { ex: Exemplar; at: number }[]>;
+}
+
+/** Histogram（累积分桶 + 总和 + 计数 + 可选 exemplar）。 */
 export class Histogram {
   private readonly buckets: readonly number[];
-  private readonly values = new Map<
-    string,
-    { labels: LabelSet; counts: number[]; sum: number; count: number }
-  >();
+  private readonly values = new Map<string, HistogramSeries>();
+  private readonly exemplarEnabled: boolean;
+  private readonly maxPerBucket: number;
+  private readonly ttlMs: number;
+  private readonly onDrop?: () => void;
 
   constructor(
     readonly descriptor: MetricDescriptor,
     buckets: readonly number[] = DEFAULT_BUCKETS,
+    exemplars: ExemplarOptions = {},
   ) {
     // 上界去重升序，保证累积语义正确
     this.buckets = [...new Set(buckets)].sort((a, b) => a - b);
+    this.exemplarEnabled = exemplars.enabled === true;
+    this.maxPerBucket = Math.max(1, exemplars.maxPerBucket ?? 1);
+    this.ttlMs = Math.max(0, exemplars.ttlMs ?? 60_000);
+    this.onDrop = exemplars.onDrop;
   }
 
-  /** 观测一个值（秒）。 */
-  observe(value: number, labels: LabelSet = {}): void {
+  /** exemplar 是否启用（供协议协商与测试）。 */
+  get exemplarsEnabled(): boolean {
+    return this.exemplarEnabled;
+  }
+
+  /**
+   * 观测一个值（秒）。
+   * 第三参仅在 exemplar 启用时生效；未启用时完全忽略，保证默认输出不变。
+   */
+  observe(value: number, labels: LabelSet = {}, exemplar?: Exemplar): void {
     if (!Number.isFinite(value)) return;
     const key = labelKey(labels);
     let s = this.values.get(key);
     if (!s) {
-      s = { labels, counts: new Array(this.buckets.length).fill(0), sum: 0, count: 0 };
+      s = { labels, counts: new Array(this.buckets.length).fill(0), sum: 0, count: 0, exemplars: new Map() };
       this.values.set(key, s);
     }
     s.sum += value;
@@ -152,6 +198,20 @@ export class Histogram {
     for (let i = 0; i < this.buckets.length; i += 1) {
       if (value <= this.buckets[i]!) s.counts[i]! += 1;
     }
+
+    if (!this.exemplarEnabled || !exemplar) return;
+    const idx = this.bucketIndex(value);
+    const now = Date.now();
+    const items = s.exemplars.get(idx) ?? [];
+    // 惰性清理过期项
+    const alive = items.filter((it) => now - it.at <= this.ttlMs);
+    alive.push({ ex: exemplar, at: now });
+    // 超出上限：保留最新，丢弃最旧并计数
+    while (alive.length > this.maxPerBucket) {
+      alive.shift();
+      this.onDrop?.();
+    }
+    s.exemplars.set(idx, alive);
   }
 
   /** 观测总数。 */
@@ -181,6 +241,53 @@ export class Histogram {
     }
     return out;
   }
+
+  /**
+   * 渲染 OpenMetrics 样本行：在落点桶后附 exemplar。
+   * 格式：`<bucket> <count> # {trace_id="..."} <value> <ts秒>`
+   */
+  renderOpenMetrics(): string[] {
+    const out: string[] = [];
+    for (const [key, s] of [...this.values.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+      const prefix = s.labels;
+      for (let i = 0; i < this.buckets.length; i += 1) {
+        const labels = { ...prefix, le: formatNumber(this.buckets[i]!) };
+        out.push(
+          `${this.descriptor.name}_bucket${renderLabelSuffix(labelKey(labels))} ${formatNumber(s.counts[i]!)}${this.exemplarSuffix(i, s)}`,
+        );
+      }
+      const infLabels = { ...prefix, le: '+Inf' };
+      out.push(
+        `${this.descriptor.name}_bucket${renderLabelSuffix(labelKey(infLabels))} ${formatNumber(s.count)}${this.exemplarSuffix(this.buckets.length, s)}`,
+      );
+      out.push(`${this.descriptor.name}_sum${renderLabelSuffix(key)} ${formatNumber(s.sum)}`);
+      out.push(`${this.descriptor.name}_count${renderLabelSuffix(key)} ${formatNumber(s.count)}`);
+    }
+    return out;
+  }
+
+  /** 值 → 落点桶索引（超出最大上界归入 +Inf 桶）。 */
+  private bucketIndex(value: number): number {
+    for (let i = 0; i < this.buckets.length; i += 1) {
+      if (value <= this.buckets[i]!) return i;
+    }
+    return this.buckets.length;
+  }
+
+  /** 单个桶的 exemplar 后缀（取最新存活项；过期项在此惰性清理）。 */
+  private exemplarSuffix(idx: number, s: HistogramSeries): string {
+    const items = s.exemplars.get(idx);
+    if (!items || items.length === 0) return '';
+    const now = Date.now();
+    const alive = items.filter((it) => now - it.at <= this.ttlMs);
+    if (alive.length === 0) {
+      s.exemplars.delete(idx);
+      return '';
+    }
+    const last = alive[alive.length - 1]!;
+    const labels = labelKey(last.ex.labels ?? {});
+    return ` # {${labels}} ${formatNumber(last.ex.value)} ${(last.ex.timestampMs / 1000).toFixed(3)}`;
+  }
 }
 
 /** 指标注册器：持有全部指标并渲染完整 exposition 文本。 */
@@ -199,10 +306,20 @@ export class MetricsRegistry {
     return metric;
   }
 
-  histogram(name: string, help: string, buckets?: readonly number[]): Histogram {
-    const metric = new Histogram({ name, help, type: 'histogram' }, buckets);
+  histogram(
+    name: string,
+    help: string,
+    buckets?: readonly number[],
+    exemplars?: ExemplarOptions,
+  ): Histogram {
+    const metric = new Histogram({ name, help, type: 'histogram' }, buckets, exemplars);
     this.metrics.push(metric);
     return metric;
+  }
+
+  /** 是否存在启用 exemplar 的直方图（供协议协商）。 */
+  get exemplarsEnabled(): boolean {
+    return this.metrics.some((m) => m instanceof Histogram && m.exemplarsEnabled);
   }
 
   /** 渲染 Prometheus 文本 exposition（末尾带换行，符合 exposition 规范）。 */
@@ -214,6 +331,22 @@ export class MetricsRegistry {
       lines.push(`# TYPE ${name} ${type}`);
       lines.push(...metric.render());
     }
+    return `${lines.join('\n')}\n`;
+  }
+
+  /**
+   * 渲染 OpenMetrics 1.0（末尾以 `# EOF` 结束）。
+   * 直方图在落点桶后附 exemplar；Counter/Gauge 输出与 0.0.4 一致。
+   */
+  renderOpenMetrics(): string {
+    const lines: string[] = [];
+    for (const metric of this.metrics) {
+      const { name, help, type } = metric.descriptor;
+      lines.push(`# HELP ${name} ${help}`);
+      lines.push(`# TYPE ${name} ${type}`);
+      lines.push(...(metric instanceof Histogram ? metric.renderOpenMetrics() : metric.render()));
+    }
+    lines.push('# EOF');
     return `${lines.join('\n')}\n`;
   }
 }

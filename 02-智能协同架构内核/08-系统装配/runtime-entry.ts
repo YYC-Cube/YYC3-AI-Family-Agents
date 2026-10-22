@@ -14,6 +14,7 @@
 
 import { createRuntimeAssembly, type RuntimeAssembly, type RuntimeAssemblyOptions } from './runtime-assembly.js';
 import { FamilyMetrics } from '../09-可观测性/family-metrics.js';
+import type { ExemplarOptions } from '../09-可观测性/metrics-registry.js';
 import { startMetricsServer, type MetricsServerHandle } from '../09-可观测性/metrics-server.js';
 import type { ConsistencySnapshot } from '../02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/consistency-metrics.js';
 
@@ -38,6 +39,8 @@ export interface RuntimeEntryOptions {
   readonly consistencySource?: ConsistencySource;
   /** 一致性上报周期毫秒，默认 15000；≤0 表示只做首报不上定时器。 */
   readonly consistencyIntervalMs?: number;
+  /** Exemplar 配置（v2.8.0 / L7）：默认关闭，开启后 `/metrics` 支持 OpenMetrics 下钻。 */
+  readonly exemplars?: ExemplarOptions;
   /** 启动日志输出（默认 console.log；测试可传空函数）。 */
   readonly log?: (message: string) => void;
 }
@@ -60,7 +63,7 @@ export interface RuntimeHandle {
  */
 export async function startRuntime(options: RuntimeEntryOptions = {}): Promise<RuntimeHandle> {
   const log = options.log ?? ((message: string) => console.log(message));
-  const metrics = new FamilyMetrics();
+  const metrics = new FamilyMetrics(undefined, { exemplars: options.exemplars });
 
   const assembly = createRuntimeAssembly({
     ...options.assembly,
@@ -112,6 +115,7 @@ export async function startRuntime(options: RuntimeEntryOptions = {}): Promise<R
  *   YYC3_METRICS_HOST      监听地址，默认 127.0.0.1
  *   YYC3_METRICS_TOKEN     Bearer 令牌（可选，设置即启用鉴权）
  *   YYC3_CONSISTENCY_INTERVAL_MS 一致性上报周期，默认 15000
+ *   YYC3_EXEMPLARS_ENABLED 设为 1 时启用 Histogram exemplars（默认关闭）
  */
 export async function startRuntimeFromEnv(
   options: Omit<RuntimeEntryOptions, 'storeDir' | 'port' | 'host' | 'authToken' | 'consistencyIntervalMs'> = {},
@@ -128,5 +132,6 @@ export async function startRuntimeFromEnv(
     host: env.YYC3_METRICS_HOST,
     authToken: env.YYC3_METRICS_TOKEN,
     consistencyIntervalMs: Number.isFinite(interval) ? interval : undefined,
+    exemplars: options.exemplars ?? (env.YYC3_EXEMPLARS_ENABLED === '1' ? { enabled: true } : undefined),
   });
 }

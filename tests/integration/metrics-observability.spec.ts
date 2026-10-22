@@ -11,6 +11,10 @@
  *   M6 /metrics HTTP 端点（Prometheus 文本协议可抓取）
  *   M7 Bearer 鉴权（L3 闭环）
  *   M8 运行时入口端到端（L1 / L6 闭环）
+ *   M9 默认关闭 exemplar（零行为变化）
+ *   M10 启用 exemplar（落点桶 + trace_id）
+ *   M10b 每桶上限 / 丢弃计数 / TTL
+ *   M10c /metrics 协议协商（OpenMetrics ↔ 0.0.4）
  *
  * 运行：tsc 编译 + node（零依赖 harness，范式同 pillars-smoke）。
  */
@@ -269,6 +273,71 @@ describe('可观测性数据面（P0 指标采集）', () => {
       closed = true;
     }
     expect(closed).toBe(true);
+  });
+
+  it('M9: 默认关闭 exemplar（输出无样例、无丢弃指标，0.0.4 行为不变）', () => {
+    const metrics = new FamilyMetrics();
+    metrics.observeMemoryRetrieval(400, 'trace-off'); // 未启用时 traceId 被忽略
+
+    const text = metrics.render();
+    expect(text.includes('family_exemplars_dropped_total')).toBe(false);
+    expect(text.includes('# {')).toBe(false);
+
+    const om = metrics.renderOpenMetrics();
+    expect(om).toContain('# EOF');
+    expect(om.includes('trace_id=')).toBe(false);
+  });
+
+  it('M10: 启用 exemplar（只挂落点桶，含 trace_id）', () => {
+    const metrics = new FamilyMetrics(undefined, { exemplars: { enabled: true } });
+    metrics.observeMemoryRetrieval(400, 'trace-x');
+
+    const om = metrics.renderOpenMetrics();
+    expect(om).toContain('family_memory_retrieval_duration_seconds_bucket{le="0.5"} 1 # {trace_id="trace-x"} 0.4 ');
+    expect(om.includes('le="0.3"} 0 #')).toBe(false);
+    expect(/# \{trace_id="trace-x"\} 0\.4 \d+\.\d{3}/.test(om)).toBe(true);
+  });
+
+  it('M10b: 每桶上限保留最新 + 丢弃计数 + TTL 过期不输出', async () => {
+    const metrics = new FamilyMetrics(undefined, {
+      exemplars: { enabled: true, maxPerBucket: 1, ttlMs: 60_000 },
+    });
+    metrics.observeMemoryRetrieval(400, 't1');
+    metrics.observeMemoryRetrieval(420, 't2');
+    metrics.observeMemoryRetrieval(430, 't3');
+
+    expect(metrics.exemplarsDropped.value()).toBe(2);
+    const om = metrics.renderOpenMetrics();
+    expect(om.includes('trace_id="t3"')).toBe(true);
+    expect(om.includes('trace_id="t1"')).toBe(false);
+
+    // TTL 过期：1ms 后渲染不再输出 exemplar
+    const ttl = new FamilyMetrics(undefined, { exemplars: { enabled: true, ttlMs: 1 } });
+    ttl.observeMemoryRetrieval(100, 'expire-me');
+    await new Promise((r) => setTimeout(r, 10));
+    expect(ttl.renderOpenMetrics().includes('expire-me')).toBe(false);
+  });
+
+  it('M10c: /metrics 协议协商（Accept: openmetrics → 1.0 + # EOF；否则 0.0.4）', async () => {
+    const metrics = new FamilyMetrics(undefined, { exemplars: { enabled: true } });
+    metrics.observeMemoryRetrieval(400, 'trace-http');
+
+    const server = await startMetricsServer({ metrics, port: 0 });
+    try {
+      const om = await fetch(`${server.url}/metrics`, {
+        headers: { Accept: 'application/openmetrics-text' },
+      });
+      expect(om.headers.get('content-type').includes('application/openmetrics-text')).toBe(true);
+      const omText = await om.text();
+      expect(omText).toContain('# EOF');
+      expect(omText).toContain('trace_id="trace-http"');
+
+      const plain = await fetch(`${server.url}/metrics`);
+      expect(plain.headers.get('content-type').includes('version=0.0.4')).toBe(true);
+      expect((await plain.text()).includes('# EOF')).toBe(false);
+    } finally {
+      await server.close();
+    }
   });
 });
 

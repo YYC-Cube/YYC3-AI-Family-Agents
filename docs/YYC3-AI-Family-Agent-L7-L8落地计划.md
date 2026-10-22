@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-L7-L8落地计划.md
 description: P0 验收剩余改进项 L7（Histogram exemplars）与 L8（Git 基线）的可执行落地计划
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.1.0
+version: v1.2.0
 created: 2026-10-23
 updated: 2026-10-23
 status: in_progress
@@ -40,7 +40,7 @@ L7 / L8 来自 [P0 可观测数据面验收报告 v1.2.0](YYC3-AI-Family-Agent-P
 
 | 编号 | 内容 | 当前状态 | 阻断性 |
 | ---- | ---- | -------- | ------ |
-| **L7** | Histogram 不支持 exemplars / native histogram | ⬜ 未开始（默认关闭方案已确定） | 非阻断 |
+| **L7** | Histogram 不支持 exemplars / native histogram | ✅ **已完成（v2.8.0）**：默认关闭，OpenMetrics 下钻可用 | 非阻断 |
 | **L8** | 缺少 Git 版本基线 | ◐ **已执行 L8-1～L8-4**，剩余 L8-5～L8-8 待推送后完成 | 非阻断 |
 
 **共同目标**：可观测从「知道慢」升级为「知道**哪一次**慢」；代码资产从「文件目录」升级为「可追溯、可复现的版本」。
@@ -162,6 +162,22 @@ family_memory_retrieval_duration_seconds_count 12
 | 5 | 抓取与面板（L7-5/6） | YAML/JSON 解析通过；面板可跳转 trace |
 | 6 | 回归门禁（L7-7） | 78 + 4 全绿；`--dashboard-only` 可刷新面板 |
 | 7 | 文档（L7-8） | README 能力表、§8.3 v2.8.0、本计划状态更新 |
+
+### 6.1 执行进度（2026-10-23 · 已完成）
+
+| # | 状态 | 实证 |
+| -- | ---- | ---- |
+| L7-1 注册器 | ✅ | `ExemplarOptions` / `Exemplar` / `observe(..., exemplar)` / `renderOpenMetrics()`；桶落点、每桶上限、TTL、`dropped` |
+| L7-2 协议协商 | ✅ | `Accept: application/openmetrics-text` → OpenMetrics 1.0 + `# EOF`；否则 0.0.4 |
+| L7-3 业务接线 | ✅ | `observeMemoryRetrieval(ms, traceId?)`；任务时长携带 `trace_id`；条件注册 `family_exemplars_dropped_total` |
+| L7-4 装配透传 | ✅ | 桥接事件自带 `event.key.traceId`，无需新增装配参数；`startRuntime` 增 `exemplars` 选项与环境变量 |
+| L7-5 抓取配置 | ✅ | `prometheus.yml` 增 `scrape_protocols: [OpenMetricsText1.0.0, PrometheusText0.0.4]` |
+| L7-6 面板 | ✅ | 新增记忆 P95 / 任务 P99 面板，目标启用 `exemplar: true` |
+| L7-7 测试 | ✅ | M9 / M10 / M10b / M10c 全过；metrics-observability **12/12** |
+| L7-8 文档 | ✅ | README 能力与门禁更新；架构 §8.3 v2.8.0；本计划 v1.2.0 |
+
+**门禁**：82/82 全绿（78 + 4），显式跳过 5 例，静默 0，`tsc --noEmit` exit 0。
+**兼容性**：默认关闭时未注册 `family_exemplars_dropped_total`、无 exemplar 行；CI `metrics.prom` 仅测试计数由 8→12 变化。
 
 ## 七、测试设计
 
@@ -309,6 +325,7 @@ L7-1 注册器 → L7-2 协议 → L7-3/4 业务接线 → L7-5/6 部署面板 �
 | ---- | ---- | ---- |
 | v1.0.0 | 2026-10-23 | 初版：L7 方案 A 选型；L8 单仓决策；步骤/测试/验收/风险 |
 | v1.1.0 | 2026-10-23 | 刷新为可执行版：L8 记录已执行 L8-1～L8-4（三次提交、备份忽略）；L7 补齐逐文件变更清单、数据模型、渲染格式、M9–M12 断言、逐字节验证方法与 DoD；补充 L7/L8 标准引用与执行顺序 |
+| v1.2.0 | 2026-10-23 | **L7 实施完成（v2.8.0）**：注册器 exemplar、OpenMetrics 协商、业务接线、抓取与面板、M9–M10c 用例（82/82）；补充 §6.1 执行进度；L8 状态维持「已执行 4/8，待推送」 |
 
 ---
 

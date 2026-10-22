@@ -19,7 +19,8 @@ import { timingSafeEqual } from 'node:crypto';
 
 /** 启动选项。 */
 export interface MetricsServerOptions {
-  readonly metrics: { render(): string };
+  /** 指标集：render 为 0.0.4；renderOpenMetrics 提供 OpenMetrics 1.0（可选）。 */
+  readonly metrics: { render(): string; renderOpenMetrics?(): string };
   /** 监听端口，默认 9464；0 表示系统随机分配。 */
   readonly port?: number;
   /**
@@ -77,6 +78,13 @@ export async function startMetricsServer(options: MetricsServerOptions): Promise
           res.end('unauthorized');
           return;
         }
+      }
+      // L7：按 Accept 协商 OpenMetrics 1.0（未提供 renderOpenMetrics 时保持 0.0.4）
+      const accept = String(req.headers.accept ?? '');
+      if (accept.includes('application/openmetrics-text') && typeof options.metrics.renderOpenMetrics === 'function') {
+        res.writeHead(200, { 'Content-Type': 'application/openmetrics-text; version=1.0.0; charset=utf-8' });
+        res.end(options.metrics.renderOpenMetrics());
+        return;
       }
       res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4; charset=utf-8' });
       res.end(options.metrics.render());

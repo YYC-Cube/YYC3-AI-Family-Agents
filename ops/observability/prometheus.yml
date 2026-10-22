@@ -18,6 +18,11 @@ scrape_configs:
   - job_name: yyc3-family-runtime
     metrics_path: /metrics
     scheme: http
+    # L7：优先 OpenMetrics（exemplar 下钻），失败自动回退 0.0.4
+    # 需 Prometheus ≥ 2.40，并开启 exemplar 存储（exemplar_storage / --enable-feature）
+    scrape_protocols:
+      - OpenMetricsText1.0.0
+      - PrometheusText0.0.4
     bearer_token_file: /etc/prometheus/secrets/metrics-token
     static_configs:
       - targets: ["family-runtime:9464"]

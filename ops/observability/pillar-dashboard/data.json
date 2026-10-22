@@ -1,10 +1,10 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-22T23:09:41.589Z",
-  "generatedAtCN": "2026/10/23 07:09:41",
+  "generatedAt": "2026-10-22T23:35:39.313Z",
+  "generatedAtCN": "2026/10/23 07:35:39",
   "gate": {
     "passed": true,
-    "totalPassed": 78,
+    "totalPassed": 82,
     "totalFailed": 0,
     "totalSkipped": 5,
     "specs": 13
@@ -28,7 +28,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 37,
+      "passed": 41,
       "failed": 0
     },
     {
@@ -42,7 +42,7 @@
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 23,
+      "passed": 27,
       "failed": 0
     }
   ],
@@ -201,10 +201,10 @@
         "学",
         "愈"
       ],
-      "passed": 8,
+      "passed": 12,
       "failed": 0,
       "skipped": 0,
-      "total": 8,
+      "total": 12,
       "silent": false,
       "ok": true
     },
