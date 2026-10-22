@@ -100,6 +100,7 @@ pnpm regression      # 或：node scripts/run-regression.mjs
 - [ ] `pnpm regression` 全绿（新增用例计入总数）
 - [ ] 无「空断言」或「恒真断言」；未实现能力必须显式跳过并写明原因
 - [ ] 指标/告警/面板变更已同步 `ops/`
+- [ ] **未接线模块清单已同步**：新增骨架需登记，完成接线需移除（[清单](docs/YYC3-AI-Family-Agent-未接线模块清单.md)）
 - [ ] 文档相对链接可达，无死链
 - [ ] 无密钥、Token、真实生产数据
 

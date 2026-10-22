@@ -220,14 +220,34 @@ YYC3-AI-Family-Agent/
 
 ---
 
+## 🔌 模块接线状态
+
+> 口径：从 13 个门禁入口做静态 import 可达性分析；**「仅编译」不代表已交付能力**。
+
+| 范围 | 编译文件 | 已接线 | 仅编译 |
+| ---- | -------- | ------ | ------ |
+| `02-智能协同架构内核` | 93 | 34 | 59 |
+| `03-家人Agent实现集` | 135 | 33 | 102 |
+| `tests`（门禁入口） | 13 | 13 | 0 |
+| **合计** | **241** | **80** | **161** |
+
+- `shared-core` 31/31 全接线；8 位家人仅 `member-grandmaster`、`member-qianhang` 的 `self-judge` 被引用
+- `01-九层架构分层底座` 20/20 为**契约骨架**，尚未接线
+- 8 个家人自测 spec 被 `tsconfig` 排除且不在回归清单
+
+完整明细（含每个文件职责、状态、计划阶段、标准与规范五维矩阵）见 **[未接线模块清单](docs/YYC3-AI-Family-Agent-未接线模块清单.md)**。
+
+---
+
 ## 📚 文档
 
 | 文档 | 内容 |
 | ---- | ---- |
-| [架构设计](docs/YYC3-AI-Family-Agent-架构设计.md) | 五支柱定义、九层底座、§8.3 版本变更（至 v2.7.2） |
+| [架构设计](docs/YYC3-AI-Family-Agent-架构设计.md) | 五支柱定义、九层底座、§8.3 版本变更（至 v2.7.3） |
 | [P0 可观测数据面验收报告](docs/YYC3-AI-Family-Agent-P0可观测数据面验收报告.md) | 7 项 AC 实证、五维评估、遗留项闭环（v1.2.0） |
 | [装配层接线指导](docs/YYC3-AI-Family-Agent-装配层接线指导.md) | infra-1～4 分步接线、双采陷阱、适配器代码 |
 | [L7 / L8 落地计划](docs/YYC3-AI-Family-Agent-L7-L8落地计划.md) | Exemplars 方案 A · Git 基线 · 步骤/测试/验收/回滚 |
+| [未接线模块清单](docs/YYC3-AI-Family-Agent-未接线模块清单.md) | 接线状态盘点 · 骨架与已交付边界 · 标准规范五维矩阵 |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 分支、PR、提交规范、质量门禁、文档规范 |
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | 行为准则与处理阶梯 |
 | [SECURITY.md](SECURITY.md) | 漏洞报告、支持版本、部署安全基线 |
