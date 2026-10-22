@@ -72,11 +72,11 @@ category: report
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
 | `02-智能协同架构内核` | 93 | **34** | **59** | 核心链路已接线；九层底座与治理/调度扩展为骨架 |
-| `03-家人Agent实现集` | 135 | **33** | **102** | `shared-core` 全接线；8 位家人仅 2 个 `self-judge` 被引用 |
-| `tests` | 13 | 13 | 0 | 门禁入口 |
-| **合计** | **241** | **80** | **161** | 另：8 个家人自测 spec 未纳入编译与门禁 |
+| `03-家人Agent实现集` | 138 | **35** | **103** | `shared-core` 全接线（含新增 llm-adapter）；8 位家人仅 2 个 `self-judge` 被引用 |
+| `tests` | 14 | 14 | 0 | 门禁入口（含 P1 llm-provider） |
+| **合计** | **245** | **83** | **162** | 另：8 个家人自测 spec 未纳入编译与门禁 |
 
-> 已接线 80 = 02 的 34 + 03 的 33 + tests 的 13。
+> 已接线 83 = 02 的 34 + 03 的 35 + tests 的 14。
 
 ---
 
@@ -161,14 +161,15 @@ category: report
 
 ---
 
-## 四、03-家人Agent实现集 · 未接线明细（102）
+## 四、03-家人Agent实现集 · 未接线明细（103）
 
-### 4.1 `shared-core` — 31/31 全接线 ✅
+### 4.1 `shared-core` — 33/34 全接线 ✅（仅 llm-adapter barrel 未用）
 
 | 子模块 | 文件数 | 引用方 |
 | ------ | ------ | ------ |
 | `self-judge-kit` | 6 | 9 处（家人 self-judge / 测试 / 契约） |
 | `memory-framework` | 25 | 5 处（测试、程序化记忆提取、编排器） |
+| `llm-adapter` | 3 | 2 可达（`zhipu-provider` + `types`，由 llm-provider 测试覆盖）；barrel 未用 |
 
 > `memory-framework` 覆盖 sensory / working / episodic / semantic / procedural / write-policy / orchestrator 七层。
 
@@ -200,7 +201,7 @@ category: report
 | `prompts/` | `intent-detection.prompt.ts` | 意图识别提示词 | ⬜ |
 | | `query-parsing.prompt.ts` | 查询解析提示词 | ⬜ |
 | `providers/` | `openai.provider.ts` | OpenAI 适配（当前 TODO 桩） | ⬜ |
-| | `zhipu.provider.ts` | 智谱适配（当前 TODO 桩） | ⬜ |
+| | `zhipu.provider.ts` | 智谱适配 | ✅ 实现（shared-core；成员为薄转发，测试覆盖） |
 | `self-judge/` | `index.ts` | 家人专属自判断 | ✅（天枢/宗师/千行以外为 ⬜） |
 
 ### 4.3 家人自测 — ⊘ 未纳入门禁（8 个）
@@ -283,7 +284,7 @@ category: report
 
 - P0 验收（v1.2.0）针对「可观测数据面」，其 78 例门禁与 7 条告警均基于**已接线**模块
 - 未接线模块**不计入**已交付能力；路线图状态以本文与 `§8.3` 为准
-- `qianhang-intent-e2e` 的 4 个跳过用例，正对应 `03/business-layer/member-qianhang/core/intent-gateway` 未接线（P1 解锁）
+- `qianhang-intent-e2e` 的 4 个跳过用例，对应 `03/business-layer/member-qianhang/core/intent-gateway` 未接线；**智谱 provider 已就绪（v2.9.0）**，仍差意图分类与网关接线
 
 ---
 
@@ -292,6 +293,7 @@ category: report
 | 版本 | 日期 | 变更 |
 | ---- | ---- | ---- |
 | v1.0.0 | 2026-10-23 | 初版：静态可达性分析（241 编译文件 / 80 已接线 / 161 仅编译）；02 与 03 明细；配置未加载 40 个；标准与规范五维矩阵；维护规则 |
+| v1.1.0 | 2026-10-23 | P1 智谱 provider 接入后复核：新增 `shared-core/llm-adapter`（3 文件，2 可达）；统计更新为 245 / 83 / 162；8 位家人 `zhipu.provider.ts` 标记为「共享实现 + 薄转发」 |
 
 ---
 

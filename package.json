@@ -1,16 +1,16 @@
 {
   "name": "@yyc3/ai-family-agent",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "private": true,
   "description": "YYC³ AI Family Agent 编程体系 — 自·知·学·治·愈 五支柱融合内核（TypeScript，零运行时依赖）",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YYC-Cube/YYC3-Family-AI-Agents.git"
+    "url": "https://github.com/YYC-Cube/YYC3-AI-Family-Agents.git"
   },
   "homepage": "https://matrix.yyc3.top",
   "bugs": {
-    "url": "https://github.com/YYC-Cube/YYC3-Family-AI-Agents/issues"
+    "url": "https://github.com/YYC-Cube/YYC3-AI-Family-Agents/issues"
   },
   "keywords": [
     "ai-agents",

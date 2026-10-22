@@ -10,7 +10,24 @@
 
 ### Planned
 
-- **P1 · 真实 LLM Provider**：openai / zhipu HTTP 调用与重试退避，解锁千行意图链路与 llm 结构化提炼
+- **P1 续**：OpenAI provider（同协议适配）与千行意图链路接线（zhipu provider 已完成）
+
+## [2.9.0] - 2026-10-23
+
+### Added
+
+- **P1 智谱 Provider（真实 HTTP）**：`shared-core/llm-adapter/zhipu-provider.ts` —— 智谱 v4 `/chat/completions`，支持标准补全、SSE 流式、超时（AbortController）、429/5xx 指数退避重试、`ProviderError`（状态码 + retryable）
+- 密钥仅从 `ZHIPU_API_KEY` 读取；错误信息不回显密钥
+- 统一类型与错误契约：`shared-core/llm-adapter/types.ts`（`ChatMessage` / `CompletionRequest` / `CompletionResponse` / `ProviderError`）
+
+### Changed
+
+- 8 位家人的 `providers/zhipu.provider.ts` 统一改为薄转发到 `shared-core/llm-adapter`，消除 8 份重复骨架
+- `package.json` 版本 2.8.0 → 2.9.0
+
+### Tests
+
+- 新增 `llm-provider.spec` 6 例（补全 / 重试 / 401 不重试 / 超时 / 流式 / isAvailable）；全量门禁 **88/88**（显式跳过 5）
 
 ## [2.8.0] - 2026-10-23
 

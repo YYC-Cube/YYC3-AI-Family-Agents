@@ -12,8 +12,8 @@
 ### 环境准备
 
 ```bash
-git clone git@github.com:YYC-Cube/YYC3-Family-AI-Agents.git
-cd YYC3-Family-AI-Agents
+git clone git@github.com:YYC-Cube/YYC3-AI-Family-Agents.git
+cd YYC3-AI-Family-Agents
 
 # Node ≥ 20；tsc 可用（局部或全局）
 node -v
@@ -137,7 +137,7 @@ pnpm regression      # 或：node scripts/run-regression.mjs
 
 ## 🆘 需要帮助
 
-- 问题反馈：[GitHub Issues](https://github.com/YYC-Cube/YYC3-Family-AI-Agents/issues)
+- 问题反馈：[GitHub Issues](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/issues)
 - 联系邮箱：<admin@0379.email>
 
 > 「***YanYuCloudCube***」 · **© 2025-2026 YanYuCloudCube™. All Rights Reserved.**

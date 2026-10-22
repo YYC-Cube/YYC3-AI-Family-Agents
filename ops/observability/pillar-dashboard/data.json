@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-22T23:35:39.313Z",
-  "generatedAtCN": "2026/10/23 07:35:39",
+  "generatedAt": "2026-10-22T23:52:40.026Z",
+  "generatedAtCN": "2026/10/23 07:52:40",
   "gate": {
     "passed": true,
-    "totalPassed": 82,
+    "totalPassed": 88,
     "totalFailed": 0,
     "totalSkipped": 5,
-    "specs": 13
+    "specs": 14
   },
   "pillars": [
     {
@@ -28,7 +28,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 41,
+      "passed": 47,
       "failed": 0
     },
     {
@@ -205,6 +205,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 12,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/llm-provider.spec.js",
+      "name": "LLM Provider（zhipu）",
+      "phase": "P1",
+      "pillars": [
+        "学"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
       "silent": false,
       "ok": true
     },

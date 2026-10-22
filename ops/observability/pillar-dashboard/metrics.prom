@@ -23,5 +23,6 @@ family_regression_spec_passed{spec="tests/integration/healing-governance.spec.js
 family_regression_spec_passed{spec="tests/integration/knowledge-evolution.spec.js"} 5
 family_regression_spec_passed{spec="tests/integration/assembly-e2e.spec.js"} 6
 family_regression_spec_passed{spec="tests/integration/metrics-observability.spec.js"} 12
+family_regression_spec_passed{spec="tests/integration/llm-provider.spec.js"} 6
 family_regression_spec_passed{spec="tests/e2e/qianhang-intent-e2e.spec.js"} 0
 family_regression_spec_passed{spec="tests/pillar-contracts/pillars.contract.js"} 5

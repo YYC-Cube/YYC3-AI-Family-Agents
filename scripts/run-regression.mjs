@@ -36,6 +36,7 @@ const SPECS = [
   { file: 'tests/integration/knowledge-evolution.spec.js', pillars: ['知', '学'], phase: 'Phase E', name: '知识更新 + 参数护栏' },
   { file: 'tests/integration/assembly-e2e.spec.js', pillars: ['学', '愈'], phase: '装配', name: '装配层端到端（infra 1–4）' },
   { file: 'tests/integration/metrics-observability.spec.js', pillars: ['学', '愈'], phase: 'P0 数据面', name: '指标采集与暴露' },
+  { file: 'tests/integration/llm-provider.spec.js', pillars: ['学'], phase: 'P1', name: 'LLM Provider（zhipu）' },
   { file: 'tests/e2e/qianhang-intent-e2e.spec.js', pillars: [], phase: 'e2e', name: '千行意图端到端' },
   { file: 'tests/pillar-contracts/pillars.contract.js', pillars: [], phase: '契约', name: '五支柱契约' },
 ];

@@ -236,7 +236,7 @@ diff /tmp/before.prom ops/observability/pillar-dashboard/metrics.prom && echo BY
 ## 十二、当前状态（2026-10-23）
 
 - 仓库根：`YYC3-AI-FAmily-Agent/`，已完成 `git init -b main`
-- 远端：`origin` → `https://github.com/YYC-Cube/YYC3-Family-AI-Agents.git`（**全新空仓**）
+- 远端：`origin` → `https://github.com/YYC-Cube/YYC3-AI-Family-Agents.git`（**全新空仓**）
 - 提交：
 
 ```text
@@ -265,7 +265,7 @@ d1d1fa0 docs: 新增未接线模块清单（v2.7.3）并忽略 docs 本地备份
 - 本地备份：`docs/02-*`、`docs/03-*` 已忽略，不入远端
 
 > SSH 已配置并验证（`gh` 登录协议为 SSH），仓库名注意为 `YYC3-AI-Family-Agents`（AI 在前）：
-> `git remote set-url origin git@github.com:YYC-Cube/YYC3-Family-AI-Agents.git`
+> `git remote set-url origin git@github.com:YYC-Cube/YYC3-AI-Family-Agents.git`
 
 ## 十四、标签规范
 
