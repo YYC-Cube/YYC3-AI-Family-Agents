@@ -26,7 +26,7 @@ author: AI Tutor <Intelligent Application Implementation Expert>
 version: v1.0.0
 created: 2026-10-23
 updated: 2026-10-23
-status: planned
+status: in_progress
 tags: [plan],[observability],[exemplars],[git],[l7],[l8]
 category: plan
 ---
@@ -162,19 +162,19 @@ family_memory_retrieval_duration_seconds_bucket{le="0.5"} 12 # {trace_id="trace-
 
 ### 3.2 现状与关键决策
 
-**现状**：
+**现状（2026-10-23 更新）**：
 
-- 代码工作区：`YYC3-AI-FAmily-Agent/`（TypeScript 五支柱，v2.7.2），**无 `.git`**
-- 远端仓库：`YYC-Cube/YYC3-Family-AI-Agents`（Python v3.1.0，含 8 位家人 + 治理中枢），已有 MIT LICENSE 与 CI
-- 该远端 `docs/` 下已存在 `YYC3-AI-Family-Agent-编程体系/` 文档目录
+- 代码工作区：`YYC3-AI-FAmily-Agent/`（TypeScript 五支柱，v2.7.2），**已完成 `git init -b main` 与单次基线提交 `74f9281`**（405 文件 / 32,229 行），工作树干净
+- 远端仓库：`YYC-Cube/YYC3-Family-AI-Agents`（**全新空仓**，原 Python 仓库已由仓库所有者删除）；本地已关联 `origin`
+- 本仓库不再包含旧 Python 运行仓资产（`agent_server.py` / `governance_hub.py` / `agents/` / `deploy/` 等），按所有者决策只保留 TS 五支柱 + 工程配套 + 文档品牌
 
-**决策（推荐）**：作为**同一仓库的 TypeScript 子体系**纳入，不另起独立仓。
+**决策（已执行）**：新仓为空白且不再包含 Python 主系统，**TypeScript 五支柱直接占据仓库根目录**，不设 `subsystems/` 前缀；原「单仓双子系统」方案随旧仓删除而失效。
 
 | 方案 | 说明 | 优点 | 缺点 | 结论 |
 | --- | --- | --- | --- | --- |
-| **A. 单仓子体系（推荐）** | 代码放 `subsystems/yyc3-family-agent-ts/`，文档保留在 `docs/...-编程体系/` | 单一真相、共享 CI/Issue/安全策略；品牌一致 | 仓库体积增大；两套工具链并存 | ✅ |
-| B. 独立仓库 | 新仓 `YYC3-AI-Family-Agent-*`，子模块引用 | 边界清晰、CI 独立 | 版本对齐成本；双仓库治理 | 备选 |
-| C. Git Submodule | 远端挂子模块 | 复用独立仓 | 子模块体验差、易漂移 | ❌ |
+| **A. 根目录直放（已执行）** | TS 五支柱 + 工程配套 + 文档品牌直接作为仓库根 | 路径最短、与 README/CI 一致、无前缀噪音 | 若未来并入其他子系统需调整目录 | ✅ **已落地** |
+| B. `subsystems/` 前缀 | 代码收进 `subsystems/yyc3-family-agent-ts/` | 预留多子系统扩展 | 当前仅一个子系统，属过度设计 | 暂不采用 |
+| C. 独立仓库 / Submodule | 另起仓或子模块引用 | 边界清晰 | 版本对齐与治理成本高 | ❌ |
 
 ### 3.3 实施步骤
 
@@ -188,6 +188,21 @@ family_memory_retrieval_duration_seconds_bucket{le="0.5"} 12 # {trace_id="trace-
 | L8-6 | CI 接入 | 复用 `.github/workflows/regression-gate.yml`（pnpm regression） | PR 上自动跑门禁 |
 | L8-7 | 分支保护 | `main` 需 PR + 1 评审 + 门禁通过 | 直接 push 被拒 |
 | L8-8 | 发布说明 | `CHANGELOG.md` 增加 TS 子体系条目；Release 附验收报告 | 可追溯到验收 v1.2.0 |
+
+### 3.3.1 执行进度（2026-10-23）
+
+| # | 状态 | 实证 |
+| --- | --- | --- |
+| L8-1 基线检查 | ✅ | 无 `.env` / `data/` / `node_modules` / `.DS_Store` 入库 |
+| L8-2 `.gitignore` | ✅ | 覆盖 `node_modules/`、`dist/`、`data/`、`.env*`、`.DS_Store` |
+| L8-3 初始化与关联远端 | ✅（方式调整） | 空仓前提下直接在工作区 `git init -b main` 并关联 `origin`，无需克隆搬运 |
+| L8-4 基线提交 | ✅ | `74f9281`：405 文件 / 32,229 行，工作树干净 |
+| L8-5 打标签 | ⬜ | 待推送后打 `subsystem/yyc3-family-agent-ts-v2.7.2` |
+| L8-6 CI 接入 | ⬜ | `regression-gate.yml` 已入库；待远端启用并观察首跑 |
+| L8-7 分支保护 | ⬜ | 待远端开启 PR + 门禁要求 |
+| L8-8 发布说明 | ⬜ | 待首个 Release 关联验收报告 v1.2.0 |
+
+> 远端推送**未执行**（遵循「不擅自推送」原则）。所有者执行 `git push -u origin main` 后，可继续 L8-5～L8-8。
 
 ### 3.4 标签规范（与主仓三类标签对齐）
 
