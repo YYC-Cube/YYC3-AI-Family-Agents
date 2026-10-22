@@ -1,0 +1,53 @@
+# YYC³ AI Family · family-api Deployment 骨架
+# 团队规范：服务端口自 3030 起
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: family-api
+  labels:
+    app.kubernetes.io/name: family-api
+    app.kubernetes.io/part-of: yyc3-ai-family
+spec:
+  replicas: 3                     # 生产副本数建议 3
+  selector:
+    matchLabels:
+      app: family-api
+  template:
+    metadata:
+      labels:
+        app: family-api
+        app.kubernetes.io/part-of: yyc3-ai-family
+    spec:
+      containers:
+        - name: family-api
+          image: registry.example.com/yyc3/family-api:latest   # TODO: 替换为真实镜像仓库（由 CI 注入）
+          ports:
+            - name: http
+              containerPort: 3030
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /healthz      # TODO: 占位探针路径，联调后对齐真实健康检查
+              port: 3030
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz      # TODO: 占位探针路径，联调后对齐真实健康检查
+              port: 3030
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: ZHIPU_API_KEY       # 密钥经 Secret 注入，禁止硬编码
+              valueFrom:
+                secretKeyRef:
+                  name: family-api-secrets
+                  key: zhipu-api-key

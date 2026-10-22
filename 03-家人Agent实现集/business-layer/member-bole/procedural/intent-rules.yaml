@@ -1,0 +1,33 @@
+# ============================================================
+# 千里·伯乐 · 意图解析规则（程序记忆条目 · 可版本化）
+# 「知/学」支柱 procedural-memory
+# ============================================================
+id: member-bole.intent-rules
+name: 千里·伯乐意图解析规则
+version: 1.0.0
+status: active
+
+rules:
+  - intent: general
+    keywords: [示例关键词]
+    route_to: "010301-04"
+
+workflows:
+  - id: member-bole.clarify-ambiguity
+    condition: 候选间隔 < 0.15
+    strategy:
+      - 登记歧义假设
+      - escalation: cross-validate
+    expected_outcome: 用户澄清后重分类，置信度回升
+  - id: member-bole.low-confidence-escalate
+    condition: confidence < tauLow
+    strategy:
+      - escalation: cross-validate
+      - 若仍低置信 → human-confirm
+    expected_outcome: 低置信直接产出 = 0
+
+guardrails:
+  - id: member-bole.no-low-confidence-output
+    statement: 禁止在置信度 < tauLow 时直接产出
+    intercept_point: output
+    action: deny

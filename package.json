@@ -1,0 +1,44 @@
+{
+  "name": "@yyc3/ai-family-agent",
+  "version": "2.7.2",
+  "private": true,
+  "description": "YYC³ AI Family Agent 编程体系 — 自·知·学·治·愈 五支柱融合内核（TypeScript，零运行时依赖）",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YYC-Cube/YYC3-Family-AI-Agents.git"
+  },
+  "homepage": "https://matrix.yyc3.top",
+  "bugs": {
+    "url": "https://github.com/YYC-Cube/YYC3-Family-AI-Agents/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "multi-agent-systems",
+    "ai-family",
+    "yyc3",
+    "typescript",
+    "five-pillars",
+    "observability",
+    "self-healing",
+    "memory-framework",
+    "zero-dependency"
+  ],
+  "packageManager": "pnpm@9.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest",
+    "regression": "node scripts/run-regression.mjs",
+    "create-member": "bash scripts/create-member.sh"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "eslint": "^8.57.0",
+    "vitest": "^1.6.0"
+  }
+}

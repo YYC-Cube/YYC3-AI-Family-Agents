@@ -1,0 +1,51 @@
+# YYC³ AI Family · 回归门禁（防退化红线）
+# 门禁命令：pnpm regression（scripts/run-regression.mjs 一体化：编译 → 全量 spec → 五支柱聚合 → 面板 → exit code）
+# 面板产物：ops/observability/pillar-dashboard/（data.json + index.html，artifact 留存）
+
+name: regression-gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gate:
+    name: 全量回归 + 五支柱面板
+    runs-on: ubuntu-latest
+    env:
+      # L2 闭环：配置该 secret 后自动把门禁指标推送 Pushgateway；未配置则跳过
+      PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --no-frozen-lockfile
+
+      - name: 类型检查（门禁一）
+        run: pnpm typecheck
+
+      - name: 全量回归 + 五支柱面板（门禁二）
+        run: pnpm regression
+
+      - name: 推送门禁指标至 Pushgateway（L2）
+        if: env.PUSHGATEWAY_URL != ''
+        run: node scripts/push-metrics.mjs
+
+      - name: 上传面板产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pillar-dashboard
+          path: ops/observability/pillar-dashboard/
+          retention-days: 30

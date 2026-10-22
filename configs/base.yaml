@@ -1,0 +1,23 @@
+# YYC³ AI Family · 基础配置（dev/staging/prod 仅覆盖差异项）
+family:
+  name: YYC3-AI-Family
+  members_registry: docs/YYC3-AI-Family-Agent-家人档案
+llm:
+  default_provider: zhipu
+  providers:
+    openai: { model: gpt-4o, timeout_ms: 30000 }
+    zhipu: { model: glm-4-plus, timeout_ms: 30000 }
+    ollama: { base_url: http://localhost:11434, model: qwen2.5:14b }  # 降级兜底（§6.2）
+memory:
+  working_context: { max_turns: 20 }
+  episodic_store: { retention_days: 365 }
+  retrieval_timeout_ms: 300        # §6.1 记忆检索 SLO
+self_judge:
+  tau_low: 0.6                     # §5.2 升级阈值
+  calibration_max_error: 0.15      # §6.4 Phase B
+bus:
+  idempotency_key: traceId+agentId+seq
+  dlq_enabled: true
+observability:
+  log_format: json
+  trace_id_header: x-yyc3-trace-id

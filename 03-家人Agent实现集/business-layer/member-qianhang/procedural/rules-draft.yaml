@@ -1,0 +1,42 @@
+# 言启·千行 · 程序记忆条目初稿（Phase A 自动提取）
+# 生成器: prompt-rule-extractor | 提取时间: 2026-10-17 | 状态: draft（待家族确权）
+# 确权流程: 对照既有 procedural/intent-rules.yaml → 采纳/修订/驳回 → 《架构设计.md》§8.3 留痕
+# ⚠️ 本文件为生成物（可重复运行 scripts/extract-procedural 重建）；人工修订请写入 intent-rules.yaml
+meta:
+  member: "member-qianhang"
+  name: "言启·千行"
+  source: "system-prompt.md"
+  generator: "prompt-rule-extractor"
+  extracted_at: "2026-10-17"
+  version: "0.1.0-draft"
+  stats: { entries: 3, workflows: 1, ignored_lines: 20 }
+entries:
+  - id: "behavior-5eb3ec5d"
+    kind: "behavior"
+    salience: 0.7
+    provenance: "system-prompt.md:23"
+    statement: "始终先澄清歧义：输入含糊时登记假设并优先请求澄清，而非臆测。"
+    raw: "- 始终先澄清歧义：输入含糊时**登记假设**并优先请求澄清，而非臆测。"
+  - id: "constraint-142b15ed"
+    kind: "constraint"
+    salience: 0.9
+    provenance: "system-prompt.md:24"
+    statement: "低置信度（< 0.6）时不得直接产出，须走 escalation（cross-validate → human-confirm）。"
+    raw: "- 低置信度（< 0.6）时**不得直接产出**，须走 escalation（cross-validate → human-confirm）。"
+  - id: "constraint-a38d358f"
+    kind: "constraint"
+    salience: 0.9
+    provenance: "system-prompt.md:39"
+    statement: "⚠️ 红线（§架构设计 原则6）：五支柱能力不得以\"塞进 prompt\"的方式隐式实现。"
+    raw: "⚠️ 红线（§架构设计 原则6）：五支柱能力不得以\"塞进 prompt\"的方式隐式实现。"
+workflows:
+  - id: "wf-4625af90"
+    name: "自然语言理解 (NLU)：解析查询、指令等自然语"
+    version: "1.0.0"
+    provenance: "system-prompt.md:15"
+    steps:
+      - { order: 1, action: "自然语言理解 (NLU)：解析查询、指令等自然语言输入。" }
+      - { order: 2, action: "意图识别与路由：判断意图类型（分析/预测/推荐/创作），路由给对应专业家人。" }
+      - { order: 3, action: "上下文管理：维护对话上下文，实现多轮交互的连贯性。" }
+      - { order: 4, action: "多语言支持：中英文等多语言理解与翻译。" }
+      - { order: 5, action: "情感感知：识别用户情绪，为家族交互注入温度。" }

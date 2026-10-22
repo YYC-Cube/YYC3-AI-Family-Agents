@@ -1,0 +1,89 @@
+# YYC³ AI Family · 五高 SLO + 回归门禁告警规则（Prometheus 原生规则格式）
+# 指标来源（v2.7.0 P0 数据面已打通）：
+#   - 运行时指标：02-智能协同架构内核/09-可观测性（FamilyMetrics），
+#     由装配层 createRuntimeAssembly({ metrics }) 自动埋点，经 GET /metrics 暴露；
+#   - CI 指标：scripts/run-regression.mjs 生成 ops/observability/pillar-dashboard/metrics.prom。
+# 消费方式（本文件为 rule_files 直采格式，顶层 groups）：
+#   1. Prometheus 直采：prometheus.yml rule_files 挂载（ConfigMap）；
+#   2. kube-prometheus-stack：prometheus.additionalPrometheusRules 直填本文件 groups；
+#   3. PrometheusRule CRD：将本文件 groups 原样填入 spec 即可。
+groups:
+  - name: yyc3-family-five-high-slo
+    rules:
+      # ① 高性能：任务执行 P99 > 500ms 告警（数据源 family_task_execution_duration_seconds）
+      - alert: HighPerfP99Latency
+        expr: histogram_quantile(0.99, sum(rate(family_task_execution_duration_seconds_bucket[5m])) by (le)) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          pillar: high-performance
+        annotations:
+          summary: "任务执行 P99 延迟超过 500ms"
+
+      # ② 高可用：任务失败率 > 0.1% 告警（数据源 family_task_executed_total{outcome}）
+      - alert: HighAvailabilityErrorRate
+        expr: |
+          sum(rate(family_task_executed_total{outcome="failed"}[5m]))
+            / clamp_min(sum(rate(family_task_executed_total[5m])), 0.001) > 0.001
+        for: 5m
+        labels:
+          severity: critical
+          pillar: high-availability
+        annotations:
+          summary: "任务失败率超过 0.1%"
+
+      # ③ 自判断校准漂移：自评-外验一致率 < 90%（§6.4 Phase B 校准门禁）
+      #    数据源：ConsistencyTracker.snapshot → FamilyMetrics.recordConsistency
+      - alert: SelfJudgeCalibrationDrift
+        expr: family_selfjudge_agreement_ratio < 0.9
+        for: 10m
+        labels:
+          severity: warning
+          pillar: self-judge
+        annotations:
+          summary: "自评-外验一致率低于 90%（§6.4 Phase B）"
+
+      # ④ 记忆检索慢：P95 > 300ms（§6.1 记忆检索 SLO）
+      #    数据源：instrumentMemoryOrchestrator 包装 retrieve 计时
+      - alert: MemoryRetrievalSlow
+        expr: histogram_quantile(0.95, sum(rate(family_memory_retrieval_duration_seconds_bucket[5m])) by (le)) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          pillar: memory
+        annotations:
+          summary: "记忆检索 P95 超过 300ms（§6.1）"
+
+      # ⑤ 学习回归失败：本周期回归基线出现失败用例
+      #    数据源：LearningLoop.onCycle → FamilyMetrics.recordCycle
+      - alert: LearningRegressionFailure
+        expr: family_learning_regression_failed_cases > 0
+        for: 0m
+        labels:
+          severity: critical
+          pillar: learning
+        annotations:
+          summary: "学习后回归基线失败（tests/regression/baseline.json）"
+
+  # 回归门禁组（v2.5.1）：pnpm regression 一体化门禁 + 五支柱面板（Phase E 可视化面）
+  - name: yyc3-family-regression-gate
+    rules:
+      # ⑥ 回归门禁失败：任一用例失败（数据源 ops/observability/pillar-dashboard/data.json）
+      - alert: RegressionGateFailed
+        expr: family_regression_gate_failed_total > 0
+        for: 0m
+        labels:
+          severity: critical
+          pillar: five-pillar
+        annotations:
+          summary: "全量回归门禁失败（scripts/run-regression.mjs）"
+
+      # ⑦ 五支柱面板红牌：任一支柱存在失败用例（自·知·学·治·愈）
+      - alert: FivePillarDashboardRed
+        expr: family_pillar_failed_cases{pillar=~"self|memory|learning|governance|healing"} > 0
+        for: 0m
+        labels:
+          severity: warning
+          pillar: five-pillar
+        annotations:
+          summary: "五支柱 Dashboard 存在失败用例：{{ $labels.pillar }}"

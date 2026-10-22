@@ -1,0 +1,3 @@
+{"id":"eval-intent-001","input":"帮我把昨天会话里的待办整理成一份清单","expected_intent":"task.organize","confidence_floor":0.6}
+{"id":"eval-intent-002","input":"查一下这个月家里开销比上月多了多少","expected_intent":"data.query","confidence_floor":0.6}
+{"id":"eval-intent-003","input":"下周三提醒我给妈妈订生日蛋糕","expected_intent":"reminder.create","confidence_floor":0.65}

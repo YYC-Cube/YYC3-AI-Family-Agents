@@ -1,0 +1,35 @@
+# YYC³ AI Family · 本地编排骨架（开发/联调用）
+services:
+  bus-redis:                      # 家人协同总线事件承载（幂等/重试/DLQ）
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  ollama:                         # 本地 LLM 降级兜底（§6.2）
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+  family-api:                     # 家人 API 服务（build 上下文占位）
+    build:
+      context: ../../             # TODO: 联调后指向含 Dockerfile 的工程根目录
+      dockerfile: ops/docker/Dockerfile
+    ports:
+      - "3030:3030"               # 团队规范：端口 3030 起
+    environment:
+      - NODE_ENV=development
+      - ZHIPU_API_KEY=${ZHIPU_API_KEY}    # 密钥经环境变量注入，禁止硬编码
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - bus-redis
+      - ollama
+
+volumes:
+  ollama-data:

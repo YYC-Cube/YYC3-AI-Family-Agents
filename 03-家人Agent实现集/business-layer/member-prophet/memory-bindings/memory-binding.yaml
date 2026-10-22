@@ -1,0 +1,41 @@
+# ============================================================
+# 预见·先知 · 记忆绑定声明（「知」支柱 · §4.1）
+# ============================================================
+member_id: member-prophet
+member_number: "010301-03"
+名号: 预见·先知
+
+read:
+  - layer: working
+    budget:
+      maxTokens: 128000
+      maxItems: 200
+    precision: 高
+  - layer: semantic
+    budget:
+      maxTokens: 8192
+      maxItems: 50
+    precision: 高
+  - layer: procedural
+    budget:
+      maxTokens: 4096
+      maxItems: 30
+    precision: 版本化精确命中
+
+write:
+  - layer: episodic
+    trigger: task.completed
+    sourceJudgment: true
+  - layer: procedural
+    trigger: 学习引擎固化 / 人工审核
+    sourceJudgment: true
+
+deny_write:
+  - semantic
+  - working
+  - sensory
+
+guarantees:
+  retrievalLatencyMs: 300
+  consistency: memory-orchestrator.checkConsistency
+  forgetting: write-policy.forgetting-policy

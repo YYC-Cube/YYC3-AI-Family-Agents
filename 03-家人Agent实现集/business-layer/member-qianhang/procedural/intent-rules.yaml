@@ -1,0 +1,56 @@
+# ============================================================
+# 言启·千行 · 意图解析规则（程序记忆条目 · 可版本化）
+# 「知/学」支柱 procedural-memory —— 从 system-prompt 提炼，可审计/可 A/B/可回滚。
+# ============================================================
+id: qianhang.intent-rules
+name: 千行意图解析规则
+version: 1.0.0
+status: active
+
+# 意图类型 → 关键词/触发条件 → 路由目标
+rules:
+  - intent: analysis
+    keywords: [分析, 统计, 对比, 报告, analyze, analysis]
+    route_to: "010301-02"        # 语枢·万物
+  - intent: prediction
+    keywords: [预测, 趋势, 未来, forecast, predict]
+    route_to: "010301-03"        # 预见·先知
+  - intent: recommendation
+    keywords: [推荐, 建议, 适合, recommend]
+    route_to: "010301-04"        # 千里·伯乐
+  - intent: creation
+    keywords: [创作, 写, 生成, 设计, create, generate]
+    route_to: "010301-08"        # 创想·灵韵
+  - intent: orchestration
+    keywords: [编排, 调度, 计划, orchestrate]
+    route_to: "010301-05"        # 元启·天枢
+  - intent: chat
+    keywords: [你好, 谢谢, hello, hi]
+    route_to: "010301-01"        # 千行自身
+
+# 工作流模式：条件 → 策略 → 结果（供学习引擎回流）
+workflows:
+  - id: qianhang.clarify-ambiguity
+    condition: 候选意图间隔 < 0.15
+    strategy:
+      - 登记歧义假设（assumption-tracker）
+      - escalation: cross-validate
+      - 生成澄清提问回呈用户
+    expected_outcome: 用户明确意图后重分类，置信度回升
+  - id: qianhang.low-confidence-escalate
+    condition: confidence < 0.65 (tauLow)
+    strategy:
+      - escalation: cross-validate（请语枢·万物独立分析）
+      - 若仍低置信 → human-confirm
+    expected_outcome: 低置信直接产出 = 0
+
+# 行为约束护栏（经 shared-core/guardrail-registry 注册）
+guardrails:
+  - id: qianhang.no-low-confidence-output
+    statement: 禁止在置信度 < tauLow 时直接产出
+    intercept_point: output
+    action: deny
+  - id: qianhang.no-assumption-silence
+    statement: 存在高风险假设时必须显式暴露
+    intercept_point: output
+    action: escalate

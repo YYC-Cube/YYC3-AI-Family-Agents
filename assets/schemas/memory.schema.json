@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yyc3.top/schemas/memory.schema.json",
+  "title": "YYC³ AI Family — MemoryWriteRequest / MemoryRecord",
+  "description": "「知」支柱记忆写入契约与记忆记录形状（架构设计 §5.1）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["layer", "payload", "salience", "provenance"],
+  "properties": {
+    "layer": {
+      "description": "目标记忆层（写入限定为长期三层）。",
+      "enum": ["episodic", "semantic", "procedural"]
+    },
+    "payload": {
+      "description": "写入内容（层语义决定具体结构）。"
+    },
+    "salience": {
+      "description": "信息显著度，由 write-policy.salience-scorer 计算。",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sourceJudgment": {
+      "description": "【自】来源判断信号；低置信但成功的轨迹 = 高价值素材。",
+      "$ref": "https://yyc3.top/schemas/judgment.schema.json"
+    },
+    "provenance": {
+      "description": "溯源信息（不可篡改审计基座）。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent", "traceId", "ts"],
+      "properties": {
+        "agent": { "type": "string", "minLength": 1 },
+        "traceId": { "type": "string", "minLength": 1 },
+        "ts": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "MemoryRecord": {
+      "title": "MemoryRecord",
+      "description": "落库后的记忆记录（含全部五层认知记忆）。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "layer", "content", "salience", "provenance"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "layer": {
+          "enum": ["sensory", "working", "episodic", "semantic", "procedural"]
+        },
+        "content": {},
+        "salience": { "type": "number", "minimum": 0, "maximum": 1 },
+        "eventTime": { "type": "integer", "minimum": 0 },
+        "recordTime": { "type": "integer", "minimum": 0 },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["agent", "traceId", "ts"],
+          "properties": {
+            "agent": { "type": "string", "minLength": 1 },
+            "traceId": { "type": "string", "minLength": 1 },
+            "ts": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "MemoryLayer": {
+      "enum": ["sensory", "working", "episodic", "semantic", "procedural"]
+    }
+  }
+}

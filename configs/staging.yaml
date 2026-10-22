@@ -1,0 +1,5 @@
+# YYC³ AI Family · 预发环境覆盖（继承 base.yaml，仅写差异项）
+canary:
+  weight_percent: 10              # 灰度流量权重 10%（对应 02-智能协同架构内核/04-落地规划脚本/canary-release.sh）
+observability:
+  log_level: info                 # 预发环境常规日志

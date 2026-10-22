@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yyc3.top/schemas/judgment.schema.json",
+  "title": "YYC³ AI Family — JudgmentSignal",
+  "description": "「自」支柱自我判断信号契约（架构设计 §5.2）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["agent", "confidence", "uncertaintySources", "assumptions", "escalation"],
+  "properties": {
+    "agent": {
+      "description": "产出判断的家人标识。",
+      "type": "string",
+      "minLength": 1
+    },
+    "confidence": {
+      "description": "校准后的置信度。",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "uncertaintySources": {
+      "description": "不确定性来源，如 [\"用户输入歧义性\"]。",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "alternativeHypotheses": {
+      "description": "可能的替代假设/替代意图。",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "assumptions": {
+      "description": "显式登记的隐式假设。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Assumption" }
+    },
+    "deviation": {
+      "description": "与程序记忆标准模式的偏离。",
+      "$ref": "#/$defs/DeviationReport"
+    },
+    "escalation": {
+      "description": "升级决策（安全护栏）。",
+      "enum": ["none", "cross-validate", "human-confirm"]
+    }
+  },
+  "$defs": {
+    "Assumption": {
+      "title": "Assumption",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "basis", "riskIfWrong"],
+      "properties": {
+        "statement": { "type": "string", "minLength": 1 },
+        "basis": { "type": "string", "minLength": 1 },
+        "riskIfWrong": { "enum": ["low", "med", "high"] }
+      }
+    },
+    "DeviationReport": {
+      "title": "DeviationReport",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "expected", "actual"],
+      "properties": {
+        "severity": { "enum": ["low", "med", "high"] },
+        "expected": { "type": "string" },
+        "actual": { "type": "string" }
+      }
+    }
+  }
+}

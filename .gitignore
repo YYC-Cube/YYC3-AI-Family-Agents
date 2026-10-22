@@ -1,0 +1,29 @@
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# 环境变量（绝不入库）
+.env
+.env.*
+!.env.example
+
+# 日志
+*.log
+logs/
+
+# 编辑器 / 系统
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 缓存与覆盖
+coverage/
+.nyc_output/
+.vitest/
+.cache/
+
+# 运行时技能库（运行时资产不入库；进 Git 的应是导出的确权 YAML）
+data/

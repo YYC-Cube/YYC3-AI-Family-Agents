@@ -1,0 +1,92 @@
+# Changelog
+
+本仓库所有显著变更将记录于此文件。
+
+格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
+
+> 完整技术细节见 [架构设计 §8.3](docs/YYC3-AI-Family-Agent-架构设计.md)。
+
+## [Unreleased]
+
+### Planned
+
+- **L7 · Histogram Exemplars**：指标 → trace 下钻（OpenMetrics 方案 A），默认关闭、逐字节兼容；详见 [L7/L8 落实计划](docs/YYC3-AI-Family-Agent-L7-L8落地计划.md)
+- **P1 · 真实 LLM Provider**：openai / zhipu HTTP 调用与重试退避，解锁千行意图链路与 llm 结构化提炼
+
+## [2.7.2] - 2026-10-23
+
+### Added
+
+- `08-系统装配` 纳入「愈」默认调度链路：`FaultDetector` + `DegradationController`，新增 `handleSignal(signal)` 一条调用完成「信号 → 去抖 → 故障 → 降级/熔断 → 指标记账」
+- `DegradationController` 新增 `onStateChange` 状态迁移回调（仅真实迁移触发），熔断状态可观测
+- 装配时主动上报初始 `closed` 态，消除 `family_circuit_state` 无样本盲区
+
+### Changed
+
+- 4 个静默测试套件全部产出汇总行：`self-judge-kit` 转 3 例真实断言；`family-bus` 转 4 例真实断言；`pillars.contract` 5 条契约由恒真占位改为真实校验；`qianhang-intent-e2e` 4 步显式跳过并注明原因
+- 回归脚本支持跳过语义，解析 `N 通过 / M 失败 / S 跳过 / 共 K 例`，面板与 `data.json` 展示跳过数
+
+### Fixed
+
+- 熔断器初始状态未上报导致的 `family_circuit_state` 无样本问题
+
+### Tests
+
+- 全量门禁 **78/78 全绿**（自 16 · 知 25 · 学 37 · 治 18 · 愈 23），显式跳过 5 例，静默套件归零
+
+## [2.7.1] - 2026-10-23
+
+### Added
+
+- 进程级入口 `08-系统装配/runtime-entry.ts`：`startRuntime` / `startRuntimeFromEnv`，首报 + 定时上报一致性快照，`stop()` 幂等
+- `ops/observability/prometheus.yml`：运行时 / Pushgateway / Prometheus 三作业与规则挂载
+- `scripts/push-metrics.mjs`：零依赖推送 CI 门禁指标至 Pushgateway（未配置时跳过）
+- `metrics-server` 支持可选 Bearer 令牌（`timingSafeEqual` 常量时间比较）
+
+### Changed
+
+- `/metrics` 默认绑定 `127.0.0.1`（原 `0.0.0.0`）；`/healthz` 保持免鉴权供存活探针
+
+### Tests
+
+- metrics-observability 新增 M7（鉴权）与 M8（入口端到端），8/8 通过；全量 65/65
+
+## [2.7.0] - 2026-10-17
+
+### Added
+
+- `09-可观测性`：零依赖指标注册器（Counter / Gauge / Histogram + Prometheus 文本 exposition）、14 项 `family_*` 指标、`/metrics` 与 `/healthz`
+- 最小侵入埋点：`TrajectoryBridge.onEvent`、`LearningLoop.onCycle`、`instrumentMemoryOrchestrator`（Proxy 计时）
+- 7 条告警规则全部接真实指标；CI 指标 `metrics.prom`
+
+## [2.6.0] - 2026-10-17
+
+### Added
+
+- `08-系统装配/runtime-assembly.ts`：`createRuntimeAssembly()` 端到端装配（store → 回滚钩子 → 学习 → 桥接）
+- `learning-loop.signal(traceId, goldenPass)`：标签独立入口，消除 `ingest` 双采
+- 装配冒烟 5 例（A1–A5）
+
+## [2.5.0] - 2026-10-17
+
+### Added
+
+- Phase D 治/愈转实：故障去抖、熔断状态机、一致性修复三态、审计链防篡改
+- Phase E 知识更新：语义差异、偏好防抖、规则演化双门禁、参数适应护栏（evaluate-only）
+- infra-1～4 集成位：总线桥接 / 语义抽象端口 / 技能落盘 / 回滚委托
+
+## [2.4.0] - 2026-10-17
+
+### Added
+
+- Phase C 经验回流：轨迹采集、结果标注、模式提炼、回归门禁、技能版本化与回滚
+- `LearningLoop` 闭环门面与技能库（InMemory）
+
+## [2.0.0] - 2026-10-17
+
+### Added
+
+- 九层架构分层底座、五支柱骨架、8 位家人实例、千里·伯乐确权与分层
+- Phase A 程序化记忆提取、Phase B 自评-外验闭环
+
+> 「***YanYuCloudCube***」 · **© 2025-2026 YanYuCloudCube™. All Rights Reserved.**

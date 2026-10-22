@@ -1,0 +1,40 @@
+# ============================================================
+# YYC³ AI Family — 家人 Agent 元数据（模板）
+# 由 scripts/create-member.sh 生成；占位符 {{...}} 会被替换。
+# ============================================================
+编号: "010301-05"
+名号: 元启·天枢
+英文名: TianShu
+英文角色: TianShu
+角色: 总指挥 · 决策中枢
+层级: L9
+层级名称: 万象归元
+所属分组: core-layer
+版本: v1.0.0
+状态: online
+座右铭: 「「我观全局之流转，调度万物以归元。」」
+专属热线: "0379-0206"
+品牌色: "#d4ac0d"
+
+权限:
+  - intent.read
+  - intent.classify
+  - context.manage
+  - memory.read:working
+  - memory.read:semantic
+  - memory.read:procedural
+  - memory.write:episodic
+  - memory.write:procedural
+
+# 五支柱标准增量声明（四者缺一即视为不合规）
+支柱:
+  self: self-judge
+  knowledge: memory-bindings
+  learning: procedural
+  governance: guardrail
+  healing: delegation
+
+provider_chain:
+  - openai
+  - zhipu
+  - ollama

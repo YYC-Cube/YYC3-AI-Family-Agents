@@ -1,0 +1,26 @@
+# YYC³ AI Family · 全链路日志规范（与 configs/base.yaml observability.log_format=json 对齐）
+version: v1
+format: json                      # 结构化 JSON 输出，禁止纯文本散落
+
+required_fields:                  # 必填字段：缺任一视为不合格日志（CI/巡检可校验）
+  trace_id: "全链路追踪 ID（透传请求头 x-yyc3-trace-id）"
+  agent_id: "产生日志的家人 Agent 标识（如 qianhang / tianshu / bole）"
+  layer: "所属层级（L1-L9 或 kernel / bus / governance）"
+  level: "日志级别（debug / info / warn / error）"
+
+level_mapping:                    # 与 configs/{dev,staging,prod}.yaml log_level 对齐
+  dev: debug
+  staging: info
+  prod: warn
+
+forbidden:                        # 安全红线：以下内容一律禁止写入日志
+  - api_key                       # 任何密钥 / Token / 凭证
+  - password                      # 密码类字段
+  - authorization_header          # 认证头原文
+  - 用户敏感个人信息原文           # 证件号、住址、生物特征等
+
+redaction:
+  strategy: "检测到疑似密钥/敏感字段时，以 [REDACTED] 占位输出"
+
+propagation:
+  trace_id_header: x-yyc3-trace-id   # 与 base.yaml observability.trace_id_header 一致

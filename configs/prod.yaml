@@ -1,0 +1,19 @@
+# YYC³ AI Family · 生产环境覆盖（继承 base.yaml，仅写差异项）
+# 安全红线：全部真实端点/凭证经 ${ENV_VAR} 环境变量注入，禁止硬编码
+replicas: 3                       # 生产副本数建议 3（配合 ops/k8s/hpa.yaml min2/max10）
+llm:
+  providers:
+    openai:
+      api_key: ${OPENAI_API_KEY}
+      base_url: ${OPENAI_BASE_URL}
+    zhipu:
+      api_key: ${ZHIPU_API_KEY}
+      base_url: ${ZHIPU_BASE_URL}
+memory:
+  episodic_store:
+    endpoint: ${EPISODIC_STORE_ENDPOINT}
+bus:
+  endpoint: ${BUS_REDIS_URL}
+observability:
+  log_level: warn                 # 生产环境仅告警级日志
+  otlp_endpoint: ${OTLP_ENDPOINT}

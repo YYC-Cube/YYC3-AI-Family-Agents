@@ -1,0 +1,6 @@
+# YYC³ AI Family · 开发环境覆盖（继承 base.yaml，仅写差异项）
+debug: true                       # 调试开关：输出详细堆栈与内部状态
+llm:
+  default_provider: ollama        # 本地 Ollama 优先（降级兜底 §6.2），离线可跑、节省配额
+observability:
+  log_level: debug                # 开发环境全量日志

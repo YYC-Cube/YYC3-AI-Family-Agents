@@ -1,0 +1,27 @@
+# HELP family_regression_gate_failed_total 全量回归门禁失败用例数（CI）
+# TYPE family_regression_gate_failed_total gauge
+family_regression_gate_failed_total 0
+
+# HELP family_pillar_failed_cases 五支柱失败用例数（CI）
+# TYPE family_pillar_failed_cases gauge
+family_pillar_failed_cases{pillar="self"} 0
+family_pillar_failed_cases{pillar="memory"} 0
+family_pillar_failed_cases{pillar="learning"} 0
+family_pillar_failed_cases{pillar="governance"} 0
+family_pillar_failed_cases{pillar="healing"} 0
+
+# HELP family_regression_spec_passed 回归套件通过用例数（CI）
+# TYPE family_regression_spec_passed gauge
+family_regression_spec_passed{spec="tests/unit/procedural-extraction.spec.js"} 15
+family_regression_spec_passed{spec="tests/unit/self-judge-kit.spec.js"} 3
+family_regression_spec_passed{spec="tests/integration/self-judge-verification.spec.js"} 9
+family_regression_spec_passed{spec="tests/integration/experience-reflow.spec.js"} 10
+family_regression_spec_passed{spec="tests/integration/pillars-smoke.spec.js"} 4
+family_regression_spec_passed{spec="tests/integration/family-bus.spec.js"} 4
+family_regression_spec_passed{spec="tests/integration/infra-integration.spec.js"} 4
+family_regression_spec_passed{spec="tests/integration/healing-governance.spec.js"} 5
+family_regression_spec_passed{spec="tests/integration/knowledge-evolution.spec.js"} 5
+family_regression_spec_passed{spec="tests/integration/assembly-e2e.spec.js"} 6
+family_regression_spec_passed{spec="tests/integration/metrics-observability.spec.js"} 8
+family_regression_spec_passed{spec="tests/e2e/qianhang-intent-e2e.spec.js"} 0
+family_regression_spec_passed{spec="tests/pillar-contracts/pillars.contract.js"} 5

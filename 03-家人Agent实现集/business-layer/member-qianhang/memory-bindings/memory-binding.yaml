@@ -1,0 +1,51 @@
+# ============================================================
+# 言启·千行 · 记忆绑定声明（「知」支柱 · §4.1）
+# 声明该家人读取/写入哪些记忆层、预算与精度要求。
+# ============================================================
+member_id: member-qianhang
+member_number: "010301-01"
+名号: 言启·千行
+
+# 读取声明：本家人检索时可用的记忆层
+read:
+  - layer: working
+    budget:
+      maxTokens: 128000
+      maxItems: 200
+    precision: 高
+  - layer: semantic
+    budget:
+      maxTokens: 8192
+      maxItems: 50
+    precision: 高
+  - layer: procedural
+    budget:
+      maxTokens: 4096
+      maxItems: 30
+    precision: 版本化精确命中   # 意图规则必须精确，不允许近似
+  - layer: sensory
+    budget:
+      maxTokens: 1024
+      maxItems: 16
+    precision: 粗
+
+# 写入声明：本家人可提交的记忆层（salience 由 write-policy 计算）
+write:
+  - layer: episodic
+    trigger: task.completed          # 任务链路结束
+    sourceJudgment: true             # 携带 self-judge 的 JudgmentSignal
+  - layer: procedural
+    trigger: 学习引擎固化 / 人工审核   # 不直接写，经 learning + 审核
+    sourceJudgment: true
+
+# 不写入层（显式声明边界）
+deny_write:
+  - semantic    # 语义图谱更新归学习引擎 knowledge-update
+  - working     # 工作上下文由运行时维护，非本家人写入
+  - sensory     # 感知缓冲由输入管道写入
+
+# 精度与一致性约束
+guarantees:
+  retrievalLatencyMs: 300          # 对齐 §6.1 记忆检索延迟 < 300ms
+  consistency: 跨层一致性由 memory-orchestrator.checkConsistency 校验
+  forgetting: 遗忘曲线由 write-policy.forgetting-policy 驱动
