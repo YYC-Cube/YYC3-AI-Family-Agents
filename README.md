@@ -292,7 +292,7 @@ gh repo edit YYC-Cube/YYC3-Family-AI-Agents \
 | Phase D/E | ✅ 完成 | 治/愈转实 · 知识更新 · 参数护栏（v2.5.0） |
 | P0 可观测 | ✅ 完成 | 指标 → /metrics → 告警 → 面板（v2.7.0–v2.7.2） |
 | **L7 Exemplars** | ✅ 完成 | OpenMetrics 下钻（v2.8.0，默认关闭） |
-| **L8 Git 基线** | ◐ 部分完成 | 本地 4 次提交就绪；待推送后完成标签 / CI / 分支保护 / Release |
+| **L8 Git 基线** | ✅ 完成 | 远端 main + 标签 + CI 门禁 + 分支保护 + Release v2.8.0 |
 | **P1 真实 LLM** | ⬜ 待启动 | openai / zhipu provider（HTTP + 重试退避），解锁千行意图链路 |
 
 ---

@@ -26,7 +26,7 @@ author: AI Tutor <Intelligent Application Implementation Expert>
 version: v1.2.0
 created: 2026-10-23
 updated: 2026-10-23
-status: in_progress
+status: completed
 tags: [plan],[observability],[exemplars],[git],[l7],[l8],[standards]
 category: plan
 ---
@@ -246,18 +246,25 @@ d1d1fa0 docs: 新增未接线模块清单（v2.7.3）并忽略 docs 本地备份
 ```
 
 - 忽略规则已生效：`docs/02-智能协同架构内核/`、`docs/03-家人Agent实现集/`（本地备份，`git check-ignore` 已验证）
-- **未推送**（遵循「不擅自推送」原则）
+- **已推送**：`main` 与标签已同步至远端（L8-5 完成）
 
-## 十三、剩余步骤
+## 十三、执行步骤（已完成）
 
-| # | 任务 | 命令 | DoD |
-| -- | ---- | ---- | --- |
-| L8-5 | 推送并打标签 | `git push -u origin main`<br>`git tag subsystem/yyc3-family-agent-ts-v2.7.3`<br>`git push origin --tags` | 远端可见 main 与标签 |
-| L8-6 | CI 首跑验证 | 远端 Actions 观察 `regression-gate` | typecheck + regression 全绿；artifact 可下载 |
-| L8-7 | 分支保护 | GitHub Settings → Branches | `main` 需 PR + 门禁通过，禁止直推 |
-| L8-8 | 首个 Release | Release 关联 `CHANGELOG.md` 与验收报告 v1.2.0 | Release 可追溯验收 |
+| # | 任务 | 命令 | DoD | 状态 |
+| -- | ---- | ---- | --- | ---- |
+| L8-5 | 推送并打标签 | `git push -u origin main`<br>`git push origin --tags` | 远端可见 main 与标签 | ✅ **已完成**：`main` → `c9c7c65`（后续 `f70a136` / `2914a1d`）；标签 `subsystem/yyc3-family-agent-ts-v2.7.3` / `v2.8.0` 已推送 |
+| L8-6 | CI 首跑验证 | 远端 Actions 观察 `regression-gate` | typecheck + regression 全绿；artifact 可下载 | ✅ **已完成**：run `39873611154` conclusion=success |
+| L8-7 | 分支保护 | GitHub Settings → Branches | `main` 需 PR + 门禁通过，禁止直推 | ✅ **已完成**：required check「全量回归 + 五支柱面板」、1 评审、禁 force push / 删除、`enforce_admins=false` |
+| L8-8 | 首个 Release | Release 关联 `CHANGELOG.md` 与验收报告 v1.2.0 | Release 可追溯验收 | ✅ **已完成**：[v2.8.0 Release](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/releases/tag/subsystem/yyc3-family-agent-ts-v2.8.0) |
 
-> 若 HTTPS 推送要求凭据，可切换 SSH（当前 `gh` 登录协议为 SSH）：
+**远端信息**
+
+- SSH：`git@github.com:YYC-Cube/YYC3-AI-Family-Agents.git`（注意仓库名为 `YYC3-AI-Family-Agents`，AI 在前）
+- 默认分支：`main`；CI 工作流：`regression-gate`
+- 锁文件：`pnpm-lock.yaml` 已入库，CI 使用 `--frozen-lockfile`
+- 本地备份：`docs/02-*`、`docs/03-*` 已忽略，不入远端
+
+> SSH 已配置并验证（`gh` 登录协议为 SSH），仓库名注意为 `YYC3-AI-Family-Agents`（AI 在前）：
 > `git remote set-url origin git@github.com:YYC-Cube/YYC3-Family-AI-Agents.git`
 
 ## 十四、标签规范
@@ -326,6 +333,7 @@ L7-1 注册器 → L7-2 协议 → L7-3/4 业务接线 → L7-5/6 部署面板 �
 | v1.0.0 | 2026-10-23 | 初版：L7 方案 A 选型；L8 单仓决策；步骤/测试/验收/风险 |
 | v1.1.0 | 2026-10-23 | 刷新为可执行版：L8 记录已执行 L8-1～L8-4（三次提交、备份忽略）；L7 补齐逐文件变更清单、数据模型、渲染格式、M9–M12 断言、逐字节验证方法与 DoD；补充 L7/L8 标准引用与执行顺序 |
 | v1.2.0 | 2026-10-23 | **L7 实施完成（v2.8.0）**：注册器 exemplar、OpenMetrics 协商、业务接线、抓取与面板、M9–M10c 用例（82/82）；补充 §6.1 执行进度；L8 状态维持「已执行 4/8，待推送」 |
+| v1.3.0 | 2026-10-23 | **L8 全部完成**：SSH 推送 `main` 与标签（`v2.7.3` / `v2.8.0`）；CI 首跑成功（run `39873611154`）；`main` 分支保护（required check + 1 评审 + 禁 force push）；Release v2.8.0 发布；补充 `pnpm-lock.yaml` 并改 `--frozen-lockfile`；修正远端仓库名为 `YYC3-AI-Family-Agents`（AI 在前） |
 
 ---
 
