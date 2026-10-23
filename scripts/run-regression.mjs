@@ -30,7 +30,7 @@ const SPECS = [
   { file: 'tests/integration/self-judge-verification.spec.js', pillars: ['自', '治'], phase: 'Phase B', name: '自评-外验闭环' },
   { file: 'tests/integration/experience-reflow.spec.js', pillars: ['学'], phase: 'Phase C', name: '经验回流闭环' },
   { file: 'tests/integration/pillars-smoke.spec.js', pillars: ['自', '治', '学'], phase: '冒烟', name: '三支柱贯通冒烟' },
-  { file: 'tests/integration/family-bus.spec.js', pillars: [], phase: 'infra', name: '家族通信总线' },
+  { file: 'tests/integration/family-bus.spec.js', pillars: ['愈'], phase: 'infra', name: '家族通信总线（含 DLQ）' },
   { file: 'tests/integration/infra-integration.spec.js', pillars: ['学', '愈'], phase: 'infra 1–4', name: 'infra 集成位' },
   { file: 'tests/integration/healing-governance.spec.js', pillars: ['治', '愈', '知'], phase: 'Phase D', name: '治/愈 + 记忆全链路' },
   { file: 'tests/integration/knowledge-evolution.spec.js', pillars: ['知', '学'], phase: 'Phase E', name: '知识更新 + 参数护栏' },

@@ -1,12 +1,12 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-23T00:16:49.395Z",
-  "generatedAtCN": "2026/10/23 08:16:49",
+  "generatedAt": "2026-10-23T00:29:54.970Z",
+  "generatedAtCN": "2026/10/23 08:29:54",
   "gate": {
     "passed": true,
-    "totalPassed": 94,
+    "totalPassed": 97,
     "totalFailed": 0,
-    "totalSkipped": 1,
+    "totalSkipped": 0,
     "specs": 14
   },
   "pillars": [
@@ -42,7 +42,7 @@
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 27,
+      "passed": 34,
       "failed": 0
     }
   ],
@@ -122,13 +122,15 @@
     },
     {
       "file": "tests/integration/family-bus.spec.js",
-      "name": "家族通信总线",
+      "name": "家族通信总线（含 DLQ）",
       "phase": "infra",
-      "pillars": [],
-      "passed": 4,
+      "pillars": [
+        "愈"
+      ],
+      "passed": 7,
       "failed": 0,
-      "skipped": 1,
-      "total": 5,
+      "skipped": 0,
+      "total": 7,
       "silent": false,
       "ok": true
     },

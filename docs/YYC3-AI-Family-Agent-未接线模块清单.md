@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.3.0
+  Version : v1.4.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.3.0
+version: v1.4.0
 created: 2026-10-23
 updated: 2026-10-23
 status: active
@@ -281,9 +281,10 @@ category: report
 
 本清单**不改变**既有验收结论：
 
-- P0 验收（v1.2.0）针对「可观测数据面」，其 78 例门禁与 7 条告警均基于**已接线**模块
+- P0 验收（v1.2.0）针对「可观测数据面」，其告警与指标均基于**已接线**模块（当前门禁 97 例全绿）
 - 未接线模块**不计入**已交付能力；路线图状态以本文与 `§8.3` 为准
 - `qianhang-intent-e2e` 已由跳过转为 **4 例真实断言（v2.11.0）**；provider 与意图链路均已接线
+- `event-bus` 已补 **重试 + 死信队列（DLQ，v2.12.0）**，门禁显式跳过归零
 
 ---
 
@@ -295,6 +296,7 @@ category: report
 | v1.1.0 | 2026-10-23 | P1 智谱 provider 接入后复核：新增 `shared-core/llm-adapter`（3 文件，2 可达）；统计更新为 245 / 83 / 162；8 位家人 `zhipu.provider.ts` 标记为「共享实现 + 薄转发」 |
 | v1.2.0 | 2026-10-23 | P1 OpenAI provider 接入后复核：新增兼容基类与 OpenAI provider（llm-adapter 共 5 文件，4 可达）；统计更新为 247 / 85 / 162；`openai.provider.ts` 标记为薄转发 |
 | v1.3.0 | 2026-10-23 | P1 意图链路接线后复核：`task-decomposer` 由骨架转实（CAGEERF 七阶段 + owner/dependsOn）；千行 4 文件与伯乐成就面板纳入 e2e 可达集；统计更新为 247 / 90 / 157；e2e 显式跳过降至 1 例（仅 DLQ） |
+| v1.4.0 | 2026-10-23 | EventBus 重试 + DLQ 落地后复核：`event-bus` 属存量已接线文件（仅功能增强，无新增/移出编译单元），统计维持 247 / 90 / 157；family-bus 用例 7/7 并归入「愈」，显式跳过归零，门禁 97/97 |
 
 ---
 

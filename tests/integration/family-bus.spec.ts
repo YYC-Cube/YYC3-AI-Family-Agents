@@ -1,8 +1,8 @@
 // @ts-nocheck
 /**
  * 家族通信总线集成测试（family-bus）—— 真实断言版（v2.7.2，验收 L4）。
- * 覆盖：发布订阅 / 幂等去重 / 点对点路由；死信队列（DLQ）未实现 → 显式跳过（不再静默）。
- * 对应架构：§4 云枢核心引擎 family-communication-bus。
+ * 覆盖：发布订阅 / 幂等去重 / 点对点路由 / 重试与死信（DLQ，v2.12.0）。
+ * 对应架构：§4 云枢核心引擎 family-communication-bus；§5.5 自愈矩阵第 3 层「总线」。
  */
 
 const __localShim = typeof describe === 'undefined';
@@ -45,7 +45,7 @@ function makeEvent({ traceId = 't1', agentId = 'qianhang', seq = 1, topic = 'tas
   };
 }
 
-describe('family-bus 事件链路（发布 → 幂等 → 路由）', () => {
+describe('family-bus 事件链路（发布 → 幂等 → 路由 → 死信）', () => {
   it('事件发布：订阅方收到同一 traceId 与载荷', async () => {
     const bus = new EventBus();
     const received = [];
@@ -102,7 +102,62 @@ describe('family-bus 事件链路（发布 → 幂等 → 路由）', () => {
     expect(b).toBe(0);
   });
 
-  it.skip('死信：超过最大重试次数后事件进入 DLQ', 'EventBus 尚无重试/DLQ 实现（TODO(infra)：对接 07-自愈中心）');
+  it('死信 D1：重试耗尽后进入 DLQ，字段完整且 drain 清空', async () => {
+    const pushed = [];
+    const bus = new EventBus({ maxAttempts: 3, now: () => 2000, onDeadLetter: (l) => pushed.push(l) });
+    let attempts = 0;
+    bus.subscribe('task.executed', () => {
+      attempts += 1;
+      throw new Error('handler-boom');
+    });
+
+    await bus.publish(makeEvent({ traceId: 'trace-dlq-1' }));
+
+    expect(attempts).toBe(3);
+    expect(pushed).toHaveLength(1);
+    expect(bus.deadLetters()).toHaveLength(1);
+    const [letter] = bus.deadLetters();
+    expect(letter.id).toBe('trace-dlq-1:qianhang:1');
+    expect(letter.topic).toBe('task.executed');
+    expect(letter.event.key.traceId).toBe('trace-dlq-1');
+    expect(letter.attempts).toBe(3);
+    expect(letter.error).toBe('handler-boom');
+    expect(letter.at).toBe(2000);
+    expect(bus.drainDeadLetters()).toHaveLength(1);
+    expect(bus.deadLetters()).toHaveLength(0);
+  });
+
+  it('死信 D2：故障隔离——同主题异常处理器不阻断其它处理器', async () => {
+    const bus = new EventBus({ maxAttempts: 1 });
+    let healthy = 0;
+    bus.subscribe('task.executed', () => {
+      throw new Error('bad-handler');
+    });
+    bus.subscribe('task.executed', () => {
+      healthy += 1;
+    });
+
+    await bus.publish(makeEvent({ traceId: 'trace-dlq-2' }));
+
+    expect(healthy).toBe(1);
+    expect(bus.deadLetters()).toHaveLength(1);
+    expect(bus.deadLetters()[0].topic).toBe('task.executed');
+    expect(bus.deadLetters()[0].attempts).toBe(1);
+  });
+
+  it('死信 D3：瞬时失败重试成功则不入 DLQ', async () => {
+    const bus = new EventBus({ maxAttempts: 2 });
+    let attempts = 0;
+    bus.subscribe('task.executed', () => {
+      attempts += 1;
+      if (attempts === 1) throw new Error('transient');
+    });
+
+    await bus.publish(makeEvent({ traceId: 'trace-dlq-3' }));
+
+    expect(attempts).toBe(2);
+    expect(bus.deadLetters()).toHaveLength(0);
+  });
 });
 
 (async () => {

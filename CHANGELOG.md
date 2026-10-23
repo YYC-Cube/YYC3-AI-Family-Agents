@@ -10,8 +10,27 @@
 
 ### Planned
 
-- **EventBus DLQ**：重试 / 死信队列实现，解锁最后 1 个跳过用例
 - **LLM 实答 UAT**：以真实 Key 做身份与意图抽检（本地门控，默认跳过）
+
+## [2.12.0] - 2026-10-23
+
+### Added
+
+- **EventBus 重试与死信（DLQ）**：`EventBusOptions`（`maxAttempts` / `retryDelayMs` / `dlqCapacity` / `now` / `onDeadLetter`）；单处理器失败按指数退避重试，耗尽后写入有界 FIFO 死信队列并回调自愈中心
+- 故障隔离：同一主题内单个处理器异常不再阻断其它处理器与发布方
+- `deadLetters()` 快照与 `drainDeadLetters()` 批量取出，供 07-自愈中心 `dead-letter` 动作消费
+- family-bus 用例新增 D1/D2/D3（重试耗尽入 DLQ、故障隔离、瞬时失败重试成功），五支柱归属补入「愈」
+
+### Changed
+
+- 显式跳过从 1 例降为 **0 例**；门禁口径 94 → **97 例全绿**
+- `package.json` 版本 2.11.0 → 2.12.0
+
+### Tests
+
+```
+自 20 · 知 25 · 学 53 · 治 18 · 愈 34 · 合计 97 / 97 通过，0 跳过，0 静默
+```
 
 ## [2.11.0] - 2026-10-23
 

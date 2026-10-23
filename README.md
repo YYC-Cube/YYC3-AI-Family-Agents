@@ -19,7 +19,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 ### 项目徽章
 
 [![CI](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml/badge.svg)](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml)
-![Regression](https://img.shields.io/badge/Regression-94%2F94%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
+![Regression](https://img.shields.io/badge/Regression-97%2F97%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Zero Deps](https://img.shields.io/badge/Runtime%20Deps-0-8a2be2?style=for-the-badge)
@@ -138,8 +138,8 @@ sequenceDiagram
 # 1. 类型检查（仓库根）
 pnpm typecheck          # 等价 tsc --noEmit
 
-# 2. 全量门禁：隔离编译 → 13 个套件 → 五支柱聚合 → 面板 → 退出码
-pnpm regression         # 78 例全绿；5 例显式跳过
+# 2. 全量门禁：隔离编译 → 14 个套件 → 五支柱聚合 → 面板 → 退出码
+pnpm regression         # 97 例全绿；0 例跳过
 
 # 3. 查看面板（自包含 HTML，无需服务器）
 open ops/observability/pillar-dashboard/index.html
@@ -216,10 +216,10 @@ YYC3-AI-Family-Agent/
 
 | 项 | 结果 |
 | --- | --- |
-| 全量用例 | **94 / 94 通过** |
-| 显式跳过 | **1 例**（EventBus DLQ 未实现，带原因） |
+| 全量用例 | **97 / 97 通过** |
+| 显式跳过 | **0 例**（EventBus DLQ 已实现） |
 | 静默套件 | **0** |
-| 五支柱 | 自 20 · 知 25 · 学 53 · 治 18 · 愈 27 |
+| 五支柱 | 自 20 · 知 25 · 学 53 · 治 18 · 愈 34 |
 | 类型检查 | `tsc --noEmit` exit 0 |
 
 ---
