@@ -38,6 +38,8 @@ const SPECS = [
   { file: 'tests/integration/metrics-observability.spec.js', pillars: ['学', '愈'], phase: 'P0 数据面', name: '指标采集与暴露' },
   { file: 'tests/integration/llm-provider.spec.js', pillars: ['学'], phase: 'P1', name: 'LLM Provider（zhipu）' },
   { file: 'tests/e2e/qianhang-intent-e2e.spec.js', pillars: ['自', '学'], phase: 'e2e', name: '千行意图端到端' },
+  // UAT（tests/uat/llm-live-uat.spec.ts）刻意不进本清单：密钥类真实调用只走 `pnpm uat:llm` 本地门控，
+  // 保持回归门禁 hermetic 与「跳过 0」口径。
   { file: 'tests/pillar-contracts/pillars.contract.js', pillars: [], phase: '契约', name: '五支柱契约' },
 ];
 

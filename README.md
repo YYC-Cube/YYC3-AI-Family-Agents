@@ -222,6 +222,12 @@ YYC3-AI-Family-Agent/
 | 五支柱 | 自 20 · 知 25 · 学 53 · 治 18 · 愈 34 |
 | 类型检查 | `tsc --noEmit` exit 0 |
 
+**LLM 实答 UAT（本地门控，默认跳过，不计入门禁）**：`pnpm uat:llm` 以真实 Key 对开放平台做身份与意图抽检（1 身份 + 4 意图，附规则主选对照）。三重门控（`UAT_LLM=1` + `UAT_LLM_CONFIRM=我知晓真实计费` + 密钥存在）缺一整体跳过且 exit 0：
+
+```bash
+UAT_LLM=1 UAT_LLM_CONFIRM='我知晓真实计费' ZHIPU_API_KEY=<你的Key> pnpm uat:llm
+```
+
 ---
 
 ## 🔌 模块接线状态

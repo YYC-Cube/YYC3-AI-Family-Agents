@@ -8,9 +8,23 @@
 
 ## [Unreleased]
 
-### Planned
+## [2.13.0] - 2026-10-23
 
-- **LLM 实答 UAT**：以真实 Key 做身份与意图抽检（本地门控，默认跳过）
+### Added
+
+- **LLM 实答 UAT**：`tests/uat/llm-live-uat.spec.ts` + `scripts/run-uat-llm.mjs`（`pnpm uat:llm`）——以真实 Key 对开放平台做身份与意图抽检；三重门控（`UAT_LLM=1` + `UAT_LLM_CONFIRM=我知晓真实计费` + 密钥存在）缺一整体跳过且 exit 0，默认零调用零计费；**不进回归 SPECS**，CI 门禁维持 hermetic 与「97/97 · 跳过 0」口径
+- UAT 用例 5 例：U1 身份自报（system 锚「言启·千行」，断言 `finishReason=stop`、作答含「千行」、usage 双非零）；U2–U5 意图实答（六标签闭集提示词 + JSON 抽取容错，规则主选对照仅记录不断言）
+- 诊断输出全部非敏感：密钥仅显示存在性与长度，不回显、不落盘、不进日志
+
+### Changed
+
+- **回归清单治理**：`run-regression.mjs` SPECS 移除误入的 UAT 条目（密钥类真实调用只走 `pnpm uat:llm` 本地门控，不进 CI 门禁），显式跳过维持 **0 例**、门禁恢复 hermetic「97/97 · 跳过 0」口径
+- `package.json` 版本 2.12.0 → 2.13.0
+
+### Tests
+
+- 实答凭据：**glm-4-flash**（智谱 bigmodel）· **5/5 通过** · 4 意图实答与规则主选全部一致 · U1 身份锚命中 · exit 0
+- 门禁回归维持 **97 / 97**（自 20 · 知 25 · 学 53 · 治 18 · 愈 34），0 跳过，0 静默（UAT 不计入门禁）
 
 ## [2.12.0] - 2026-10-23
 
