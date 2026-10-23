@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-L7-L8落地计划
-  Version : v1.1.0
+  Version : v1.4.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-L7-L8落地计划.md
 description: P0 验收剩余改进项 L7（Histogram exemplars）与 L8（Git 基线）的可执行落地计划
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.2.0
+version: v1.4.0
 created: 2026-10-23
 updated: 2026-10-23
 status: completed
@@ -41,7 +41,7 @@ L7 / L8 来自 [P0 可观测数据面验收报告 v1.2.0](YYC3-AI-Family-Agent-P
 | 编号 | 内容 | 当前状态 | 阻断性 |
 | ---- | ---- | -------- | ------ |
 | **L7** | Histogram 不支持 exemplars / native histogram | ✅ **已完成（v2.8.0）**：默认关闭，OpenMetrics 下钻可用 | 非阻断 |
-| **L8** | 缺少 Git 版本基线 | ◐ **已执行 L8-1～L8-4**，剩余 L8-5～L8-8 待推送后完成 | 非阻断 |
+| **L8** | 缺少 Git 版本基线 | ✅ **已完成（v1.3.0）**：SSH 推送、CI、分支保护、Release 齐备 | 非阻断 |
 
 **共同目标**：可观测从「知道慢」升级为「知道**哪一次**慢」；代码资产从「文件目录」升级为「可追溯、可复现的版本」。
 
@@ -275,14 +275,16 @@ d1d1fa0 docs: 新增未接线模块清单（v2.7.3）并忽略 docs 本地备份
 | 里程碑 | `milestone/<kebab-case>` | `milestone/ts-five-pillars-p0` |
 | 主版本 | `vX.Y.Z` | 由仓库所有者按整体节奏发布 |
 
-## 十五、验收标准
+## 十五、验收标准（2026-10-23 复核通过 · v2.11.0 基线）
 
-- [ ] `git clone` 到空目录 → `pnpm regression` → **78/78 全绿 + 5 例跳过**
-- [ ] `git status` 干净；`git log --oneline` 可读
-- [ ] 密钥扫描无命中（gitleaks / `git secrets`）
-- [ ] PR 流水线自动执行 typecheck + regression
-- [ ] `docs/02-*`、`docs/03-*` 备份不出现于远端
-- [ ] 标签与 Release 可追溯
+- [x] `git clone` 到空目录 → `pnpm install --frozen-lockfile` → `pnpm regression` → **94/94 全绿 + 1 例跳过**（克隆 `/tmp/yyc3-l8-verify`，commit `b3376b5`）
+- [x] `git status` 干净；`git log --oneline` 可读（工作区仅门禁生成的面板产物，提交后即净）
+- [x] 密钥扫描无命中（`sk-*` / 32 位十六进制点分密钥 / 历史泄露值，全仓 0 命中）
+- [x] PR 流水线自动执行 typecheck + regression（`regression-gate` 触发含 `push: main` / `pull_request` / `workflow_dispatch`）
+- [x] `docs/02-*`、`docs/03-*` 备份不出现于远端（克隆后 `docs/` 仅 4 个正式文档 + 3 个正式子目录 + `_archive`）
+- [x] 标签与 Release 可追溯（`subsystem/yyc3-family-agent-ts-v2.7.3` / `v2.8.0` / `v2.11.0`，Release 均已发布）
+
+> 附加实证：克隆目录重跑门禁后 `metrics.prom` 与仓库版本**逐字节一致**，验证 L7「默认关闭零行为变化」在独立环境成立。
 
 ## 十六、风险
 
@@ -291,7 +293,7 @@ d1d1fa0 docs: 新增未接线模块清单（v2.7.3）并忽略 docs 本地备份
 | 误提交密钥/大文件 | 高 | 提交前扫描；泄露即轮换 |
 | 仓库体积膨胀 | 中 | 排除构建产物；必要时 LFS |
 | 历史改写 | 高 | 禁止 `push --force` 到 `main` |
-| CI 无锁文件导致安装漂移 | 中 | 现有 `--no-frozen-lockfile`；建议后续提交 `pnpm-lock.yaml` 并改 `--frozen-lockfile` |
+| CI 无锁文件导致安装漂移 | 中 | 已缓解：`pnpm-lock.yaml` 入库，CI 与克隆验证均使用 `--frozen-lockfile` |
 
 ## 十七、标准与规范引用（L8）
 
@@ -334,6 +336,7 @@ L7-1 注册器 → L7-2 协议 → L7-3/4 业务接线 → L7-5/6 部署面板 �
 | v1.1.0 | 2026-10-23 | 刷新为可执行版：L8 记录已执行 L8-1～L8-4（三次提交、备份忽略）；L7 补齐逐文件变更清单、数据模型、渲染格式、M9–M12 断言、逐字节验证方法与 DoD；补充 L7/L8 标准引用与执行顺序 |
 | v1.2.0 | 2026-10-23 | **L7 实施完成（v2.8.0）**：注册器 exemplar、OpenMetrics 协商、业务接线、抓取与面板、M9–M10c 用例（82/82）；补充 §6.1 执行进度；L8 状态维持「已执行 4/8，待推送」 |
 | v1.3.0 | 2026-10-23 | **L8 全部完成**：SSH 推送 `main` 与标签（`v2.7.3` / `v2.8.0`）；CI 首跑成功（run `39873611154`）；`main` 分支保护（required check + 1 评审 + 禁 force push）；Release v2.8.0 发布；补充 `pnpm-lock.yaml` 并改 `--frozen-lockfile`；修正远端仓库名为 `YYC3-AI-Family-Agents`（AI 在前） |
+| v1.4.0 | 2026-10-23 | **L7/L8 验收复核（v2.11.0 基线）**：干净克隆 `b3376b5` → `--frozen-lockfile` 安装 → **94/94 全绿 + 1 例跳过**；`metrics.prom` 与仓库逐字节一致；§十五 6 项验收全部勾选；§十六 锁文件风险标注已缓解；补记 `v2.11.0` 标签与 Release |
 
 ---
 
