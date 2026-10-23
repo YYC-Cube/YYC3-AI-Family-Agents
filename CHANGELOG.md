@@ -10,7 +10,24 @@
 
 ### Planned
 
-- **P1 续**：OpenAI provider（同协议适配）与千行意图链路接线（zhipu provider 已完成）
+- **P1 续**：千行意图链路接线（intent-classifier + intent-gateway），解锁 e2e 的 4 个跳过用例
+
+## [2.10.0] - 2026-10-23
+
+### Added
+
+- **OpenAI Provider**：`shared-core/llm-adapter/openai-provider.ts` —— OpenAI v1 `/chat/completions`，支持可选 `OpenAI-Organization` / `OpenAI-Project` 头
+- 抽取共享基类 `openai-compatible-client.ts`：传输、超时、429/5xx 指数退避、SSE 解析、错误分类与密钥脱敏统一实现
+- `ZhiPuProvider` 改为基类薄配置（行为不变）
+
+### Changed
+
+- 8 位家人的 `providers/openai.provider.ts` 统一改为薄转发到 shared-core（原先 8 份重复类型与骨架）
+- `package.json` 版本 2.9.0 → 2.10.0
+
+### Tests
+
+- `llm-provider.spec` 新增 O1（OpenAI 请求/组织头/整形）与 O2（环境变量隔离），共 8 例；全量门禁 **90/90**（显式跳过 5）
 
 ## [2.9.0] - 2026-10-23
 

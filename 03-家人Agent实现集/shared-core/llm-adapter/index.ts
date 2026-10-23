@@ -3,4 +3,6 @@
  */
 
 export * from './types.js';
+export * from './openai-compatible-client.js';
 export * from './zhipu-provider.js';
+export * from './openai-provider.js';

@@ -9,6 +9,8 @@
  *   L4 超时（AbortController）
  *   L5 SSE 流式增量
  *   L6 isAvailable（环境变量存在性）
+ *   O1 OpenAI 补全（Bearer / 组织头 / 响应整形）
+ *   O2 OpenAI isAvailable 不受 ZHIPU_API_KEY 影响
  *
  * 安全：全程使用假密钥 `test-key`，不读取、不打印真实密钥。
  */
@@ -38,6 +40,7 @@ if (__localShim) {
 
 import http from 'node:http';
 import { ZhiPuProvider } from '@shared/llm-adapter/zhipu-provider.js';
+import { OpenAiProvider } from '@shared/llm-adapter/openai-provider.js';
 
 /** 启动本地桩服务，返回 baseUrl、请求记录与关闭函数。 */
 async function listen(handler) {
@@ -216,6 +219,52 @@ describe('LLM Provider（zhipu）', () => {
     await withKey('test-key', async () => {
       expect(provider.isAvailable()).toBe(true);
     });
+  });
+
+  it('O1: OpenAI 补全（Bearer / 组织头 / 响应整形）', async () => {
+    const stub = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        choices: [{ message: { content: 'OpenAI 适配成功' }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 5, completion_tokens: 3 },
+      }));
+    });
+    const prev = process.env.OPENAI_API_KEY;
+    process.env.OPENAI_API_KEY = 'sk-test';
+    try {
+      const provider = new OpenAiProvider('OPENAI_API_KEY', stub.baseUrl, { organization: 'org-test' });
+      const out = await provider.complete(REQ);
+
+      expect(stub.requests.length).toBe(1);
+      const r = stub.requests[0];
+      expect(r.url).toBe('/chat/completions');
+      expect(r.headers.authorization).toBe('Bearer sk-test');
+      expect(r.headers['openai-organization']).toBe('org-test');
+      expect(out.text).toBe('OpenAI 适配成功');
+      expect(out.usage.promptTokens).toBe(5);
+    } finally {
+      await stub.close();
+      if (prev === undefined) delete process.env.OPENAI_API_KEY;
+      else process.env.OPENAI_API_KEY = prev;
+    }
+  });
+
+  it('O2: OpenAI isAvailable 不受 ZHIPU_API_KEY 影响', async () => {
+    const provider = new OpenAiProvider('OPENAI_API_KEY', 'http://127.0.0.1:1');
+    const prevOpen = process.env.OPENAI_API_KEY;
+    const prevZhipu = process.env.ZHIPU_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    process.env.ZHIPU_API_KEY = 'zhipu-only';
+    try {
+      expect(provider.isAvailable()).toBe(false); // 仅智谱 Key 不算可用
+      process.env.OPENAI_API_KEY = 'sk-x';
+      expect(provider.isAvailable()).toBe(true);
+    } finally {
+      if (prevOpen === undefined) delete process.env.OPENAI_API_KEY;
+      else process.env.OPENAI_API_KEY = prevOpen;
+      if (prevZhipu === undefined) delete process.env.ZHIPU_API_KEY;
+      else process.env.ZHIPU_API_KEY = prevZhipu;
+    }
   });
 });
 
