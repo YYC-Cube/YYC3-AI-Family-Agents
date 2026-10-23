@@ -22,6 +22,19 @@ owner: grandmaster
 | 标签 | `regression` `baseline` |
 | 实现锚点（kernel） | `architecture-kernel/05-持续学习引擎/stability-guard/regression-tester.ts` |
 
+## 步骤（steps）
+
+1. 采集变更前后基线指标
+2. 对比检测退化幅度
+3. 超阈值时拦截发布
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `baseline` `candidate` |
+| 输出 | `passed` `regressions` |
+
 ## 示例
 
 - 新版本意图准确率下降 2% 时拦截发布

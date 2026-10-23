@@ -56,6 +56,13 @@ skills:
     pillars: [自]
     tags: [confidence, assumption, escalation]
     kernel: family-agents/shared-core/self-judge-kit/index.ts
+    steps:
+      - 接收候选结论与上下文证据
+      - 产出 0..1 置信度并显式登记假设
+      - 检测偏离并给出升级（escalation）决策
+    io:
+      input: [candidate, evidence]
+      output: [confidence, assumptions, escalation]
     examples:
       - 对候选意图给出 0..1 置信度并显式登记假设
 
@@ -67,6 +74,13 @@ skills:
     pillars: [知]
     tags: [memory, retrieval]
     kernel: family-agents/shared-core/memory-framework/index.ts
+    steps:
+      - 解析查询意图与检索范围
+      - 按语义相似度召回情景/语义/程序记忆
+      - 按相关性与时效排序返回
+    io:
+      input: [query, context]
+      output: [memories]
     examples:
       - 检索同一客户近三次决策的上下文
 
@@ -78,6 +92,13 @@ skills:
     pillars: [知]
     tags: [memory, write, procedural]
     kernel: family-agents/shared-core/memory-framework/write-policy
+    steps:
+      - 接收待写入条目与显著性信号
+      - 按写入策略判定情景/程序记忆归属
+      - 落盘并返回写入结果
+    io:
+      input: [entry, salience]
+      output: [written]
     examples:
       - 把本轮结论写入情景记忆并标注显著性
 
@@ -89,6 +110,13 @@ skills:
     pillars: [自, 学]
     tags: [intent, routing]
     kernel: family-agents/business-layer/member-qianhang/core/intent-classifier.service.ts
+    steps:
+      - 对用户输入做六类意图闭集分类
+      - 输出意图、置信度与理由
+      - 按路由表分发到目标家人
+    io:
+      input: [utterance, context]
+      output: [intent, confidence, route]
     examples:
       - 把“帮我分析上月成本”路由到语枢·万物
 
@@ -100,6 +128,13 @@ skills:
     pillars: [学]
     tags: [trajectory, learning]
     kernel: architecture-kernel/05-持续学习引擎/experience-reflow
+    steps:
+      - 采集任务轨迹与自评信号
+      - 提炼成功/失败模式三元组
+      - 触发学习周期与技能固化
+    io:
+      input: [trajectory]
+      output: [patterns]
     examples:
       - 把一次成功分析沉淀为可复用轨迹
 
@@ -111,6 +146,13 @@ skills:
     pillars: [学, 愈]
     tags: [skill, versioning, rollback]
     kernel: architecture-kernel/05-持续学习引擎/skill-consolidation
+    steps:
+      - 接收候选技能与目标版本
+      - 跑回归门禁评估零退化
+      - 通过则固化版本，退化则回滚
+    io:
+      input: [skillId, nextVersion]
+      output: [consolidated, rolledBack]
     examples:
       - 零退化后固化 v1.1.0，退化则回滚 v1.0.0
 
@@ -122,6 +164,13 @@ skills:
     pillars: [治]
     tags: [policy, abac]
     kernel: architecture-kernel/06-治理中心/policy-registry/policy-registry.ts
+    steps:
+      - 解析请求的主体/资源/动作
+      - 按作用域匹配注册策略（首个命中生效）
+      - 输出 allow/deny 裁决与理由
+    io:
+      input: [request]
+      output: [decision]
     examples:
       - 判定“调用外部工具”是否被允许
 
@@ -133,6 +182,13 @@ skills:
     pillars: [治]
     tags: [audit, hash-chain]
     kernel: architecture-kernel/06-治理中心/compliance-audit/compliance-audit.ts
+    steps:
+      - 构造审计条目并链入 FNV-1a 哈希链
+      - 追加到 append-only 账本
+      - 按需验真链完整性
+    io:
+      input: [event]
+      output: [record, verified]
     examples:
       - 为一次工具调用追加审计记录并验真
 
@@ -144,6 +200,13 @@ skills:
     pillars: [愈]
     tags: [fault, circuit, rollback]
     kernel: architecture-kernel/07-自愈中心/fault-detector
+    steps:
+      - 侦测故障信号并去抖
+      - 触发熔断与降级路径
+      - 修复一致性后恢复或回滚版本
+    io:
+      input: [faultSignal]
+      output: [action, recovered]
     examples:
       - 失败率升高后熔断并回滚技能版本
 
@@ -155,6 +218,13 @@ skills:
     pillars: [愈]
     tags: [llm, provider, fallback]
     kernel: family-agents/shared-core/llm-adapter/index.ts
+    steps:
+      - 组装 provider 请求
+      - 按 openai→zhipu→ollama 顺序调用
+      - 失败逐级降级并返回最终响应
+    io:
+      input: [prompt, options]
+      output: [completion, provider]
     examples:
       - openai 超时后切换 zhipu，再失败切本地 ollama
 
@@ -166,6 +236,13 @@ skills:
     pillars: [治]
     tags: [metrics, tracing]
     kernel: architecture-kernel/09-可观测性/family-metrics.ts
+    steps:
+      - 捕获任务事件与 traceId
+      - 写入 family_* 指标序列
+      - 输出追踪埋点
+    io:
+      input: [event, traceId]
+      output: [metric]
     examples:
       - 为任务执行记录 outcome 与耗时并保留 traceId
 
@@ -177,6 +254,13 @@ skills:
     pillars: [愈]
     tags: [mcp, tool]
     kernel: architecture-kernel/02-云枢核心引擎/mcp-adapter/bus-mcp-codec.ts
+    steps:
+      - 解析工具名与调用参数
+      - 经 MCP codec 编码并调用目标工具
+      - 归一工具响应返回
+    io:
+      input: [tool, args]
+      output: [result]
     examples:
       - 通过 MCP 调用文件系统工具读取报表
 
@@ -187,7 +271,14 @@ skills:
     description: 发现对端 Agent Card 并委托任务、归一结果
     pillars: [治]
     tags: [a2a, delegation]
-    status: planned
+    kernel: architecture-kernel/a2a-adapter/index.ts
+    steps:
+      - 发现对端 well-known Agent Card
+      - 按能力定位并委托 JSON-RPC 任务
+      - 归一结果，失败入有界死信队列
+    io:
+      input: [capability, task]
+      output: [taskId, state]
     examples:
       - 元启·天枢向语枢·万物委托一次数据分析任务
 
@@ -200,6 +291,10 @@ skills:
     name: 战略决策编排
     description: 全局最优导向的策略编排，平衡风险与长期价值
     tags: [strategy, orchestration]
+    steps:
+      - 统筹跨家人目标与约束
+      - 生成多套策略方案
+      - 平衡风险与长期价值给出推荐
     examples:
       - 为跨部门资源冲突给出三套方案并标注取舍
     references:
@@ -213,6 +308,13 @@ skills:
     description: 按 CAGEERF 七阶段分解任务并指派 owner 与依赖
     tags: [decomposition, cageref, dispatch]
     kernel: architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/task-decomposer.ts
+    steps:
+      - 按 CAGEERF 七阶段拆解任务
+      - 指派 owner 与依赖关系
+      - 输出可执行子任务清单
+    io:
+      input: [goal, constraints]
+      output: [subtasks]
     examples:
       - 把“降本 10%”拆成 5 个可执行子任务并派给对应家人
 
@@ -223,6 +325,10 @@ skills:
     name: 冲突裁决与资源调度
     description: 跨家人结论冲突时的裁决与算力/预算再分配
     tags: [arbitration, scheduling]
+    steps:
+      - 识别跨家人结论冲突
+      - 依裁决规则评估各方依据
+      - 输出裁决与资源再分配
     examples:
       - 语枢·万物与预见·先知结论相左时给出裁决依据
 
@@ -234,6 +340,13 @@ skills:
     description: 全局状态中心巡视、告警收敛与升级上报
     tags: [status, alerting]
     kernel: architecture-kernel/02-云枢核心引擎/global-status-center
+    steps:
+      - 巡视五支柱与全局状态中心
+      - 收敛告警并按等级分级
+      - 异常时升级上报
+    io:
+      input: [snapshot]
+      output: [alerts, escalations]
     examples:
       - 汇总五支柱健康度并向人类高管上报异常
 
@@ -245,6 +358,13 @@ skills:
     description: 六类意图闭集识别，输出意图/置信度/理由
     tags: [intent, classification]
     kernel: family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts
+    steps:
+      - 加载六类意图闭集提示词
+      - 对用户话语分类并打分
+      - 输出意图/置信度/理由
+    io:
+      input: [utterance]
+      output: [intent, confidence, reason]
     examples:
       - 识别“这月花了多少”为 analysis 意图并给置信度
 
@@ -255,6 +375,10 @@ skills:
     name: 歧义澄清
     description: 候选间隔过小时登记假设并生成澄清提问
     tags: [clarify, assumption]
+    steps:
+      - 检测意图候选间隔过小
+      - 登记假设与候选集
+      - 生成澄清提问
     examples:
       - “看看销售”歧义时追问是看数据还是看趋势
 
@@ -266,6 +390,13 @@ skills:
     description: 多轮会话状态维护与跨家人上下文传递
     tags: [context, session]
     kernel: family-agents/business-layer/member-qianhang/core/context-manager.service.ts
+    steps:
+      - 维护多轮会话状态槽位
+      - 跨家人传递上下文快照
+      - 支持指代消解与继承
+    io:
+      input: [sessionId, turn]
+      output: [context]
     examples:
       - 第二轮“再按部门拆一下”继承首轮的分析对象
 
@@ -277,6 +408,13 @@ skills:
     description: 把管理者的自然语言转译为结构化查询参数
     tags: [nlq, mapping]
     kernel: family-agents/business-layer/member-qianhang/nlq/query-to-api.mapper.ts
+    steps:
+      - 解析自然语言查询要素
+      - 映射为结构化查询参数
+      - 校验后输出 region/month/metric 三元组
+    io:
+      input: [query]
+      output: [querySpec]
     examples:
       - “上月华东区退货率”转成 region/month/metric 三元组
 
@@ -287,6 +425,10 @@ skills:
     name: 经营数据分析
     description: 结构化数据统计、对比、归因与洞察生成
     tags: [analysis, statistics]
+    steps:
+      - 加载结构化经营数据
+      - 执行统计、对比与归因
+      - 生成三条以内关键洞察
     examples:
       - 分析本月销售数据趋势并给出三条洞察
 
@@ -297,6 +439,10 @@ skills:
     name: 经营决策支持
     description: 从数据到洞察到决策建议的链路，附可追溯依据
     tags: [decision, insight]
+    steps:
+      - 汇总数据与洞察
+      - 生成决策建议与依据链
+      - 标注可追溯引用
     examples:
       - 基于成本结构给出降本优先级建议并标注依据
     references:
@@ -309,6 +455,10 @@ skills:
     name: 指标归因与根因分析
     description: 基于指标/日志/链路定位偏离根因
     tags: [root-cause, diagnosis]
+    steps:
+      - 汇聚指标、日志与链路证据
+      - 定位偏离传播路径
+      - 输出根因与置信度
     examples:
       - 定位响应时延升高的根因是缓存命中率下降
 
@@ -319,6 +469,10 @@ skills:
     name: 报告生成
     description: 结构化经营报告与图表建议输出
     tags: [report, visualization]
+    steps:
+      - 提炼分析结论与图表建议
+      - 按经营报告结构编排
+      - 输出结构化报告
     examples:
       - 生成月度经营分析报告大纲与关键结论
 
@@ -329,6 +483,10 @@ skills:
     name: 趋势预测
     description: 时间序列趋势外推与区间估计
     tags: [forecast, time-series]
+    steps:
+      - 构建时间序列特征
+      - 外推趋势并估计区间
+      - 输出预测与置信带
     examples:
       - 预测未来三个月订单量区间并标注置信带
 
@@ -339,6 +497,10 @@ skills:
     name: 风险预警
     description: 异常模式识别与提前预警，附触发阈值
     tags: [risk, alert]
+    steps:
+      - 监测风险指标阈值
+      - 识别异常模式
+      - 触发分级预警
     examples:
       - 现金流连续两月下滑时触发橙色预警
     references:
@@ -351,6 +513,10 @@ skills:
     name: 容量与算力预警
     description: 设备矩阵与算力负载的趋势预判
     tags: [capacity, compute]
+    steps:
+      - 汇总设备矩阵负载
+      - 预判算力趋势
+      - 提示扩容窗口
     examples:
       - 推理队列积压趋势提示扩容窗口
     references:
@@ -363,6 +529,10 @@ skills:
     name: 场景推演
     description: 多情景假设下的结果推演与敏感度分析
     tags: [scenario, simulation]
+    steps:
+      - 定义情景假设组合
+      - 推演各情景结果
+      - 输出敏感度对比
     examples:
       - 涨价 5% 与不涨价两种情景的毛利推演
 
@@ -373,6 +543,10 @@ skills:
     name: 人才匹配
     description: 岗位画像与人选能力匹配度评分
     tags: [talent, matching]
+    steps:
+      - 构建岗位能力画像
+      - 匹配人选能力证据
+      - 输出匹配度评分
     examples:
       - 为新设的区域运营岗匹配三位候选人
     references:
@@ -385,6 +559,10 @@ skills:
     name: 个性化推荐
     description: 基于画像与行为的对象/内容推荐
     tags: [recommendation, personalization]
+    steps:
+      - 结合画像与行为特征
+      - 对候选对象/内容排序
+      - 输出个性化推荐
     examples:
       - 为管理者推荐本周最应关注的三个指标
 
@@ -395,6 +573,10 @@ skills:
     name: 用户画像
     description: 角色、偏好与行为特征的结构化画像
     tags: [persona, profile]
+    steps:
+      - 汇聚角色与行为数据
+      - 提炼偏好与决策特征
+      - 生成结构化画像
     examples:
       - 生成“区域财务负责人”的决策偏好画像
 
@@ -406,6 +588,13 @@ skills:
     description: 成就面板数据解读与激励建议
     tags: [achievement, incentive]
     kernel: family-agents/business-layer/member-bole/emotion/achievement-panel.ts
+    steps:
+      - 读取成就面板数据
+      - 解读成就与激励的关联
+      - 输出团队激励节奏建议
+    io:
+      input: [panel]
+      output: [insights]
     examples:
       - 依据成就面板给出团队激励节奏建议
 
@@ -416,6 +605,10 @@ skills:
     name: 安全审计
     description: 权限、访问与数据流的合规审计与取证
     tags: [security, audit, compliance]
+    steps:
+      - 拉取权限与访问记录
+      - 对照合规基线逐项审计
+      - 输出越权取证结论
     examples:
       - 审计一次跨部门数据访问是否越权
     references:
@@ -428,6 +621,10 @@ skills:
     name: 内容合规过滤
     description: 输入输出内容的安全与合规拦截
     tags: [content, filter, safety]
+    steps:
+      - 解析输入输出内容
+      - 命中安全与合规规则
+      - 拦截并提示脱敏
     examples:
       - 拦截含个人敏感信息的输出并提示脱敏
 
@@ -438,6 +635,10 @@ skills:
     name: 零信任鉴权
     description: 每次调用均校验身份、权限与来源可信度
     tags: [zero-trust, auth]
+    steps:
+      - 校验调用身份与令牌
+      - 评估来源可信度
+      - 拒绝不可信调用
     examples:
       - 拒绝未携带有效令牌的外部工具调用
 
@@ -448,6 +649,10 @@ skills:
     name: 安全事件响应
     description: 威胁等级判定、隔离与上报闭环
     tags: [incident, response]
+    steps:
+      - 判定威胁等级
+      - 隔离受影响会话
+      - 上报并闭环处置
     examples:
       - 识别提示词注入后隔离会话并上报元启·天枢
 
@@ -458,6 +663,10 @@ skills:
     name: 质量标准校验
     description: 按标准/规范/数据化三档校验产出质量
     tags: [quality, standard]
+    steps:
+      - 加载标准/规范/数据化三档基线
+      - 逐项校验产出质量
+      - 输出通过与否及缺陷清单
     examples:
       - 校验经营报告是否满足口径与引用完整性
     references:
@@ -471,6 +680,13 @@ skills:
     description: 变更前后的基线对比与退化拦截
     tags: [regression, baseline]
     kernel: architecture-kernel/05-持续学习引擎/stability-guard/regression-tester.ts
+    steps:
+      - 采集变更前后基线指标
+      - 对比检测退化幅度
+      - 超阈值时拦截发布
+    io:
+      input: [baseline, candidate]
+      output: [passed, regressions]
     examples:
       - 新版本意图准确率下降 2% 时拦截发布
 
@@ -482,6 +698,13 @@ skills:
     description: 把复盘结论蒸馏为可复用程序记忆条目
     tags: [distill, procedural]
     kernel: architecture-kernel/05-持续学习引擎/knowledge-update
+    steps:
+      - 汇集复盘结论与同类案例
+      - 蒸馏为程序记忆条目
+      - 固化为可复用处置规则
+    io:
+      input: [retrospectives]
+      output: [procedure]
     examples:
       - 把三次同类故障的处置提炼为一条处置规则
 
@@ -492,6 +715,10 @@ skills:
     name: 复盘与改进建议
     description: 事件复盘、责任归位与改进项跟踪
     tags: [retrospective, improvement]
+    steps:
+      - 汇集事件时间线
+      - 归因责任与流程缺口
+      - 输出改进项清单
     examples:
       - 复盘一次误报并给出三条改进项
 
@@ -502,6 +729,10 @@ skills:
     name: 创意生成
     description: 多方向创意发散与可行性初筛
     tags: [ideation, creativity]
+    steps:
+      - 拆解创意命题与约束
+      - 多方向发散候选创意
+      - 初筛可行性并标注成本
     examples:
       - 为新品发布给出六个创意方向并标注成本
     references:
@@ -514,6 +745,10 @@ skills:
     name: 文案与内容创作
     description: 面向不同受众的文案撰写与润色
     tags: [copywriting, content]
+    steps:
+      - 明确受众与核心信息
+      - 撰写文案初稿
+      - 按调性润色定稿
     examples:
       - 把经营结论改写成面向高管的 200 字摘要
 
@@ -524,6 +759,10 @@ skills:
     name: 风格与视觉建议
     description: 品牌调性、版式与视觉呈现建议
     tags: [style, visual]
+    steps:
+      - 理解品牌调性基线
+      - 给出配色与版式方案
+      - 输出视觉呈现建议
     examples:
       - 为季度报告给出配色与版式建议
 
@@ -534,6 +773,10 @@ skills:
     name: 营销内容策划
     description: 营销主题、渠道话术与节奏编排
     tags: [marketing, campaign]
+    steps:
+      - 确定营销主题与节奏
+      - 编排渠道话术
+      - 输出内容策划案
     examples:
       - 为区域促销设计三渠道内容节奏
     references:

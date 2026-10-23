@@ -22,6 +22,19 @@ owner: qianhang
 | 标签 | `nlq` `mapping` |
 | 实现锚点（kernel） | `family-agents/business-layer/member-qianhang/nlq/query-to-api.mapper.ts` |
 
+## 步骤（steps）
+
+1. 解析自然语言查询要素
+2. 映射为结构化查询参数
+3. 校验后输出 region/month/metric 三元组
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `query` |
+| 输出 | `querySpec` |
+
 ## 示例
 
 - “上月华东区退货率”转成 region/month/metric 三元组

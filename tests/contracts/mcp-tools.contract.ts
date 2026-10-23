@@ -62,14 +62,14 @@ if (__localShim) {
 }
 
 describe('MCP 工具目录契约（P4-T5）', () => {
-  it('--check --json 以 0 退出：产物与清单派生一致（44 可见 + 1 不可见）', () => {
+  it('--check --json 以 0 退出：产物与清单派生一致（45 可见 + 0 不可见，P2 激活）', () => {
     globalThis.expect(generated.status).toBe(0);
     globalThis.expect(report.ok).toBeTruthy();
     globalThis.expect(report.mode).toBe('check');
-    globalThis.expect(report.count).toBe(44);
-    globalThis.expect(report.hiddenCount).toBe(1);
+    globalThis.expect(report.count).toBe(45);
+    globalThis.expect(report.hiddenCount).toBe(0);
     globalThis.expect(report.protocolVersion).toBe('2026-07-28');
-    globalThis.expect(artifact.count).toBe(44);
+    globalThis.expect(artifact.count).toBe(45);
     globalThis.expect(artifact.tools.length + artifact.hidden.length).toBe(45);
   });
 
@@ -91,18 +91,15 @@ describe('MCP 工具目录契约（P4-T5）', () => {
     globalThis.expect(report.names.includes(sample.name)).toBeTruthy();
   });
 
-  it('planned 未准入不可见：hidden 仅 shared.a2a-delegate，可见目录无泄漏', () => {
-    globalThis.expect(artifact.hidden.length).toBe(1);
-    const planned = artifact.hidden[0];
-    globalThis.expect(planned.logicalId).toBe('shared.a2a-delegate');
-    globalThis.expect(planned.name).toBe('shared__a2a_delegate');
-    globalThis.expect(planned.reason).toBe('planned');
-    if (artifact.tools.some((t) => t.name === planned.name)) throw new Error(`planned 工具泄漏：${planned.name}`);
-    if (report.names.includes(planned.name)) throw new Error('--json names 泄漏 planned 工具');
-    globalThis.expect(report.hiddenNames.join(',')).toBe(planned.name);
+  it('planned 归零：hidden 为空且 a2a_delegate 已转正可见（P2 激活）', () => {
+    globalThis.expect(artifact.hidden.length).toBe(0);
+    globalThis.expect(report.hiddenNames.join(',')).toBe('');
+    const promoted = artifact.tools.find((t) => t.logicalId === 'shared.a2a-delegate');
+    if (!promoted) throw new Error('激活技能未进入可见目录：shared.a2a-delegate');
+    globalThis.expect(promoted.name).toBe('shared__a2a_delegate');
   });
 
-  it('与技能索引同源：45 条索引 = 44 可见 + 1 不可见，覆盖集合完全一致', () => {
+  it('与技能索引同源：45 条索引 = 45 可见 + 0 不可见，覆盖集合完全一致', () => {
     globalThis.expect(index.count).toBe(45);
     globalThis.expect(index.entries.length).toBe(45);
     const indexIds = new Set(index.entries.map((e) => e.id));
@@ -116,7 +113,7 @@ describe('MCP 工具目录契约（P4-T5）', () => {
     globalThis.expect(sorted).toBe(resorted);
   });
 
-  it('与能力供给面板同源：tools 44 · skills 45 = 可见 44 + 不可见 1', () => {
+  it('与能力供给面板同源：tools 45 · skills 45 = 可见 45 + 不可见 0', () => {
     const data = JSON.parse(readFileSync(path.join(ROOT, 'ops/observability/pillar-dashboard/data.json'), 'utf8'));
     if (data.capabilities === undefined) throw new Error('面板 data.json 缺少 capabilities（先执行 pnpm regression）');
     globalThis.expect(data.capabilities.tools).toBe(artifact.count);

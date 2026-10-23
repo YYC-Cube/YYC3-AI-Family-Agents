@@ -1,18 +1,18 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-23T19:46:53.864Z",
-  "generatedAtCN": "2026/10/24 03:46:53",
+  "generatedAt": "2026-10-23T23:43:28.390Z",
+  "generatedAtCN": "2026/10/24 07:43:28",
   "gate": {
     "passed": true,
-    "totalPassed": 238,
+    "totalPassed": 285,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 33
+    "specs": 40
   },
   "capabilities": {
     "skills": 45,
-    "activeSkills": 44,
-    "tools": 44,
+    "activeSkills": 45,
+    "tools": 45,
     "plugins": 1
   },
   "pillars": [
@@ -34,21 +34,21 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 87,
+      "passed": 101,
       "failed": 0
     },
     {
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 77,
+      "passed": 102,
       "failed": 0
     },
     {
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 49,
+      "passed": 52,
       "failed": 0
     }
   ],
@@ -259,10 +259,10 @@
         "学",
         "愈"
       ],
-      "passed": 12,
+      "passed": 13,
       "failed": 0,
       "skipped": 0,
-      "total": 12,
+      "total": 13,
       "silent": false,
       "ok": true
     },
@@ -333,10 +333,10 @@
         "治",
         "愈"
       ],
-      "passed": 6,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "total": 6,
+      "total": 8,
       "silent": false,
       "ok": true
     },
@@ -453,10 +453,10 @@
       "name": "技能产物契约",
       "phase": "契约 P3-T2",
       "pillars": [],
-      "passed": 7,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "total": 7,
+      "total": 8,
       "silent": false,
       "ok": true
     },
@@ -561,6 +561,102 @@
       "failed": 0,
       "skipped": 0,
       "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/external-worker.contract.js",
+      "name": "外部 Worker 契约",
+      "phase": "契约 P2-T1",
+      "pillars": [],
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "total": 7,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/a2a-adapter.spec.js",
+      "name": "A2A 适配层（发现+委托+DLQ）",
+      "phase": "P2-T2",
+      "pillars": [
+        "治"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/security-policy-bind.spec.js",
+      "name": "安全策略映射（observe/enforce）",
+      "phase": "P2-T4",
+      "pillars": [
+        "治"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/capability-instrumentation.spec.js",
+      "name": "能力供给生产接线",
+      "phase": "§6.3 接线",
+      "pillars": [
+        "治"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/family-server-assembly.spec.js",
+      "name": "家族服务装配（MCP+准入+仪表）",
+      "phase": "P6-A",
+      "pillars": [
+        "治"
+      ],
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "total": 7,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/skill-executor.spec.js",
+      "name": "技能执行引擎（确定性臂）",
+      "phase": "P6-B",
+      "pillars": [
+        "学"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/llm-step-executor.spec.js",
+      "name": "LLM 技能步骤执行（语义臂）",
+      "phase": "P6-C",
+      "pillars": [
+        "学"
+      ],
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "total": 7,
       "silent": false,
       "ok": true
     }

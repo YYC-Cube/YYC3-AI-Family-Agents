@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.19.0
+  Version : v1.23.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.19.0
+version: v1.23.0
 created: 2026-10-23
 updated: 2026-10-24
 status: active
@@ -41,7 +41,7 @@ category: report
 适用范围：
 
 - 目录：`architecture-kernel/**`、`family-agents/**`
-- 口径：从 **32 个门禁入口**（`tests/**/*.spec.ts` + `*.contract.ts`）出发的静态 import 可达性
+- 口径：从 **40 个门禁入口**（`tests/**/*.spec.ts` + `*.contract.ts`，UAT 门控 spec 不作入口）出发的静态 import 可达性
 - 不含：`docs/` 下的本地备份目录（已在 `.gitignore` 排除）、`node_modules/`、构建产物
 
 **用途**：作为「骨架保留」的治理依据——避免把未接线模块误判为已交付能力，也避免误删将来要接线的载体。
@@ -54,7 +54,7 @@ category: report
 
 1. 枚举编译范围内全部 `.ts`（对齐 `tsconfig.json` 的 `include` / `exclude`）
 2. 解析静态 `import` / `export ... from` / 动态 `import()`，解析 `@shared/*`、`@members/*` 与相对路径
-3. 以 32 个门禁入口为根，计算可达集
+3. 以 40 个门禁入口为根，计算可达集
 4. 与文件总数对比，得到「已接线 / 仅编译」
 
 ### 2.2 状态定义（RFC 2119 用语）
@@ -71,12 +71,12 @@ category: report
 
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
-| `architecture-kernel` | 103 | **45** | **58** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派）；九层底座与治理/调度扩展为骨架 |
-| `family-agents` | 140 | **41** | **99** | `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线 |
-| `tests` | 33 | 33 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约） |
-| **合计** | **276** | **119** | **157** | 另：8 个家人自测 spec 未纳入编译与门禁 |
+| `architecture-kernel` | 115 | **64** | **51** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派 + P2 a2a-adapter 与安全策略映射 + §6.3 能力供给接线仪表）；九层底座与治理/调度扩展为骨架 |
+| `family-agents` | 150 | **36** | **114** | `shared-core` 记忆 / 学习 / LLM 主链路全接线；家人意图链路 4 文件 + 伯乐成就面板已接线；8 位家人薄转发 provider 与 llm-adapter barrel 属部署侧消费（纯可达口径计仅编译） |
+| `tests` | 40 | 40 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线） |
+| **合计** | **305** | **140** | **165** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
 
-> 已接线 119 = 02 的 45 + 03 的 41 + tests 的 33。
+> 已接线 140 = kernel 64 + agents 36 + tests 40。v1.20.0 起「已接线」统一为**纯静态可达**口径（可复现 BFS：相对导入 + `@shared` 别名 + barrel 透传，以 37 门禁入口为根）：与 v1.19.0 手工盘点相比，agents 41 → 34 全部来自口径统一（家人薄转发 provider 等部署侧消费文件移入仅编译，**无实际拆线**——family-agents 文件数与内容在 P5 零变更）；kernel 45 → 63 含 P5 新增 5 文件 + P6-A mcp-server-assembly（a2a-adapter ×3 / security-policies / capability-instrumentation）与别名解析补全。§三 / §四 逐文件明细仍为 v1.19.0 标注，待下一轮逐文件复核刷新。
 
 ---
 
@@ -324,6 +324,10 @@ category: report
 | v1.17.0 | 2026-10-24 | P4-T3 准入治理：kernel `10-能力注册中心/allowlist.ts` 新增 `CapabilityAllowlist`——默认 **observe**（未准入调用**必定**写入 `ComplianceAudit` 不可篡改审计链，`policyId=capability-allowlist`）、`enforce` 需**显式**开关（拒绝并计数 `rejectedCount`）、审计链可注入共享 + `verifyAudit()` 防篡改 + `filterAllowed()` 未准入不可见（供 P4-T5 `tools/list` 复用）；新增 `tests/integration/capability-allowlist.spec.ts` 门禁入口（27 → 28）；统计 270 / 113 / 157 → **272 / 115 / 157**；门禁 204 → **212 例全绿**（29 套件，治 55 → 63） |
 | v1.18.0 | 2026-10-24 | P4-T5 MCP 工具目录：`scripts/gen-mcp-tools.mjs`（`pnpm mcp:tools` / `mcp:tools:check`）由 manifest active 技能派生 `assets/mcp-tools.json`（44 可见 + 1 planned 不可见，工具名 `.`→`__`/`-`→`_`）；`mcp-adapter/server/protocol.ts` 扩展 `tools/call`——参数校验 → 可见性（未准入不可见，隐藏工具一律 -32602 不泄露存在性）→ Policy 裁决（可接 `CapabilityAllowlist`）→ 同步分派，执行失败按 MCP 语义 `isError`；新增 `tests/contracts/mcp-tools.contract.ts` 与 `tests/integration/mcp-tool-catalog.spec.ts` 门禁入口（28 → 30）；统计 272 / 115 / 157 → **274 / 117 / 157**；门禁 212 → **226 例全绿**（31 套件，治 63 → 71） |
 | v1.19.0 | 2026-10-24 | P4-T6 打包检查（M13 收官）：`scripts/pack-plugin.mjs`（`pnpm pack:plugins` / `pack:check`）零依赖确定性 ZIP 打包器（node:zlib deflateRawSync + 表驱动 crc32 + 三段容器手写，固定 DOS 时间戳 / 路径字典序 / UTF-8 flag，同输入恒同字节）；双目标——能力包 `plugins/{id}` → `assets/packs/{id}-{version}.skill`（金包 family-core 1.0.0 · 14 条目 · 9868 B，**入 Git**）+ 分发副本 `packaging/yyc3-ai-family-coding` → `docs/yyc3-ai-family-coding.skill`（3 条目，内容零变化容器归一）；打包前 canonical digest 重算与 `integrity.digest` 比对（篡改即拒绝打包）；`--check` 字节级零漂移 + `--json` 明细，CI 软校验接入；新增 `tests/contracts/pack-plugins.contract.ts` 与 `tests/integration/plugin-pack.spec.ts` 门禁入口（30 → 32）；统计 274 / 117 / 157 → **276 / 119 / 157**；门禁 226 → **238 例全绿**（33 套件，治 71 → 77） |
+| v1.20.0 | 2026-10-24 | §6.3 能力供给指标**生产端接线**（P5 组合阶段收尾）：kernel `09-可观测性/capability-instrumentation.ts` 三仪表——`instrumentSkillRegistry`（loadFromManifest 非 planned 逐技能记账）/ `instrumentMcpDispatcher`（tools/call Policy 放行后 ok|error 记账，策略拒绝不计）/ `instrumentCapabilityAllowlist`（enforce 拒绝记账，observe 不计），零侵入 Proxy / 函数包装范式同 P1-T4b；新增 `tests/integration/capability-instrumentation.spec.ts` 门禁入口（36 → 37，治）；门禁 258 → **263 例全绿**（37 套件，治 88 → 93）；包 2.26.0。**统计口径刷新**：已接线统一为纯静态可达 BFS（相对导入 + `@shared` 别名 + barrel 透传，37 门禁入口为根，可复现）——276 / 119 / 157 → **298 / 133 / 165**（agents 41 → 34 为口径统一所致，无实际拆线；§三/§四 逐文件明细待下轮复核）；P5 新增 kernel 文件 a2a-adapter ×3 / security-policies / capability-instrumentation 与 tests 入口 P2-T1/T2/T4 一并入册 |
+| v1.21.0 | 2026-10-24 | **P6-A 家族服务进程装配（M14）**：kernel `08-系统装配/mcp-server-assembly.ts`（`assembleMcpServer`：准入裁决 + traceId 合成 + 仪表化分派一站组装）+ 部署入口 `family-agents/family-server.entry.ts`（`startFamilyServer`：装载仪表化 + MCP 装配 + /metrics 暴露 + introspection 缺省分派）+ 启动器 `scripts/start-family-server.mjs`（`pnpm start` / `start:selftest`，部署资产 stdin 注入 + 隔离编译）；新增 `tests/integration/family-server-assembly.spec.ts` 门禁入口（37 → 38，治）；门禁 263 → **270 例全绿**（38 套件，治 93 → 100）；包 2.27.0；统计 298 / 133 / 165 → **301 / 136 / 165**（新增 kernel 1 + agents 1 均已接线，门禁入口 +1） |
+| v1.22.0 | 2026-10-24 | **P6-B 技能执行引擎（M15 · 确定性臂）**：kernel `05-持续学习引擎/skill-consolidation/skill-executor.ts`（`executeManifestSkill`：io.input 契约校验 + `skillTriggersOn` 触发核验（同源 skill-eval）+ steps 计划展开（exec='llm' 待 M16 语义执行臂）+ io.output 骨架）；`family-server.entry.ts` 缺省分派由 introspection 升级（契约违反抛错走 isError，error 率可观测；selftest 按 io.input 自动构造入参）；新增 `tests/integration/skill-executor.spec.ts` 门禁入口（38 → 39，学）；门禁 270 → **276 例全绿**（39 套件，学 88 → 94）；包 2.28.0；统计 301 / 136 / 165 → **302 / 137 / 165**（kernel +1 已接线） |
+| v1.23.0 | 2026-10-24 | **P6-C LLM 语义执行臂（M16）**：`protocol.ts` tools/call thenable 自动 await（同步快速路径保持，handle 签名扩 Promise）；`shared-core/llm-adapter/skill-step-executor.ts`（逐步骤提示词 + 注入式 runner + 围栏 JSON 抽取 + io.output 填充与 violations）；`family-server.entry.ts` 接 `llmRunner`/`llm` 配置（契约先行 · 无步骤同步快速路径）；启动器三闸门控（LLM_STEP + 确认语 + Key，缺省确定性臂）；mcp-server.spec +2 例（治·愈）+ 新套件 `llm-step-executor.spec.ts` 6 例（学，假件零网络）；门禁 276 → **284 例全绿**（40 套件，学 94→100 · 治 100→102 · 愈 50→52）；包 2.29.0；统计 302 / 137 / 165 → **305 / 140 / 165**（agents +1 已接线） |
 
 ---
 

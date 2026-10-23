@@ -6,6 +6,7 @@
 export * from './skill-id.js';
 export * from './skill-index.js';
 export * from './skill-eval.js';
+export * from './skill-executor.js';
 export * from './skill-merger.js';
 export * from './skill-pruner.js';
 export * from './skill-store-file.js';

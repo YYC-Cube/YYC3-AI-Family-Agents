@@ -22,6 +22,19 @@ owner: grandmaster
 | 标签 | `distill` `procedural` |
 | 实现锚点（kernel） | `architecture-kernel/05-持续学习引擎/knowledge-update` |
 
+## 步骤（steps）
+
+1. 汇集复盘结论与同类案例
+2. 蒸馏为程序记忆条目
+3. 固化为可复用处置规则
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `retrospectives` |
+| 输出 | `procedure` |
+
 ## 示例
 
 - 把三次同类故障的处置提炼为一条处置规则

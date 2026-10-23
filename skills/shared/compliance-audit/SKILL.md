@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `audit` `hash-chain` |
 | 实现锚点（kernel） | `architecture-kernel/06-治理中心/compliance-audit/compliance-audit.ts` |
 
+## 步骤（steps）
+
+1. 构造审计条目并链入 FNV-1a 哈希链
+2. 追加到 append-only 账本
+3. 按需验真链完整性
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `event` |
+| 输出 | `record` `verified` |
+
 ## 示例
 
 - 为一次工具调用追加审计记录并验真

@@ -176,8 +176,8 @@ describe('渐进披露检索（P3-T4）', () => {
     globalThis.expect(hit.id).toBe('qianhang.intent-detection');
     // 正文未加载：索引命中不可直接取全量定义
     globalThis.expect(registry.findByLogicalId(hit.id) === undefined).toBe(true);
-    // 装载正文（真实清单 44 条）后，命中 id 可解析出全量定义（含 steps 容器）
-    globalThis.expect(registry.loadFromManifest(MANIFEST_SKILLS).loaded).toBe(44);
+    // 装载正文（真实清单 45 条，P2 激活 a2a-delegate）后，命中 id 可解析出全量定义（含 steps 容器）
+    globalThis.expect(registry.loadFromManifest(MANIFEST_SKILLS).loaded).toBe(45);
     const full = registry.findByLogicalId(hit.id);
     globalThis.expect(full === undefined).toBe(false);
     globalThis.expect(Array.isArray(full.steps)).toBe(true);

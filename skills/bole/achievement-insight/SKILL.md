@@ -22,6 +22,19 @@ owner: bole
 | 标签 | `achievement` `incentive` |
 | 实现锚点（kernel） | `family-agents/business-layer/member-bole/emotion/achievement-panel.ts` |
 
+## 步骤（steps）
+
+1. 读取成就面板数据
+2. 解读成就与激励的关联
+3. 输出团队激励节奏建议
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `panel` |
+| 输出 | `insights` |
+
 ## 示例
 
 - 依据成就面板给出团队激励节奏建议

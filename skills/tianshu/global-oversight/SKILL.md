@@ -22,6 +22,19 @@ owner: tianshu
 | 标签 | `status` `alerting` |
 | 实现锚点（kernel） | `architecture-kernel/02-云枢核心引擎/global-status-center` |
 
+## 步骤（steps）
+
+1. 巡视五支柱与全局状态中心
+2. 收敛告警并按等级分级
+3. 异常时升级上报
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `snapshot` |
+| 输出 | `alerts` `escalations` |
+
 ## 示例
 
 - 汇总五支柱健康度并向人类高管上报异常

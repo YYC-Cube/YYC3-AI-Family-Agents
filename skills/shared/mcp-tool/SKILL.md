@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `mcp` `tool` |
 | 实现锚点（kernel） | `architecture-kernel/02-云枢核心引擎/mcp-adapter/bus-mcp-codec.ts` |
 
+## 步骤（steps）
+
+1. 解析工具名与调用参数
+2. 经 MCP codec 编码并调用目标工具
+3. 归一工具响应返回
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `tool` `args` |
+| 输出 | `result` |
+
 ## 示例
 
 - 通过 MCP 调用文件系统工具读取报表

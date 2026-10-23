@@ -1,6 +1,6 @@
 {
   "name": "@yyc3/ai-family-agent",
-  "version": "2.24.0",
+  "version": "2.32.0",
   "private": true,
   "description": "YYC³ AI Family Agent 编程体系 — 自·知·学·治·愈 五支柱融合内核（TypeScript，零运行时依赖）",
   "license": "MIT",
@@ -44,6 +44,8 @@
     "test": "vitest",
     "regression": "node scripts/run-regression.mjs",
     "uat:llm": "node scripts/run-uat-llm.mjs",
+    "uat:external": "node scripts/run-external-uats.mjs",
+    "external:check": "node scripts/check-external-worker.mjs",
     "manifest:check": "node scripts/check-manifest.mjs",
     "manifest:cards": "node scripts/gen-agent-cards.mjs",
     "prompts:check": "node scripts/check-prompts.mjs",
@@ -55,7 +57,10 @@
     "plugins:integrity": "node scripts/check-plugins.mjs --write-integrity",
     "pack:plugins": "node scripts/pack-plugin.mjs",
     "pack:check": "node scripts/pack-plugin.mjs --check",
-    "create-member": "bash scripts/create-member.sh"
+    "create-member": "bash scripts/create-member.sh",
+    "start": "node scripts/start-family-server.mjs",
+    "start:selftest": "node scripts/start-family-server.mjs --selftest",
+    "start:selftest:llm": "node scripts/start-family-server.mjs --selftest:llm"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

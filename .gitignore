@@ -34,3 +34,8 @@ docs/YYC3-AI-Family-Agent-架构内核/
 
 # 蓝图治理（只读蓝图源，独立仓治理，不入本仓）
 docs/YYC3-FAmily-AI-Agent-企业蓝图/
+
+# 本地工具产物（不入库）：安全扫描历史 / 插件运行根
+.mimosa/
+.video_agent/
+.v2c/

@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `memory` `retrieval` |
 | 实现锚点（kernel） | `family-agents/shared-core/memory-framework/index.ts` |
 
+## 步骤（steps）
+
+1. 解析查询意图与检索范围
+2. 按语义相似度召回情景/语义/程序记忆
+3. 按相关性与时效排序返回
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `query` `context` |
+| 输出 | `memories` |
+
 ## 示例
 
 - 检索同一客户近三次决策的上下文

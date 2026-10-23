@@ -1,8 +1,8 @@
 {
   "generatedFrom": "presets/family-manifest.yaml",
   "protocolVersion": "2026-07-28",
-  "count": 44,
-  "hiddenCount": 1,
+  "count": 45,
+  "hiddenCount": 0,
   "tools": [
     {
       "name": "bole__achievement_insight",
@@ -269,6 +269,17 @@
       }
     },
     {
+      "name": "shared__a2a_delegate",
+      "logicalId": "shared.a2a-delegate",
+      "title": "A2A 任务委托",
+      "description": "发现对端 Agent Card 并委托任务、归一结果",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
       "name": "shared__compliance_audit",
       "logicalId": "shared.compliance-audit",
       "title": "合规审计",
@@ -489,11 +500,5 @@
       }
     }
   ],
-  "hidden": [
-    {
-      "logicalId": "shared.a2a-delegate",
-      "name": "shared__a2a_delegate",
-      "reason": "planned"
-    }
-  ]
+  "hidden": []
 }

@@ -29,6 +29,6 @@ contents:
       - governance/policy-registry
 integrity:
   algorithm: sha256
-  digest: "7b0d3fc377f95ce4bb34e5e59df506fe77767a23d490d5b68637f11b018d9fe4"
+  digest: "436486d56eb1356b326bbc5eba187cb93dac3bb4638e5fd86ec5bc620ee340b5"
 targets:
   agents: ["*"]

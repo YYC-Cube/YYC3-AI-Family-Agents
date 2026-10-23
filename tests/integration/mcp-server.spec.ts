@@ -96,6 +96,38 @@ describe('MCP 服务端协议语义（P3-MCP）', () => {
     if (a.result === undefined || JSON.stringify(a) !== JSON.stringify(b)) throw new Error('ping 非幂等');
     if (a.id !== 9) throw new Error('ping id 关联失败');
   });
+
+  it('异步分派（M16）：dispatch 返回 thenable 时 handle 返回 Promise，成功结果与同步路径同构', async () => {
+    const asyncHandler = createMcpRequestHandler({
+      serverInfo: { name: 's', version: '1' },
+      tools: TOOLS,
+      dispatch: (ctx) => Promise.resolve({ echoed: ctx.toolName }),
+    });
+    const out = asyncHandler.handle(
+      JSON.stringify({ jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: TOOLS[0].name, arguments: {} } }),
+    );
+    if (typeof (out && out.then) !== 'function') throw new Error('异步分派应返回 Promise');
+    const res = JSON.parse(await out);
+    if (res.id !== 11 || res.result.isError !== false || !res.result.content[0].text.includes(TOOLS[0].name)) {
+      throw new Error(`异步成功路径结果异常：${JSON.stringify(res).slice(0, 200)}`);
+    }
+  });
+
+  it('异步分派（M16）：dispatch Promise 拒绝 → isError 结果（协议层不炸）', async () => {
+    const asyncHandler = createMcpRequestHandler({
+      serverInfo: { name: 's', version: '1' },
+      tools: TOOLS,
+      dispatch: () => Promise.reject(new Error('异步执行失败')),
+    });
+    const res = JSON.parse(
+      await asyncHandler.handle(
+        JSON.stringify({ jsonrpc: '2.0', id: 12, method: 'tools/call', params: { name: TOOLS[0].name, arguments: {} } }),
+      ),
+    );
+    if (res.result.isError !== true || !res.result.content[0].text.includes('异步执行失败')) {
+      throw new Error(`异步拒绝路径结果异常：${JSON.stringify(res).slice(0, 200)}`);
+    }
+  });
 });
 
 (async () => {

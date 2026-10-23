@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "mode": "observe",
-  "count": 44,
+  "count": 45,
   "cases": [
     {
       "id": "bole.achievement-insight",
@@ -213,6 +213,15 @@
     {
       "id": "qianhang.nlq-to-api",
       "input": "“上月华东区退货率”转成 region/month/metric 三元组",
+      "expectTrigger": true,
+      "requiredOutput": [
+        "skillId",
+        "ok"
+      ]
+    },
+    {
+      "id": "shared.a2a-delegate",
+      "input": "元启·天枢向语枢·万物委托一次数据分析任务",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",

@@ -151,6 +151,23 @@ export function validateManifest(root, manifest) {
     }
     if (!Array.isArray(skill.tags) || skill.tags.length === 0) errors.push(`技能 ${skill.id} 缺少 tags`);
     if (!Array.isArray(skill.examples) || skill.examples.length === 0) errors.push(`技能 ${skill.id} 缺少 examples`);
+    // P3-T1②：steps 执行契约——全部技能必须有非空步骤序列；dedicated 验收口径显式 ≥1 step
+    if (!Array.isArray(skill.steps) || skill.steps.length === 0) {
+      errors.push(`技能 ${skill.id} 缺少 steps（P3-T1：契约可执行性，dedicated 必须 ≥1 step）`);
+    } else {
+      if (skill.steps.some((s) => typeof s !== 'string' || !s.trim())) {
+        errors.push(`技能 ${skill.id} 存在空步骤（steps 每项须为非空字符串）`);
+      }
+    }
+    // P3-T1②：io 轻校验——声明 io 则 input/output 均须为非空列表（纯描述技能可不声明）
+    if (skill.io) {
+      for (const dir of ['input', 'output']) {
+        const list = skill.io[dir];
+        if (!Array.isArray(list) || list.length === 0 || list.some((f) => typeof f !== 'string' || !f.trim())) {
+          errors.push(`技能 ${skill.id} 的 io.${dir} 必须为非空字段列表`);
+        }
+      }
+    }
     if (skill.scope === 'dedicated' && !skill.owner) errors.push(`专用技能 ${skill.id} 缺少 owner`);
     if (skill.scope === 'shared' && skill.owner) errors.push(`共用技能 ${skill.id} 不应声明 owner`);
     if (skill.kernel && !existsSync(path.join(root, skill.kernel))) {

@@ -1,0 +1,47 @@
+# ============================================================
+# YYC³ AI Family — 安全策略映射（P2-T4 · 策略即代码事实源）
+# ------------------------------------------------------------
+# 来源：蓝图 1209 安全体系 → PolicyRegistry 注册的 YAML 策略。
+# 规则：
+#   1. mode 默认 observe（命中只记审计 allow-with-audit）；
+#      enforce 为显式开关（命中即 deny + 计数），改动须走评审。
+#   2. id 命名空间 security.*，与 manifest 技能 id 风格一致；
+#     「rule」是规则表达式名（检测算法实现复用守护 detectors，见 06/types.ts 边界）。
+#   3. 本文件由内核侧 SecurityPolicyBinder 消费（解析注入，零 IO）。
+# 语法：yaml-lite 子集（无锚点/块标量/流式集合）。
+# ============================================================
+
+policies:
+  # 蓝图 1209 · 零信任：未验证设备/身份的跨家人调用降权观察
+  - id: security.zero-trust
+    version: "1.0.0"
+    mode: observe
+    rule: deny-unverified-identity
+    scope:
+      actions:
+        - model.call
+        - tool.invoke
+      wildcard: true
+    source: blueprint-1209
+
+  # 内容过滤：model.input 段的敏感内容拦截（检测算法：守护 content-guard）
+  - id: security.content-filter
+    version: "1.0.0"
+    mode: observe
+    rule: filter-sensitive-content
+    scope:
+      resources:
+        - model.input
+      wildcard: true
+    source: blueprint-1209
+
+  # 注入检测：工具调用参数的提示注入/指令注入检测（检测算法：守护 injection-detector）
+  - id: security.injection-detect
+    version: "1.0.0"
+    mode: observe
+    rule: detect-prompt-injection
+    scope:
+      actions:
+        - tool.invoke
+      wildcard: true
+    source: blueprint-1209

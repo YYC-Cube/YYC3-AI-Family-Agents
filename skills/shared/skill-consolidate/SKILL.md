@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `skill` `versioning` `rollback` |
 | 实现锚点（kernel） | `architecture-kernel/05-持续学习引擎/skill-consolidation` |
 
+## 步骤（steps）
+
+1. 接收候选技能与目标版本
+2. 跑回归门禁评估零退化
+3. 通过则固化版本，退化则回滚
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `skillId` `nextVersion` |
+| 输出 | `consolidated` `rolledBack` |
+
 ## 示例
 
 - 零退化后固化 v1.1.0，退化则回滚 v1.0.0

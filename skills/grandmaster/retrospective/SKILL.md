@@ -22,6 +22,12 @@ owner: grandmaster
 | 标签 | `retrospective` `improvement` |
 | 实现锚点（kernel） | （纯描述，暂无锚点） |
 
+## 步骤（steps）
+
+1. 汇集事件时间线
+2. 归因责任与流程缺口
+3. 输出改进项清单
+
 ## 示例
 
 - 复盘一次误报并给出三条改进项

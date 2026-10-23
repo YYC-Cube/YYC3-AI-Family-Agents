@@ -1,0 +1,38 @@
+# ============================================================
+# YYC³ AI Family — 外部 Worker 编排边界（P2-T5 · 独立 compose 模板）
+# ------------------------------------------------------------
+# 定位：蓝图 13（Python 族）等外部家人的**隔离编排**——独立进程、独立网络段，
+#       与主服务（端口 3030）互不依赖；本文件**不参与 `pnpm regression`**、
+#       不进根 package.json scripts 必选链（仅手动 `docker compose -f ... up`）。
+# 规则：
+#   1. 端口避开 3030（主服务）与 3130（示例占位，可按 worker 实例调整）；
+#   2. 令牌一律经环境变量注入（.env / secrets），不落镜像层；
+#   3. 无此文件/无 Docker 即无依赖（P2 风险对冲：仅本地/预发，默认不启动）。
+# ============================================================
+
+services:
+  # 蓝图 13 · 外部 worker（Python 族）——按 presets/external-worker/*.worker.yaml 实例对齐
+  external-worker:
+    image: ${EXTERNAL_WORKER_IMAGE:-ghcr.io/yanyucloudcube/blueprint-13-worker:latest}
+    container_name: yyc3-external-worker
+    ports:
+      # 宿主 3130 → 容器 8000（避开主服务 3030；变更须同步 worker 实例 endpoint）
+      - "3130:8000"
+    environment:
+      # worker 契约鉴权（token_env 引用，值经环境注入，不落盘）
+      - WORKER_13_TOKEN=${WORKER_13_TOKEN:?请经环境注入 worker 令牌}
+      - WORKER_LOG_LEVEL=${WORKER_LOG_LEVEL:-info}
+    healthcheck:
+      # A2A card 发现端点即健康探针（P2-T2 发现语义复用）
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8000/.well-known/agent-card.json"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    # 隔离网络段：与主服务默认 bridge 隔离
+    networks:
+      - worker-edge
+
+networks:
+  worker-edge:
+    driver: bridge

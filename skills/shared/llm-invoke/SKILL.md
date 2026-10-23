@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `llm` `provider` `fallback` |
 | 实现锚点（kernel） | `family-agents/shared-core/llm-adapter/index.ts` |
 
+## 步骤（steps）
+
+1. 组装 provider 请求
+2. 按 openai→zhipu→ollama 顺序调用
+3. 失败逐级降级并返回最终响应
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `prompt` `options` |
+| 输出 | `completion` `provider` |
+
 ## 示例
 
 - openai 超时后切换 zhipu，再失败切本地 ollama

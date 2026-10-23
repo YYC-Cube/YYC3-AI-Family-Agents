@@ -147,7 +147,10 @@ describe('能力包打包 CLI 契约（P4-T6）', () => {
     const tmp = makeTempRoot();
     const packed = run(['--json', '--root', tmp]);
     globalThis.expect(packed.status).toBe(0);
-    const artifact = path.join(tmp, GOLDEN);
+    // 夹具改写仅限临时根目录内（路径包含守卫，防御性收窄写入面）
+    const rootDir = path.resolve(tmp);
+    const artifact = path.resolve(rootDir, GOLDEN);
+    if (!artifact.startsWith(rootDir + path.sep)) throw new Error('夹具写入越界（意外路径穿越）');
     const raw = readFileSync(artifact);
     raw[raw.length - 1] = raw[raw.length - 1] ^ 0xff;
     writeFileSync(artifact, raw);

@@ -136,6 +136,26 @@ describe('技能产物契约（P3-T2）', () => {
       if (!src.includes('实现锚点（kernel）')) throw new Error(`正文缺锚点行：${s.id}`);
     }
   });
+
+  it('步骤契约：45 条均有非空 steps 节，且 I/O 节与 kernel 锚点一一对应（P3-T1②）', () => {
+    let withKernel = 0;
+    for (const s of manifestSkills) {
+      const [prefix, slug] = s.id.split('.');
+      const src = readFileSync(path.join(ROOT, `skills/${prefix}/${slug}/SKILL.md`), 'utf8');
+      const section = src.slice(src.indexOf('## 步骤（steps）'), src.indexOf('## 示例'));
+      const stepLines = [...section.matchAll(/^\d+\. \S.+$/gm)];
+      if (stepLines.length === 0) throw new Error(`步骤节为空：${s.id}`);
+      const noKernel = src.includes('（纯描述，暂无锚点）');
+      const hasIo = src.includes('## I/O 契约');
+      if (noKernel && hasIo) throw new Error(`纯描述技能不应有 I/O 契约：${s.id}`);
+      if (!noKernel) {
+        withKernel += 1;
+        if (!hasIo) throw new Error(`有锚点技能缺 I/O 契约：${s.id}`);
+      }
+    }
+    // 13 共用 + 8 专用带 kernel = 21 条补 io
+    globalThis.expect(withKernel).toBe(21);
+  });
 });
 
 (async () => {

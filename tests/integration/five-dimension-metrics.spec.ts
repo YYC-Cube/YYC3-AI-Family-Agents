@@ -2,12 +2,12 @@
 /**
  * 五维指标映射契约测试（five-dimension-metrics.spec）—— P1-T4。
  * 覆盖：
- *   D1 指标总量：运行时 14 + 协同 4 = 18（≤18 上限）
- *   D2 映射完整性：14 项运行时指标各归属唯一主维；2 项 CI 指标亦在册
+ *   D1 指标总量：运行时 19 + 协同 4 = 23（§6.3 三项 + M19 语义执行两项入册）
+ *   D2 映射完整性：19 项运行时指标各归属唯一主维（业务 14 主维 + 单列 5）；2 项 CI 指标亦在册
  *   D3 五维分布：时间 3 / 空间 2 / 属性 4 / 事件 4 / 关联 3
  *   D4 协同 4 项默认零样本（不污染 /metrics 默认口径）
  *   D5 协同比率折算：命中 / 总数，写入 Gauge 与暴露文本
- *   D6 告警契约：4 条 alert 且各引用对应指标
+ *   D6 告警契约：协同 4 条 + 供给/语义 2 条 alert 各引用对应指标
  */
 
 import { readFileSync } from 'node:fs';
@@ -22,6 +22,14 @@ const COLLABORATION = [
   'family_collaboration_human_confirm_rate',
   'family_collaboration_trace_coverage',
   'family_collaboration_replay_coverage',
+];
+
+const CAPABILITY = [
+  'family_capability_skills_loaded_total',
+  'family_capability_mcp_tool_calls_total',
+  'family_capability_plugin_denied_total',
+  'family_llm_steps_total',
+  'family_llm_output_fill_ratio',
 ];
 
 /** 暴露文本中的指标名（取自 # HELP 行）。 */
@@ -66,21 +74,30 @@ if (__localShim) {
 }
 
 describe('五维指标映射（P1-T4）', () => {
-  it('D1: 运行时指标总数为 18（14 业务 + 4 协同）', () => {
+  it('D1: 运行时指标总数为 23（19 业务 + 4 协同）', () => {
     const names = helpNames(new FamilyMetrics().render());
-    globalThis.expect(names.length).toBe(18);
+    globalThis.expect(names.length).toBe(23);
     for (const name of COLLABORATION) globalThis.expect(names.includes(name)).toBe(true);
+    for (const name of CAPABILITY) globalThis.expect(names.includes(name)).toBe(true);
   });
 
-  it('D2: 14 项运行时指标全部归属唯一主维', () => {
-    const runtime = helpNames(new FamilyMetrics().render()).filter((name) => !COLLABORATION.includes(name));
+  it('D2: 19 项运行时指标全部归属唯一主维（业务主维 14 + 单列 5）', () => {
+    const runtime = helpNames(new FamilyMetrics().render()).filter(
+      (name) => !COLLABORATION.includes(name) && !CAPABILITY.includes(name),
+    );
     const mapped = new Set(DIMENSION_NAMES);
     for (const name of runtime) globalThis.expect(mapped.has(name)).toBe(true);
-    // 映射表 = 运行时 14 + CI 2
+    // 映射表 dimensions = 业务 14 + CI 2；能力供给 3 项在 capability 单列组
     const extra = DIMENSION_NAMES.filter((name) => !runtime.includes(name));
     globalThis.expect(extra.sort().join(',')).toBe(CI_ONLY.sort().join(','));
-    // 唯一归属：无重复
+    const capNames = MAP.capability.metrics.map((m) => m.name).sort().join(',');
+    globalThis.expect(capNames).toBe(CAPABILITY.slice().sort().join(','));
+    for (const entry of MAP.capability.metrics) {
+      globalThis.expect(['time', 'space', 'attribute', 'event', 'association'].includes(entry.dimension)).toBe(true);
+    }
+    // 唯一归属：主维无重复、与单列组无交叉
     globalThis.expect(new Set(DIMENSION_NAMES).size).toBe(DIMENSION_NAMES.length);
+    for (const name of CAPABILITY) globalThis.expect(mapped.has(name)).toBe(false);
   });
 
   it('D3: 五维分布为 时间 3 / 空间 2 / 属性 4 / 事件 4 / 关联 3', () => {
@@ -125,12 +142,14 @@ describe('五维指标映射（P1-T4）', () => {
     globalThis.expect(text).toContain('family_collaboration_trace_coverage 0.95');
   });
 
-  it('D6: 告警契约（4 条 alert 引用 4 项协同指标）', () => {
+  it('D6: 告警契约（协同 4 条 + 能力供给 1 条 alert 各引用对应指标）', () => {
     const alerts = [
       ['CollaborationClarifyRateHigh', 'family_collaboration_clarify_rate'],
       ['CollaborationHumanConfirmMissing', 'family_collaboration_human_confirm_rate'],
       ['CollaborationTraceCoverageLow', 'family_collaboration_trace_coverage'],
       ['CollaborationReplayCoverageLow', 'family_collaboration_replay_coverage'],
+      ['CapabilityPluginDenied', 'family_capability_plugin_denied_total'],
+      ['LlmOutputFillLow', 'family_llm_output_fill_ratio'],
     ];
     for (const [alert, metric] of alerts) {
       globalThis.expect(RULES.includes(`alert: ${alert}`)).toBe(true);

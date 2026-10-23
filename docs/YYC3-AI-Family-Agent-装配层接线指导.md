@@ -210,6 +210,28 @@ const loop = new LearningLoop(store, {
 
 **装配时序（必须按序）**：`store → healingRollback（依赖 store）→ loop（依赖 store+hook）→ bridge（依赖 loop.components.collector）→ bridge.attach(bus)`。
 
+### Step 6：能力供给三仪表接线（§6.3 · P6-A，v2.27.0）
+
+三个零侵入仪表（`09-可观测性/capability-instrumentation.ts`）在部署侧各自构造点包装注入，共享同一 `FamilyMetrics` 实例：
+
+```ts
+import { FamilyMetrics } from '../architecture-kernel/09-可观测性/family-metrics.js';
+import { instrumentSkillRegistry } from '../architecture-kernel/09-可观测性/capability-instrumentation.js';
+import { assembleMcpServer } from '../architecture-kernel/08-系统装配/mcp-server-assembly.js';
+
+const metrics = new FamilyMetrics();
+// ① 技能装载（skills_loaded）：包装 SkillRegistry 后再 loadFromManifest
+const registry = instrumentSkillRegistry(new SkillRegistry(), metrics);
+registry.loadFromManifest(manifestEntries);            // 非 planned 逐技能记账
+// ②③ MCP 工具调用（ok|error）与准入拒绝（enforce）：一次装配全接管
+const mcp = assembleMcpServer({
+  serverInfo, tools, admission: { allowed: ['family-core'], mode: 'observe' },
+  dispatch, metrics,                                    // policy 放行后才计 dispatch；enforce 拒绝记 denied
+});
+```
+
+**一站式入口**：[`family-agents/family-server.entry.ts`](../family-agents/family-server.entry.ts) 的 `startFamilyServer(config)` 已按上述完成全部接线（含 `/metrics` 暴露与 introspection 缺省分派）；启动器 `pnpm start`（`scripts/start-family-server.mjs`）读部署资产（`assets/mcp-tools.json` + `presets/family-manifest.yaml`）经 stdin 注入运行，`pnpm start --selftest` 自检。**语义边界**：策略拒绝不计 tool_calls（由 plugin_denied 承接）；observe 留痕不计 denied；planned 技能无样本行。
+
 ## 五、红线汇总（执行时逐条自检）
 
 - [ ] **双采**：事件唯一入口是 bridge；`signal()` 只登记不采集（方案 A）或严格单入口约定（方案 B）
@@ -238,6 +260,7 @@ const loop = new LearningLoop(store, {
 | 版本 | 日期 | 变更 |
 | --- | --- | --- |
 | v1.0.0 | 2026-10-17 | 初版：四集成位接线指导 + 双采陷阱标注 + 适配器代码 + 冒烟验收清单 |
+| v1.1.0 | 2026-10-24 | 新增 Step 6：能力供给三仪表接线（§6.3）——`capability-instrumentation` 三包装器 + `assembleMcpServer` 一站装配 + `startFamilyServer` / `pnpm start` 部署入口与语义边界 |
 
 ---
 

@@ -50,7 +50,7 @@ export interface McpToolPolicyDecision {
 /** 工具调用策略（可接 CapabilityAllowlist / PolicyRegistry 等治理实现）。 */
 export type McpToolPolicy = (ctx: McpToolCallContext) => McpToolPolicyDecision;
 
-/** 工具分派器：仅做路由 / 执行，返回可 JSON 序列化的同步结果。 */
+/** 工具分派器：仅做路由 / 执行，返回可 JSON 序列化的同步结果或 Promise（M16 异步臂）。 */
 export type McpToolDispatcher = (ctx: McpToolCallContext) => unknown;
 
 /** 服务端选项。 */
@@ -68,9 +68,10 @@ export interface McpServerOptions {
   readonly dispatch?: McpToolDispatcher;
 }
 
-/** 无状态请求处理器：一行请求 → 一行响应；通知返回 null。 */
+/** 无状态请求处理器：一行请求 → 一行响应；通知返回 null。同步分派返回 string，
+ *  异步分派（返回 thenable，M16 LLM 语义执行臂）返回 Promise<string>。 */
 export interface McpRequestHandler {
-  handle(raw: string): string | null;
+  handle(raw: string): string | null | Promise<string | null>;
 }
 
 function jsonError(id: string | number | null, code: number, message: string): string {
@@ -108,8 +109,19 @@ export function createMcpRequestHandler(options: McpServerOptions): McpRequestHa
 
   const toolResult = (text: string, isError: boolean) => ({ content: [{ type: 'text', text }], isError });
 
-  /** tools/call：参数校验 → 可见性 → Policy 裁决 → 分派（同步结果 JSON 化）。 */
-  const callTool = (id: string | number, params: unknown): string => {
+  const isThenable = (v: unknown): v is Promise<unknown> =>
+    typeof v === 'object' && v !== null && typeof (v as { then?: unknown }).then === 'function';
+  const okResponse = (id: string | number, output: unknown): string =>
+    JSON.stringify({ jsonrpc: '2.0', id, result: toolResult(JSON.stringify(output ?? null), false) });
+  const errResponse = (id: string | number, error: unknown): string =>
+    JSON.stringify({
+      jsonrpc: '2.0',
+      id,
+      result: toolResult(error instanceof Error ? error.message : String(error), true),
+    });
+
+  /** tools/call：参数校验 → 可见性 → Policy 裁决 → 分派（同步快速路径；异步分派自动 await）。 */
+  const callTool = (id: string | number, params: unknown): string | Promise<string> => {
     if (typeof params !== 'object' || params === null || Array.isArray(params)) {
       return jsonError(id, -32602, 'Invalid params');
     }
@@ -144,19 +156,20 @@ export function createMcpRequestHandler(options: McpServerOptions): McpRequestHa
     }
     try {
       const output = options.dispatch(ctx);
-      return JSON.stringify({ jsonrpc: '2.0', id, result: toolResult(JSON.stringify(output ?? null), false) });
+      // 同步分派走快速路径（既有消费者零变化）；异步分派（LLM 臂等）自动 await
+      if (!isThenable(output)) return okResponse(id, output);
+      return (output as Promise<unknown>).then(
+        (resolved) => okResponse(id, resolved),
+        (error: unknown) => errResponse(id, error),
+      );
     } catch (error) {
       // 工具执行失败按 MCP 语义返回 isError 结果（不炸协议层）
-      return JSON.stringify({
-        jsonrpc: '2.0',
-        id,
-        result: toolResult(error instanceof Error ? error.message : String(error), true),
-      });
+      return errResponse(id, error);
     }
   };
 
   return {
-    handle(raw: string): string | null {
+    handle(raw: string): string | null | Promise<string | null> {
       let msg: unknown;
       try {
         msg = JSON.parse(raw);

@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `policy` `abac` |
 | 实现锚点（kernel） | `architecture-kernel/06-治理中心/policy-registry/policy-registry.ts` |
 
+## 步骤（steps）
+
+1. 解析请求的主体/资源/动作
+2. 按作用域匹配注册策略（首个命中生效）
+3. 输出 allow/deny 裁决与理由
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `request` |
+| 输出 | `decision` |
+
 ## 示例
 
 - 判定“调用外部工具”是否被允许

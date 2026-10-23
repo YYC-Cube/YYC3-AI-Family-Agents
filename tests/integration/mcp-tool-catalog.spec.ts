@@ -98,12 +98,12 @@ if (__localShim) {
 }
 
 describe('MCP 工具目录（P4-T5）', () => {
-  it('manifest 目录 → tools/list：44 工具 · 协议版本一致 · 仅暴露 MCP 三字段', () => {
-    globalThis.expect(ARTIFACT.count).toBe(44);
+  it('manifest 目录 → tools/list：45 工具 · 协议版本一致 · 仅暴露 MCP 三字段', () => {
+    globalThis.expect(ARTIFACT.count).toBe(45);
     globalThis.expect(ARTIFACT.protocolVersion).toBe(MCP_PROTOCOL_VERSION);
     const res = request(handler(), { jsonrpc: '2.0', id: 'list-1', method: 'tools/list' });
     globalThis.expect(res.id).toBe('list-1');
-    globalThis.expect(res.result.tools.length).toBe(44);
+    globalThis.expect(res.result.tools.length).toBe(45);
     globalThis.expect(res.result.tools[0].name).toBe(ARTIFACT.tools[0].name);
     // 资产内的 logicalId/title 不外泄到协议层
     globalThis.expect(Object.keys(res.result.tools[0]).sort().join(',')).toBe('description,inputSchema,name');
@@ -116,9 +116,9 @@ describe('MCP 工具目录（P4-T5）', () => {
     const allowlist = new CapabilityAllowlist({ allowed: ['family-core'] });
     const h = handler({ visible: (tool) => allowlist.isAllowed(PLUGIN_OF.get(tool.name) ?? 'unowned') });
     const list = request(h, { jsonrpc: '2.0', id: 'list-2', method: 'tools/list' });
-    // 金包 13 条技能中 shared.a2a-delegate 为 planned（不进工具目录）→ 可见 12
+    // P2 激活后金包 13 条技能全部进工具目录（shared.a2a-delegate 已 active）→ 可见 13
     const admittedRefs = GOLDEN_REFS.filter((id) => TOOLS.some((t) => t.logicalId === id));
-    globalThis.expect(admittedRefs.length).toBe(12);
+    globalThis.expect(admittedRefs.length).toBe(13);
     globalThis.expect(list.result.tools.length).toBe(admittedRefs.length);
     for (const tool of list.result.tools) {
       if (!GOLDEN_REFS.includes(ARTIFACT.tools.find((t) => t.name === tool.name).logicalId)) {

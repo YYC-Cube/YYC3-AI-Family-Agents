@@ -83,10 +83,10 @@ if (__localShim) {
 }
 
 describe('技能行为评测（P3-T5 · observe）', () => {
-  it('金样例资产：44 例、字段完备、mode=observe、id 严格升序唯一', () => {
+  it('金样例资产：45 例、字段完备、mode=observe、id 严格升序唯一', () => {
     globalThis.expect(GOLDEN.mode).toBe('observe');
-    globalThis.expect(GOLDEN.count).toBe(44);
-    globalThis.expect(GOLDEN.cases.length).toBe(44);
+    globalThis.expect(GOLDEN.count).toBe(45);
+    globalThis.expect(GOLDEN.cases.length).toBe(45);
     for (let i = 0; i < GOLDEN.cases.length; i += 1) {
       const c = GOLDEN.cases[i];
       if (!c.id || typeof c.input !== 'string') throw new Error(`金样例缺 id/input：${c.id}`);
@@ -100,17 +100,17 @@ describe('技能行为评测（P3-T5 · observe）', () => {
     }
   });
 
-  it('覆盖零漂移：active 技能集合 ↔ 金样例 id 集合双向相等（44/44，planned 不入）', () => {
+  it('覆盖零漂移：active 技能集合 ↔ 金样例 id 集合双向相等（45/45；P2 激活 a2a-delegate 后全量覆盖）', () => {
     const goldenIds = new Set(GOLDEN.cases.map((c) => c.id));
-    globalThis.expect(goldenIds.size).toBe(44);
-    globalThis.expect(ACTIVE_IDS.size).toBe(44);
+    globalThis.expect(goldenIds.size).toBe(45);
+    globalThis.expect(ACTIVE_IDS.size).toBe(45);
     for (const id of ACTIVE_IDS) {
       if (!goldenIds.has(id)) throw new Error(`active 技能缺金样例：${id}`);
     }
     for (const id of goldenIds) {
       if (!ACTIVE_IDS.has(id)) throw new Error(`金样例引用非 active 技能：${id}`);
     }
-    if (goldenIds.has('shared.a2a-delegate')) throw new Error('planned 技能不应有金样例：shared.a2a-delegate');
+    if (!goldenIds.has('shared.a2a-delegate')) throw new Error('active 技能缺金样例：shared.a2a-delegate（P2 激活）');
   });
 
   it('skillTriggersOn：when 词元命中触发 / 无关输入不触发 / 空 when 与空输入不触发', () => {
@@ -155,7 +155,7 @@ describe('技能行为评测（P3-T5 · observe）', () => {
     globalThis.expect(bad.violations.length).toBe(3);
   });
 
-  it('observe 全量执行：44 例两阶段评测，结构合法 44，汇总与明细一致，偏差仅记录不失败', () => {
+  it('observe 全量执行：45 例两阶段评测，结构合法 45，汇总与明细一致，偏差仅记录不失败', () => {
     const outcomes = [];
     for (const c of GOLDEN.cases) {
       const skill = registry.findByLogicalId(c.id);
@@ -167,8 +167,8 @@ describe('技能行为评测（P3-T5 · observe）', () => {
       outcomes.push(evaluateSkillCase(skill, { skillId: c.id, ok: true }, c));
     }
     const summary = summarizeEval(outcomes);
-    globalThis.expect(summary.total).toBe(44);
-    globalThis.expect(summary.outputOk).toBe(44); // 全部命中注册表且信封结构合法
+    globalThis.expect(summary.total).toBe(45);
+    globalThis.expect(summary.outputOk).toBe(45); // 全部命中注册表且信封结构合法
     // 汇总口径与明细逐项一致（报表可信性）
     let triggered = 0;
     let triggerOk = 0;

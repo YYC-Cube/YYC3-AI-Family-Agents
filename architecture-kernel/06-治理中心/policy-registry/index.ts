@@ -4,3 +4,4 @@
 
 export * from './policy-registry.js';
 export * from './policy-bus.js';
+export * from './security-policies.js';

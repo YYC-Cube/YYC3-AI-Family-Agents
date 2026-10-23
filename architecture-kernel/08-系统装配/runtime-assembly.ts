@@ -48,7 +48,9 @@ export interface RuntimeAssemblyOptions {
   /**
    * 业务指标集（v2.7.0）：传入即自动埋点——桥接受理/拒收、学习周期、自愈记账与 RTO；
    * v2.15.0（P1-T4b）起自动接线复盘回流两端（受理=分母，标注=分子）。
-   * 千行澄清 / escalation / 审计链三类由部署侧以 collaboration-instrumentation 包装后接线。
+   * 千行澄清 / escalation / 审计链三类由部署侧以 collaboration-instrumentation 包装后接线；
+   * 能力供给三类（技能装载 / MCP 工具调用 / 准入拒绝，§6.3）由部署侧以
+   * capability-instrumentation 包装后接线。
    */
   readonly metrics?: FamilyMetrics;
   /** 故障侦测选项（v2.7.2 纳入装配：去抖次数 / 窗口）。 */

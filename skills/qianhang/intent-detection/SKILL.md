@@ -22,6 +22,19 @@ owner: qianhang
 | 标签 | `intent` `classification` |
 | 实现锚点（kernel） | `family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts` |
 
+## 步骤（steps）
+
+1. 加载六类意图闭集提示词
+2. 对用户话语分类并打分
+3. 输出意图/置信度/理由
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `utterance` |
+| 输出 | `intent` `confidence` `reason` |
+
 ## 示例
 
 - 识别“这月花了多少”为 analysis 意图并给置信度

@@ -93,13 +93,11 @@ if (__localShim) {
 }
 
 describe('统一技能 id 与加载器（P3-T3）', () => {
-  it('真实清单装载：45 条中 44 加载，planned 恰好跳过 shared.a2a-delegate', () => {
+  it('真实清单装载：45 条全部加载（P2 激活 a2a-delegate，planned 归零）', () => {
     globalThis.expect(MANIFEST_SKILLS.length).toBe(45);
-    globalThis.expect(load1.loaded).toBe(44);
-    if (JSON.stringify(load1.skippedPlanned) !== JSON.stringify(['shared.a2a-delegate'])) {
-      throw new Error(`planned 跳过不符：${JSON.stringify(load1.skippedPlanned)}`);
-    }
-    globalThis.expect(registry.list().length).toBe(44);
+    globalThis.expect(load1.loaded).toBe(45);
+    globalThis.expect(load1.skippedPlanned.length).toBe(0);
+    globalThis.expect(registry.list().length).toBe(45);
   });
 
   it('互查① manifest → registry：findByLogicalId 与 latest 同源', () => {
@@ -169,8 +167,8 @@ describe('统一技能 id 与加载器（P3-T3）', () => {
 
   it('幂等重载：同版本覆盖不产生重复', () => {
     const load2 = registry.loadFromManifest(MANIFEST_SKILLS);
-    globalThis.expect(load2.loaded).toBe(44);
-    globalThis.expect(registry.list().length).toBe(44);
+    globalThis.expect(load2.loaded).toBe(45);
+    globalThis.expect(registry.list().length).toBe(45);
     const versions = registry.list().filter((s) => s.id === 'shared.self-judge');
     globalThis.expect(versions.length).toBe(1);
   });

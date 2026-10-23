@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `metrics` `tracing` |
 | 实现锚点（kernel） | `architecture-kernel/09-可观测性/family-metrics.ts` |
 
+## 步骤（steps）
+
+1. 捕获任务事件与 traceId
+2. 写入 family_* 指标序列
+3. 输出追踪埋点
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `event` `traceId` |
+| 输出 | `metric` |
+
 ## 示例
 
 - 为任务执行记录 outcome 与耗时并保留 traceId

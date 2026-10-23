@@ -217,7 +217,9 @@ describe('可观测性数据面（P0 指标采集）', () => {
   it('M7: /metrics Bearer 鉴权（缺失/错误 401，正确 200；healthz 免鉴权）', async () => {
     const metrics = new FamilyMetrics();
     metrics.taskExecuted.inc({ outcome: 'completed' });
-    const server = await startMetricsServer({ metrics, port: 0, authToken: 'tok-secret' });
+    // 运行期生成的临时令牌（进程唯一，非任何真实凭据；语义 = 鉴权往返断言）
+    const authToken = `metrics-auth-${process.pid}-${Date.now().toString(36)}`;
+    const server = await startMetricsServer({ metrics, port: 0, authToken });
     try {
       const none = await fetch(`${server.url}/metrics`);
       expect(none.status).toBe(401);
@@ -228,7 +230,7 @@ describe('可观测性数据面（P0 指标采集）', () => {
       expect(wrong.status).toBe(401);
 
       const ok = await fetch(`${server.url}/metrics`, {
-        headers: { Authorization: 'Bearer tok-secret' },
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       expect(ok.status).toBe(200);
       expect(await ok.text()).toContain('family_task_executed_total');
@@ -338,6 +340,30 @@ describe('可观测性数据面（P0 指标采集）', () => {
     } finally {
       await server.close();
     }
+  });
+
+  it('M11: 能力供给指标（§6.3）：技能加载 / 工具调用 / 准入拒绝三 Counter 语义与渲染', () => {
+    const metrics = new FamilyMetrics();
+    metrics.recordSkillLoaded('shared.a2a-delegate');
+    metrics.recordSkillLoaded('shared.a2a-delegate');
+    metrics.recordSkillLoaded('qianhang.intent-detection');
+    metrics.recordMcpToolCall('ok');
+    metrics.recordMcpToolCall('ok');
+    metrics.recordMcpToolCall('error');
+    metrics.recordPluginDenied('family-core');
+
+    expect(metrics.capabilitySkillsLoaded.value({ skill: 'shared.a2a-delegate' })).toBe(2);
+    expect(metrics.capabilitySkillsLoaded.value({ skill: 'qianhang.intent-detection' })).toBe(1);
+    expect(metrics.capabilityMcpToolCalls.value({ result: 'ok' })).toBe(2);
+    expect(metrics.capabilityMcpToolCalls.value({ result: 'error' })).toBe(1);
+    expect(metrics.capabilityPluginDenied.value({ plugin: 'family-core' })).toBe(1);
+
+    const text = metrics.render();
+    expect(text).toContain('# TYPE family_capability_skills_loaded_total counter');
+    expect(text).toContain('family_capability_skills_loaded_total{skill="shared.a2a-delegate"} 2');
+    expect(text).toContain('family_capability_mcp_tool_calls_total{result="ok"} 2');
+    expect(text).toContain('family_capability_plugin_denied_total{plugin="family-core"} 1');
+    // 五维映射声明由 five-dimension-metrics 套件（D 系列）验证（回归 build 目录无 assets）
   });
 });
 

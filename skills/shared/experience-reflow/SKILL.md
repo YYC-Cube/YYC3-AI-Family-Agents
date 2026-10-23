@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `trajectory` `learning` |
 | 实现锚点（kernel） | `architecture-kernel/05-持续学习引擎/experience-reflow` |
 
+## 步骤（steps）
+
+1. 采集任务轨迹与自评信号
+2. 提炼成功/失败模式三元组
+3. 触发学习周期与技能固化
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `trajectory` |
+| 输出 | `patterns` |
+
 ## 示例
 
 - 把一次成功分析沉淀为可复用轨迹

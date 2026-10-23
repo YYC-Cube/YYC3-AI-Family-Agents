@@ -34,7 +34,7 @@ jobs:
       - name: 类型检查（门禁一）
         run: pnpm typecheck
 
-      - name: 契约清单与提示词软校验（P1-T1/T2/T5 · P3-T2 技能产物 · P4-T1 能力包 · P4-T5 工具目录 · P4-T6 打包 CLI · 不阻断）
+      - name: 契约清单与提示词软校验（P1-T1/T2/T5 · P3-T2 技能产物 · P4-T1 能力包 · P4-T5 工具目录 · P4-T6 打包 CLI · P2-T1 外部 worker 契约 · P2-T4 安全策略 · 不阻断）
         continue-on-error: true
         run: |
           node scripts/check-manifest.mjs
@@ -44,6 +44,8 @@ jobs:
           node scripts/check-plugins.mjs
           node scripts/gen-mcp-tools.mjs --check
           node scripts/pack-plugin.mjs --check
+          node scripts/check-external-worker.mjs
+          node scripts/check-security-policies.mjs
 
       - name: 全量回归 + 五支柱面板（门禁二）
         run: pnpm regression

@@ -22,6 +22,12 @@ owner: bole
 | 标签 | `recommendation` `personalization` |
 | 实现锚点（kernel） | （纯描述，暂无锚点） |
 
+## 步骤（steps）
+
+1. 结合画像与行为特征
+2. 对候选对象/内容排序
+3. 输出个性化推荐
+
 ## 示例
 
 - 为管理者推荐本周最应关注的三个指标

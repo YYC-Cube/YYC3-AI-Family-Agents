@@ -135,3 +135,30 @@ groups:
         annotations:
           summary: "复盘覆盖率 < 30%，决策经验未回流学习引擎"
           description: "当前 {value}，请检查 LearningLoop 周期与轨迹采集。"
+
+  # 能力供给组（P2 生态外挂 §6.3）：3 项供给指标 ↔ 告警基线（enforce 拒绝即红线）
+  - name: yyc3-family-capability-supply
+    rules:
+      # ⑫ 能力包准入拒绝：enforce 模式下出现拒绝（插件治理红线，10 分钟窗口）
+      #    数据源：FamilyMetrics.recordPluginDenied（接线点 CapabilityAllowlist.enforce 拒绝分支）
+      - alert: CapabilityPluginDenied
+        expr: increase(family_capability_plugin_denied_total[10m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          pillar: capability-supply
+        annotations:
+          summary: "能力包准入出现 enforce 拒绝：{{ $labels.plugin }}"
+          description: "当前 {value}，请核查插件来源与 CapabilityAllowlist 白名单口径。"
+
+      # ⑬ LLM 输出填充率过低（M19 观测增强）：语义执行产出质量基线（10 分钟窗口）
+      #    数据源：FamilyMetrics.recordLlmExecution（skill-step-executor 注入 metrics 自动上报）
+      - alert: LlmOutputFillLow
+        expr: family_llm_output_fill_ratio < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          pillar: capability-supply
+        annotations:
+          summary: "LLM 语义执行输出填充率 < 80%"
+          description: "当前 {value}，请核查步骤提示词输出契约声明与 LLM_STEP_MODEL。"

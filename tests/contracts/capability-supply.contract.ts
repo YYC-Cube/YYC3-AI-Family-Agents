@@ -91,8 +91,8 @@ describe('能力供给契约（P3-T6）', () => {
     globalThis.expect(supply.skills).toBe(manifestSkillIds().length);
   });
 
-  it('tools = active 技能数（44）且工具名全部合规唯一（^[a-zA-Z0-9_-]+$）', () => {
-    globalThis.expect(supply.tools).toBe(44);
+  it('tools = active 技能数（45，P2 激活 a2a-delegate）且工具名全部合规唯一（^[a-zA-Z0-9_-]+$）', () => {
+    globalThis.expect(supply.tools).toBe(45);
     const seen = new Set();
     for (const name of supply.toolNames) {
       if (!/^[a-zA-Z0-9_-]+$/.test(name)) throw new Error(`MCP 工具名不合规：${name}`);
@@ -101,11 +101,10 @@ describe('能力供给契约（P3-T6）', () => {
     }
   });
 
-  it('planned 未准入不可见 + 统一 id → MCP 名映射规则（. → __，- → _）', () => {
+  it('planned 归零不可见（P2 激活后）+ 统一 id → MCP 名映射规则（. → __，- → _）', () => {
     const planned = manifestPlannedIds();
-    globalThis.expect(planned.length).toBe(1);
-    globalThis.expect(planned[0]).toBe('shared.a2a-delegate');
-    if (supply.toolNames.includes(planned[0])) throw new Error(`planned 技能泄漏为工具：${planned[0]}`);
+    globalThis.expect(planned.length).toBe(0);
+    globalThis.expect(supply.activeSkills).toBe(45);
     // 映射规则抽查：与 mcp-server 契约锚点 qianhang__intent_detection 对齐
     const sample = manifestSkillIds().find((id) => id === 'qianhang.intent-detection');
     if (!sample) throw new Error('清单缺少锚点技能 qianhang.intent-detection');

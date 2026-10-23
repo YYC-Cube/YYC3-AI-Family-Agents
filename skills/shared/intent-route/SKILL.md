@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `intent` `routing` |
 | 实现锚点（kernel） | `family-agents/business-layer/member-qianhang/core/intent-classifier.service.ts` |
 
+## 步骤（steps）
+
+1. 对用户输入做六类意图闭集分类
+2. 输出意图、置信度与理由
+3. 按路由表分发到目标家人
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `utterance` `context` |
+| 输出 | `intent` `confidence` `route` |
+
 ## 示例
 
 - 把“帮我分析上月成本”路由到语枢·万物

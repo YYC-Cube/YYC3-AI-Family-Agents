@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `fault` `circuit` `rollback` |
 | 实现锚点（kernel） | `architecture-kernel/07-自愈中心/fault-detector` |
 
+## 步骤（steps）
+
+1. 侦测故障信号并去抖
+2. 触发熔断与降级路径
+3. 修复一致性后恢复或回滚版本
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `faultSignal` |
+| 输出 | `action` `recovered` |
+
 ## 示例
 
 - 失败率升高后熔断并回滚技能版本

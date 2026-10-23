@@ -12,8 +12,9 @@
  *   family_learning_regression_failed_cases         → LearningRegressionFailure
  *   family_regression_gate_failed_total（CI 侧）     → RegressionGateFailed
  *   family_pillar_failed_cases{pillar}（CI 侧）      → FivePillarDashboardRed
+ *   family_capability_plugin_denied_total           → CapabilityPluginDenied
  *
- * 五维映射（P1-T4）：14 项运行时 + 2 项 CI 指标的主维归属见
+ * 五维映射（P1-T4）：19 项运行时 + 2 项 CI 指标的主维归属见
  *   assets/schemas/five-dimension-map.json（时间/空间/属性/事件/关联）；
  * 协同度 4 项（v2.14.0）：clarify / human-confirm / trace / replay，由
  *   `recordCollaboration(kind, hit)` 按「命中/总数」折算为 0..1 的 Gauge。
@@ -93,6 +94,16 @@ export class FamilyMetrics {
   readonly traceCoverage: Gauge;
   /** 协同度 · 复盘回流覆盖率（0..1）。 */
   readonly replayCoverage: Gauge;
+  /** 能力供给 · 技能加载次数（skill 标签，§6.3）。 */
+  readonly capabilitySkillsLoaded: Counter;
+  /** 能力供给 · MCP 工具调用次数（result=ok|error）。 */
+  readonly capabilityMcpToolCalls: Counter;
+  /** 能力供给 · 能力包准入拒绝次数（allowlist enforce，§6.3）。 */
+  readonly capabilityPluginDenied: Counter;
+  /** 语义执行 · LLM 步骤执行次数（skill 标签，M19）。 */
+  readonly llmSteps: Counter;
+  /** 语义执行 · LLM 输出字段填充率（0..1，M19）。 */
+  readonly llmFillRatio: Gauge;
   /** 协同度累计（kind → total/hit）。 */
   private readonly collaboration = new Map<CollaborationKind, { total: number; hit: number }>();
   /** Exemplar 丢弃计数（仅在启用 exemplar 时注册）。 */
@@ -163,6 +174,26 @@ export class FamilyMetrics {
     this.replayCoverage = registry.gauge(
       'family_collaboration_replay_coverage',
       '复盘覆盖率：已回流学习的周期 / 全部决策周期（0..1）',
+    );
+    this.capabilitySkillsLoaded = registry.counter(
+      'family_capability_skills_loaded_total',
+      '技能加载次数（skill 标签，§6.3 能力供给）',
+    );
+    this.capabilityMcpToolCalls = registry.counter(
+      'family_capability_mcp_tool_calls_total',
+      'MCP 工具调用次数（result=ok|error，§6.3 能力供给）',
+    );
+    this.capabilityPluginDenied = registry.counter(
+      'family_capability_plugin_denied_total',
+      '能力包准入拒绝次数（allowlist enforce 模式，§6.3 能力供给）',
+    );
+    this.llmSteps = registry.counter(
+      'family_llm_steps_total',
+      'LLM 语义执行步骤次数（skill 标签，M19 观测增强）',
+    );
+    this.llmFillRatio = registry.gauge(
+      'family_llm_output_fill_ratio',
+      'LLM 语义执行输出字段填充率（0..1，M19 观测增强；告警基线 0.8）',
     );
   }
 
@@ -264,6 +295,27 @@ export class FamilyMetrics {
     for (const s of ['closed', 'half-open', 'open'] as const) {
       this.circuitState.set(s === state ? 1 : 0, { state: s });
     }
+  }
+
+  /** 能力供给 · 技能加载埋点（§6.3；接线：capability-instrumentation.instrumentSkillRegistry）。 */
+  recordSkillLoaded(skillId: string): void {
+    this.capabilitySkillsLoaded.inc({ skill: skillId });
+  }
+
+  /** 能力供给 · MCP 工具调用埋点（§6.3；接线：capability-instrumentation.instrumentMcpDispatcher）。 */
+  recordMcpToolCall(result: 'ok' | 'error'): void {
+    this.capabilityMcpToolCalls.inc({ result });
+  }
+
+  /** 能力供给 · 准入拒绝埋点（§6.3；接线：capability-instrumentation.instrumentCapabilityAllowlist）。 */
+  recordPluginDenied(pluginId: string): void {
+    this.capabilityPluginDenied.inc({ plugin: pluginId });
+  }
+
+  /** 语义执行埋点（M19；接线：skill-step-executor 注入 metrics 自动上报）。 */
+  recordLlmExecution(skillId: string, steps: number, filled: number, fields: number): void {
+    this.llmSteps.inc({ skill: skillId }, steps);
+    this.llmFillRatio.set(fields > 0 ? filled / fields : 1);
   }
 
   /** 一致性指标埋点（ConsistencyTracker.snapshot 直连；无样本时保留上次值）。 */

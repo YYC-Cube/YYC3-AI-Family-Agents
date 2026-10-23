@@ -6,3 +6,4 @@ export * from './metrics-registry.js';
 export * from './family-metrics.js';
 export * from './metrics-server.js';
 export * from './collaboration-instrumentation.js';
+export * from './capability-instrumentation.js';

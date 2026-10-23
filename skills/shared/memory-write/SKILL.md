@@ -22,6 +22,19 @@ owner: shared
 | 标签 | `memory` `write` `procedural` |
 | 实现锚点（kernel） | `family-agents/shared-core/memory-framework/write-policy` |
 
+## 步骤（steps）
+
+1. 接收待写入条目与显著性信号
+2. 按写入策略判定情景/程序记忆归属
+3. 落盘并返回写入结果
+
+## I/O 契约
+
+| 方向 | 字段 |
+| ---- | ---- |
+| 输入 | `entry` `salience` |
+| 输出 | `written` |
+
 ## 示例
 
 - 把本轮结论写入情景记忆并标注显著性

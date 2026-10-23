@@ -72,8 +72,8 @@ _万象归元于云枢 · 深栈智启新纪元_
 
 - **零运行时依赖**：指标、HTTP 端点、编译/回归脚本全部基于 Node 标准库
 - **端到端装配**：`createRuntimeAssembly()` 一次接线「总线 → 轨迹 → 学习 → 落盘 → 回滚」
-- **可观测闭环**：18 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 11 条告警 → 五支柱面板
-- **门禁可复现**：`pnpm regression` 单命令完成编译、238 例测试、面板生成与退出码判定
+- **可观测闭环**：23 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 13 条告警 → 五支柱面板
+- **门禁可复现**：`pnpm regression` 单命令完成编译、285 例测试、面板生成与退出码判定
 
 ---
 
@@ -155,8 +155,11 @@ sequenceDiagram
 # 1. 类型检查（仓库根）
 pnpm typecheck          # 等价 tsc --noEmit
 
-# 2. 全量门禁：隔离编译 → 33 个套件 → 五支柱聚合 → 面板 → 退出码
-pnpm regression         # 238 例全绿；0 例跳过
+# 2. 全量门禁：隔离编译 → 40 个套件 → 五支柱聚合 → 面板 → 退出码
+pnpm regression         # 285 例全绿；0 例跳过
+
+# 3. 家族服务雏形（P6-A）：装载 45 技能 + MCP 处理器 + /metrics 能力供给真值
+pnpm start              # 常驻（Ctrl+C 停止）；--selftest 自检；--selftest:llm 三闸门控 LLM 采样实测
 
 # 3. 查看面板（自包含 HTML，无需服务器；含五支柱 + 能力供给卡片 P3-T6）
 open ops/observability/pillar-dashboard/index.html
@@ -165,7 +168,7 @@ open ops/observability/pillar-dashboard/index.html
 pnpm manifest:check      # 清单 ↔ 8 份 agent.yaml 漂移校验
 pnpm manifest:cards      # 由清单重建 assets/agent-cards/*.json
 pnpm prompts:check       # 16 条提示词契约：版本回写 / CO-STAR 要素 / 孤儿扫描
-pnpm mcp:tools:check     # MCP 工具目录与清单零漂移（P4-T5：44 可见 + 1 planned 不可见）
+pnpm mcp:tools:check     # MCP 工具目录与清单零漂移（P4-T5：45 可见，planned 归零后全量准入）
 pnpm pack:plugins        # 能力包打包（P4-T6：金包 → assets/packs/；分发副本 → docs/）
 pnpm pack:check          # 打包产物与源零漂移（确定性 ZIP · 同输入恒同字节）
 ```
@@ -223,7 +226,7 @@ YYC3-AI-Family-Agent/
 
 ## 📊 可观测与门禁
 
-### 指标（18 项运行期）
+### 指标（21 项运行期）
 
 | 类别 | 指标 | 类型 |
 | ---- | ---- | ---- |
@@ -233,10 +236,11 @@ YYC3-AI-Family-Agent/
 | 记忆 | `family_memory_retrieval_duration_seconds` | Histogram |
 | 自愈 | `family_healing_actions_total` · `family_healing_rto_seconds` · `family_healing_contract_met` · `family_circuit_state` | Counter / Gauge |
 | 人机协同（P1-T4，T4b 已接线生产链路） | `family_collaboration_clarify_rate` · `family_collaboration_human_confirm_rate` · `family_collaboration_trace_coverage` · `family_collaboration_replay_coverage` | Gauge（0..1） |
+| 能力供给（P2 生态外挂 §6.3，已接线生产链路） | `family_capability_skills_loaded_total` · `family_capability_mcp_tool_calls_total` · `family_capability_plugin_denied_total` | Counter |
 
-> 五维归属（时间 3 / 空间 2 / 属性 4 / 事件 4 / 关联 3，另 4 项协同度单列）见 [`assets/schemas/five-dimension-map.json`](assets/schemas/five-dimension-map.json)；面板以「五维覆盖」卡片呈现。
+> 五维归属（时间 3 / 空间 2 / 属性 4 / 事件 4 / 关联 3，另 4 项协同度、3 项能力供给单列）见 [`assets/schemas/five-dimension-map.json`](assets/schemas/five-dimension-map.json)；面板以「五维覆盖」卡片呈现。
 
-**告警（11 条）**：P99 延迟 · 失败率 · 校准漂移 · 记忆检索 P95 · 学习回归失败 · 回归门禁失败 · 五支柱红牌 · 澄清率过高 · 人工确认率过低 · traceId 覆盖率过低 · 复盘覆盖率过低。规则见 [`ops/observability/prometheus-rules.yaml`](ops/observability/prometheus-rules.yaml)。
+**告警（13 条）**：P99 延迟 · 失败率 · 校准漂移 · 记忆检索 P95 · 学习回归失败 · 回归门禁失败 · 五支柱红牌 · 澄清率过高 · 人工确认率过低 · traceId 覆盖率过低 · 复盘覆盖率过低 · 能力包准入拒绝 · LLM 输出填充率过低。规则见 [`ops/observability/prometheus-rules.yaml`](ops/observability/prometheus-rules.yaml)。
 
 **Exemplars（L7，默认关闭）**：设置 `YYC3_EXEMPLARS_ENABLED=1` 后，`/metrics` 支持 OpenMetrics 1.0，直方图落点桶附带 `trace_id`，可在 Grafana 从 P95/P99 直接下钻到 trace。默认关闭时输出与 v2.7.2 完全一致，不注册 `family_exemplars_dropped_total`。
 
@@ -260,18 +264,18 @@ UAT_LLM=1 UAT_LLM_CONFIRM='我知晓真实计费' ZHIPU_API_KEY=<你的Key> pnpm
 
 ## 🔌 模块接线状态
 
-> 口径：从 32 个门禁入口做静态 import 可达性分析；**「仅编译」不代表已交付能力**。
+> 口径：从 40 个门禁入口做静态 import 可达性分析（相对导入 + `@shared` 别名 BFS，P5 后统一刷新为纯可达口径）；**「仅编译」不代表已交付能力**。
 
 | 范围 | 编译文件 | 已接线 | 仅编译 |
 | ---- | -------- | ------ | ------ |
-| `architecture-kernel` | 103 | 45 | 58 |
-| `family-agents` | 140 | 41 | 99 |
-| `tests`（门禁入口） | 33 | 33 | 0 |
-| **合计** | **276** | **119** | **157** |
+| `architecture-kernel` | 115 | 64 | 51 |
+| `family-agents` | 150 | 36 | 114 |
+| `tests`（门禁入口） | 40 | 40 | 0 |
+| **合计** | **305** | **140** | **165** |
 
-- `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线
+- `shared-core` 记忆 / 学习 / LLM 主链路全接线（llm-adapter barrel 与 8 位家人薄转发 provider 属部署侧消费，计仅编译）；家人意图链路 4 文件 + 伯乐成就面板已接线
 - `01-九层架构分层底座` 20/20 为**契约骨架**，尚未接线
-- 8 个家人自测 spec 被 `tsconfig` 排除且不在回归清单
+- 8 个家人自测 spec 被 `tsconfig` 排除且不在回归清单；另有 2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表
 
 完整明细（含每个文件职责、状态、计划阶段、标准与规范五维矩阵）见 **[未接线模块清单](docs/YYC3-AI-Family-Agent-未接线模块清单.md)**。
 

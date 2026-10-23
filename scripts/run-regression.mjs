@@ -61,6 +61,15 @@ const SPECS = [
   { file: 'tests/integration/mcp-tool-catalog.spec.js', pillars: ['治'], phase: 'P4-T5', name: 'MCP 工具目录与分派' },
   { file: 'tests/contracts/pack-plugins.contract.js', pillars: [], phase: '契约 P4-T6', name: '能力包打包 CLI 契约' },
   { file: 'tests/integration/plugin-pack.spec.js', pillars: ['治'], phase: 'P4-T6', name: '打包分发注册闭环' },
+  { file: 'tests/contracts/external-worker.contract.js', pillars: [], phase: '契约 P2-T1', name: '外部 Worker 契约' },
+  { file: 'tests/integration/a2a-adapter.spec.js', pillars: ['治'], phase: 'P2-T2', name: 'A2A 适配层（发现+委托+DLQ）' },
+  { file: 'tests/integration/security-policy-bind.spec.js', pillars: ['治'], phase: 'P2-T4', name: '安全策略映射（observe/enforce）' },
+  { file: 'tests/integration/capability-instrumentation.spec.js', pillars: ['治'], phase: '§6.3 接线', name: '能力供给生产接线' },
+  { file: 'tests/integration/family-server-assembly.spec.js', pillars: ['治'], phase: 'P6-A', name: '家族服务装配（MCP+准入+仪表）' },
+  { file: 'tests/integration/skill-executor.spec.js', pillars: ['学'], phase: 'P6-B', name: '技能执行引擎（确定性臂）' },
+  { file: 'tests/integration/llm-step-executor.spec.js', pillars: ['学'], phase: 'P6-C', name: 'LLM 技能步骤执行（语义臂）' },
+  // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
+  // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];
 
 const FIVE = ['自', '知', '学', '治', '愈'];

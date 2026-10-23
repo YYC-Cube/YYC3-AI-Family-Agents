@@ -54,6 +54,21 @@ export function buildSkillMarkdown(skill, slugById) {
     `| 实现锚点（kernel） | ${skill.kernel ? `\`${skill.kernel}\`` : '（纯描述，暂无锚点）'} |`,
     skill.status ? `| 状态 | ${skill.status} |` : null,
     '',
+    '## 步骤（steps）',
+    '',
+    ...(skill.steps ?? []).map((s, i) => `${i + 1}. ${s}`),
+    '',
+    ...(skill.io
+      ? [
+          '## I/O 契约',
+          '',
+          '| 方向 | 字段 |',
+          '| ---- | ---- |',
+          `| 输入 | ${(skill.io.input ?? []).map((f) => `\`${f}\``).join(' ')} |`,
+          `| 输出 | ${(skill.io.output ?? []).map((f) => `\`${f}\``).join(' ')} |`,
+          '',
+        ]
+      : []),
     '## 示例',
     '',
     ...(skill.examples ?? []).map((e) => `- ${e}`),
