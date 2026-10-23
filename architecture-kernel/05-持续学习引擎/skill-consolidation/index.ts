@@ -3,6 +3,9 @@
  * 职责：高频成功模式固化为技能 → 淘汰久未使用 → 版本管理与回滚。
  */
 
+export * from './skill-id.js';
+export * from './skill-index.js';
+export * from './skill-eval.js';
 export * from './skill-merger.js';
 export * from './skill-pruner.js';
 export * from './skill-store-file.js';

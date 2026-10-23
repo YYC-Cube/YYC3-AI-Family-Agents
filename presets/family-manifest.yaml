@@ -49,6 +49,7 @@ protocol:
 # ------------------------------------------------------------
 skills:
   - id: shared.self-judge
+    version: "1.0.0"
     scope: shared
     name: 结构化自判断
     description: 产出置信度、登记假设、检测偏离并给出升级决策
@@ -59,6 +60,7 @@ skills:
       - 对候选意图给出 0..1 置信度并显式登记假设
 
   - id: shared.memory-retrieve
+    version: "1.0.0"
     scope: shared
     name: 记忆检索
     description: 按语义与上下文检索情景/语义/程序记忆
@@ -69,6 +71,7 @@ skills:
       - 检索同一客户近三次决策的上下文
 
   - id: shared.memory-write
+    version: "1.0.0"
     scope: shared
     name: 记忆写入
     description: 按写入策略落盘情景记忆与程序记忆条目
@@ -79,6 +82,7 @@ skills:
       - 把本轮结论写入情景记忆并标注显著性
 
   - id: shared.intent-route
+    version: "1.0.0"
     scope: shared
     name: 意图识别与路由
     description: 六类意图闭集分类、置信度评分与路由分发
@@ -89,6 +93,7 @@ skills:
       - 把“帮我分析上月成本”路由到语枢·万物
 
   - id: shared.experience-reflow
+    version: "1.0.0"
     scope: shared
     name: 经验回流
     description: 轨迹采集、模式提炼与学习周期触发
@@ -99,6 +104,7 @@ skills:
       - 把一次成功分析沉淀为可复用轨迹
 
   - id: shared.skill-consolidate
+    version: "1.0.0"
     scope: shared
     name: 技能固化与回滚
     description: 回归零退化后固化技能版本，退化时回滚到前一版本
@@ -109,6 +115,7 @@ skills:
       - 零退化后固化 v1.1.0，退化则回滚 v1.0.0
 
   - id: shared.policy-check
+    version: "1.0.0"
     scope: shared
     name: 策略校验
     description: 按作用域匹配策略并给出 allow/deny 裁决
@@ -119,6 +126,7 @@ skills:
       - 判定“调用外部工具”是否被允许
 
   - id: shared.compliance-audit
+    version: "1.0.0"
     scope: shared
     name: 合规审计
     description: 追加可验真的链式审计记录并校验完整性
@@ -129,6 +137,7 @@ skills:
       - 为一次工具调用追加审计记录并验真
 
   - id: shared.fault-heal
+    version: "1.0.0"
     scope: shared
     name: 故障降级与自愈
     description: 故障侦测去抖、熔断降级、一致性修复与版本回滚
@@ -139,6 +148,7 @@ skills:
       - 失败率升高后熔断并回滚技能版本
 
   - id: shared.llm-invoke
+    version: "1.0.0"
     scope: shared
     name: 模型调用与降级链
     description: 统一 provider 调用接口，按 openai→zhipu→ollama 顺序降级
@@ -149,6 +159,7 @@ skills:
       - openai 超时后切换 zhipu，再失败切本地 ollama
 
   - id: shared.observe-emit
+    version: "1.0.0"
     scope: shared
     name: 指标与追踪埋点
     description: 以 traceId 贯穿事件并写入 family_* 指标
@@ -159,6 +170,7 @@ skills:
       - 为任务执行记录 outcome 与耗时并保留 traceId
 
   - id: shared.mcp-tool
+    version: "1.0.0"
     scope: shared
     name: MCP 工具调用
     description: 通过 MCP 适配器（codec + 本地 stdio）调用外部工具与数据源
@@ -169,6 +181,7 @@ skills:
       - 通过 MCP 调用文件系统工具读取报表
 
   - id: shared.a2a-delegate
+    version: "1.0.0"
     scope: shared
     name: A2A 任务委托
     description: 发现对端 Agent Card 并委托任务、归一结果
@@ -181,6 +194,7 @@ skills:
   # ---------- 二、专用技能（8 位家人 × 4 项 = 32 项） ----------
 
   - id: tianshu.strategy-orchestration
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
     name: 战略决策编排
@@ -192,6 +206,7 @@ skills:
       - 1200-提示词工程-AI-FAmily-Agent-拟人化协同架构
 
   - id: tianshu.task-decomposition
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
     name: 任务分解与分派
@@ -202,6 +217,7 @@ skills:
       - 把“降本 10%”拆成 5 个可执行子任务并派给对应家人
 
   - id: tianshu.conflict-arbitration
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
     name: 冲突裁决与资源调度
@@ -211,6 +227,7 @@ skills:
       - 语枢·万物与预见·先知结论相左时给出裁决依据
 
   - id: tianshu.global-oversight
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
     name: 全局状态巡视
@@ -221,6 +238,7 @@ skills:
       - 汇总五支柱健康度并向人类高管上报异常
 
   - id: qianhang.intent-detection
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 意图检测
@@ -231,6 +249,7 @@ skills:
       - 识别“这月花了多少”为 analysis 意图并给置信度
 
   - id: qianhang.ambiguity-clarify
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 歧义澄清
@@ -240,6 +259,7 @@ skills:
       - “看看销售”歧义时追问是看数据还是看趋势
 
   - id: qianhang.context-session
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 上下文会话管理
@@ -250,6 +270,7 @@ skills:
       - 第二轮“再按部门拆一下”继承首轮的分析对象
 
   - id: qianhang.nlq-to-api
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 自然语言查询转 API
@@ -260,6 +281,7 @@ skills:
       - “上月华东区退货率”转成 region/month/metric 三元组
 
   - id: thinker.business-analysis
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-02"
     name: 经营数据分析
@@ -269,6 +291,7 @@ skills:
       - 分析本月销售数据趋势并给出三条洞察
 
   - id: thinker.decision-support
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-02"
     name: 经营决策支持
@@ -280,6 +303,7 @@ skills:
       - 120101-提示词工程-蓝图实战-管理职能-经营决策智能化
 
   - id: thinker.root-cause
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-02"
     name: 指标归因与根因分析
@@ -289,6 +313,7 @@ skills:
       - 定位响应时延升高的根因是缓存命中率下降
 
   - id: thinker.report-compose
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-02"
     name: 报告生成
@@ -298,6 +323,7 @@ skills:
       - 生成月度经营分析报告大纲与关键结论
 
   - id: prophet.trend-forecast
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-03"
     name: 趋势预测
@@ -307,6 +333,7 @@ skills:
       - 预测未来三个月订单量区间并标注置信带
 
   - id: prophet.risk-alert
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-03"
     name: 风险预警
@@ -318,6 +345,7 @@ skills:
       - 120501-提示词工程-蓝图实战-自愈链路-自主感知智能化
 
   - id: prophet.capacity-forecast
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-03"
     name: 容量与算力预警
@@ -329,6 +357,7 @@ skills:
       - 1212-提示词工程-设备算力-本地矩阵分布
 
   - id: prophet.scenario-simulate
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-03"
     name: 场景推演
@@ -338,6 +367,7 @@ skills:
       - 涨价 5% 与不涨价两种情景的毛利推演
 
   - id: bole.talent-match
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
     name: 人才匹配
@@ -349,6 +379,7 @@ skills:
       - 120401-提示词工程-蓝图实战-资源管理-人力资源智能化
 
   - id: bole.personalize
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
     name: 个性化推荐
@@ -358,6 +389,7 @@ skills:
       - 为管理者推荐本周最应关注的三个指标
 
   - id: bole.persona-profile
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
     name: 用户画像
@@ -367,6 +399,7 @@ skills:
       - 生成“区域财务负责人”的决策偏好画像
 
   - id: bole.achievement-insight
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
     name: 成就与激励洞察
@@ -377,6 +410,7 @@ skills:
       - 依据成就面板给出团队激励节奏建议
 
   - id: guardian.security-audit
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
     name: 安全审计
@@ -388,6 +422,7 @@ skills:
       - 1209-提示词工程-蓝图实战-安全合规与伦理治理
 
   - id: guardian.content-filter
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
     name: 内容合规过滤
@@ -397,6 +432,7 @@ skills:
       - 拦截含个人敏感信息的输出并提示脱敏
 
   - id: guardian.zero-trust
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
     name: 零信任鉴权
@@ -406,6 +442,7 @@ skills:
       - 拒绝未携带有效令牌的外部工具调用
 
   - id: guardian.incident-response
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
     name: 安全事件响应
@@ -415,6 +452,7 @@ skills:
       - 识别提示词注入后隔离会话并上报元启·天枢
 
   - id: grandmaster.quality-gate
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
     name: 质量标准校验
@@ -426,6 +464,7 @@ skills:
       - 1202-提示词工程-蓝图实战-能力建设智能化
 
   - id: grandmaster.regression-guard
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
     name: 回归与退化检测
@@ -436,6 +475,7 @@ skills:
       - 新版本意图准确率下降 2% 时拦截发布
 
   - id: grandmaster.knowledge-distill
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
     name: 知识提炼与技能固化
@@ -446,6 +486,7 @@ skills:
       - 把三次同类故障的处置提炼为一条处置规则
 
   - id: grandmaster.retrospective
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
     name: 复盘与改进建议
@@ -455,6 +496,7 @@ skills:
       - 复盘一次误报并给出三条改进项
 
   - id: grace.ideation
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
     name: 创意生成
@@ -466,6 +508,7 @@ skills:
       - 120302-提示词工程-蓝图实战-价值创造-创新孵化智能化
 
   - id: grace.copywriting
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
     name: 文案与内容创作
@@ -475,6 +518,7 @@ skills:
       - 把经营结论改写成面向高管的 200 字摘要
 
   - id: grace.style-direction
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
     name: 风格与视觉建议
@@ -484,6 +528,7 @@ skills:
       - 为季度报告给出配色与版式建议
 
   - id: grace.marketing-content
+    version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
     name: 营销内容策划

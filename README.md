@@ -19,7 +19,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 ### 项目徽章
 
 [![CI](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml/badge.svg)](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml)
-![Regression](https://img.shields.io/badge/Regression-143%2F143%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
+![Regression](https://img.shields.io/badge/Regression-238%2F238%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Zero Deps](https://img.shields.io/badge/Runtime%20Deps-0-8a2be2?style=for-the-badge)
@@ -73,7 +73,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 - **零运行时依赖**：指标、HTTP 端点、编译/回归脚本全部基于 Node 标准库
 - **端到端装配**：`createRuntimeAssembly()` 一次接线「总线 → 轨迹 → 学习 → 落盘 → 回滚」
 - **可观测闭环**：18 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 11 条告警 → 五支柱面板
-- **门禁可复现**：`pnpm regression` 单命令完成编译、143 例测试、面板生成与退出码判定
+- **门禁可复现**：`pnpm regression` 单命令完成编译、238 例测试、面板生成与退出码判定
 
 ---
 
@@ -155,16 +155,19 @@ sequenceDiagram
 # 1. 类型检查（仓库根）
 pnpm typecheck          # 等价 tsc --noEmit
 
-# 2. 全量门禁：隔离编译 → 20 个套件 → 五支柱聚合 → 面板 → 退出码
-pnpm regression         # 143 例全绿；0 例跳过
+# 2. 全量门禁：隔离编译 → 33 个套件 → 五支柱聚合 → 面板 → 退出码
+pnpm regression         # 238 例全绿；0 例跳过
 
-# 3. 查看面板（自包含 HTML，无需服务器）
+# 3. 查看面板（自包含 HTML，无需服务器；含五支柱 + 能力供给卡片 P3-T6）
 open ops/observability/pillar-dashboard/index.html
 
 # 4. 家族契约清单（P1-T1/T2）与提示词契约（P1-T5）
 pnpm manifest:check      # 清单 ↔ 8 份 agent.yaml 漂移校验
 pnpm manifest:cards      # 由清单重建 assets/agent-cards/*.json
 pnpm prompts:check       # 16 条提示词契约：版本回写 / CO-STAR 要素 / 孤儿扫描
+pnpm mcp:tools:check     # MCP 工具目录与清单零漂移（P4-T5：44 可见 + 1 planned 不可见）
+pnpm pack:plugins        # 能力包打包（P4-T6：金包 → assets/packs/；分发副本 → docs/）
+pnpm pack:check          # 打包产物与源零漂移（确定性 ZIP · 同输入恒同字节）
 ```
 
 > `pnpm regression` 不会污染工作区：临时编译目录在系统 temp 下创建并自动清理；`YYC3_KEEP_TMP=1` 可保留用于调试。
@@ -241,10 +244,10 @@ YYC3-AI-Family-Agent/
 
 | 项 | 结果 |
 | --- | --- |
-| 全量用例 | **143 / 143 通过** |
+| 全量用例 | **238 / 238 通过** |
 | 显式跳过 | **0 例**（EventBus DLQ 已实现） |
 | 静默套件 | **0** |
-| 五支柱 | 自 28 · 知 25 · 学 61 · 治 41 · 愈 43 |
+| 五支柱 | 自 28 · 知 51 · 学 87 · 治 77 · 愈 49 |
 | 类型检查 | `tsc --noEmit` exit 0 |
 
 **LLM 实答 UAT（本地门控，默认跳过，不计入门禁）**：`pnpm uat:llm` 以真实 Key 对开放平台做身份与意图抽检（1 身份 + 4 意图，附规则主选对照）。三重门控（`UAT_LLM=1` + `UAT_LLM_CONFIRM=我知晓真实计费` + 密钥存在）缺一整体跳过且 exit 0：
@@ -257,14 +260,14 @@ UAT_LLM=1 UAT_LLM_CONFIRM='我知晓真实计费' ZHIPU_API_KEY=<你的Key> pnpm
 
 ## 🔌 模块接线状态
 
-> 口径：从 19 个门禁入口做静态 import 可达性分析；**「仅编译」不代表已交付能力**。
+> 口径：从 32 个门禁入口做静态 import 可达性分析；**「仅编译」不代表已交付能力**。
 
 | 范围 | 编译文件 | 已接线 | 仅编译 |
 | ---- | -------- | ------ | ------ |
-| `architecture-kernel` | 94 | 36 | 58 |
+| `architecture-kernel` | 103 | 45 | 58 |
 | `family-agents` | 140 | 41 | 99 |
-| `tests`（门禁入口） | 20 | 20 | 0 |
-| **合计** | **254** | **97** | **157** |
+| `tests`（门禁入口） | 33 | 33 | 0 |
+| **合计** | **276** | **119** | **157** |
 
 - `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线
 - `01-九层架构分层底座` 20/20 为**契约骨架**，尚未接线

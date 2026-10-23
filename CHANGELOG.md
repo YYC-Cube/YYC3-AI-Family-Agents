@@ -25,6 +25,29 @@
 - **协同度指标生产端接线（P1-T4b）**：`architecture-kernel/09-可观测性/collaboration-instrumentation.ts` 四个零侵入 Proxy 仪表——`instrumentIntentGateway`（千行澄清命中：intent=unknown 或置信度 < τ_low，默认 0.6）、`instrumentEscalationPolicy`（human-confirm 命中）、`instrumentComplianceAudit`（traceId 非空命中）、`instrumentOutcomeLabeler`（学习回流标注即记分子）；结构化最小接口，内核不反向依赖 family-agents
 - **`FamilyMetrics.recordReplay(collected, labeled)`**：复盘覆盖率两端记账——装配层桥接受理记分母（`recordReplay(1,0)`）、labeler 标注记分子（`recordReplay(0,1)`），与 `recordCollaboration` 共用同一张 collaboration map；`runtime-assembly.ts` 在 metrics 注入时自动完成学习回流两端接线，千行澄清 / escalation / 审计链三类由部署侧包装接线
 - **协同度接线套件**：`tests/integration/collaboration-wiring.spec.ts`（8 例：千行澄清真实网关命中与未命中、零侵入同构、escalation 决策透出、审计链完整性与 Prometheus 渲染、端到端装配回流闭环、`recordReplay` 记账口径、四类仪表互不串扰）
+- **技能全版本化（P3-T1 首步）**：45 条技能条目补 `version`（语义化，初始 1.0.0）；`manifest:check` 强校验版本存在与格式——技能可漂移比对、可 A/B、可回滚的前提
+- **技能产物生成（P3-T2）**：`scripts/gen-skill-artifacts.mjs`（`pnpm skills:gen` / `pnpm skills:check`）由清单派生 45 个 `skills/{owner}/{slug}/SKILL.md`（frontmatter：`name/description/version/id/scope/owner`，专用技能 owner 归一为家人 slug）；与 Agent Card 同构的「生成 + `--check` 零漂移 + 孤儿扫描」契约范式，范式依据见《技能与生态演进指导》
+- **MCP 服务端协议语义（P3-MCP）**：`02-云枢核心引擎/mcp-adapter/server/`——无状态 JSON-RPC 2.0 分派器（`initialize` / `ping` / `tools/list`），对齐 MCP 2026-07-28 规范子集（协议版本协商、tools 能力宣告、列表结果预派生可缓存、工具名 `^[a-zA-Z0-9_-]+$` 构造期 fail-fast）；工具目录由部署侧注入，内核不反向依赖 presets / family-agents
+- **门禁新增两套件**：`tests/contracts/skill-artifacts.contract.ts`（7 例：脚本退出码、45 产物 0 过期 0 孤儿、清单版本语义化、目录命名空间 ↔ id 双向一致、frontmatter 版本零漂移、owner 归属、锚点信息未丢失）与 `tests/integration/mcp-server.spec.ts`（6 例：initialize 回显、tools/list 目录与命名、未知方法 -32601、通知静默、非法输入 -32700/-32600、ping 幂等无状态）
+- **统一技能 id 帮助器（P3-T3 · ADR-D2）**：`architecture-kernel/05-持续学习引擎/skill-consolidation/skill-id.ts` 纯函数契约——`manifestSkillId`（`{owner}.{skill}` 构造与校验）、`learnedSkillId` / `isLearnedId` / `canonicalOfLearned`（`learned.*` 命名空间）、`isFnvSkillId` / `legacyLearnedId`（历史 FNV 主键 `skill-xxxxxxxx` 归并 `learned.skill-xxxxxxxx`）、`logicalIdOfStored`（显式 > FNV 归并 > 自身 id 三级解析）
+- **`SkillDefinition.logicalId` 双侧贯通**：kernel 05 与 `family-agents/shared-core/.../skill-registry.ts` 各自新增可选 `logicalId` 字段（不 import 内核——id 格式即契约）；`LearningLoop` 新增 `logicalIdResolver` 装配钩子，技能固化时写入统一命名空间 id
+- **统一 id 加载器**：`SkillRegistry.loadFromManifest(entries)`（真实清单 45 → 44 装载，`status: planned` 跳过并透出）与 `findByLogicalId`（active 优先、`logicalId ?? id` 匹配）；`FileSkillStore.findByLogicalId` 全库扫描归并——历史 FNV 技能按 `learned.{内部 id}` 可查，已落盘数据零迁移
+- **统一 id 回归套件**：`tests/integration/skill-id-unification.spec.ts`（8 例：清单真实装载 44 + planned 跳过、逻辑 id 互查同引用、归属抽查、帮助器派生与往返、显式 logicalId 命中且内部主键不变、FNV 历史归并、三套表示闭环互查、幂等重载）
+- **渐进披露检索（P3-T4）**：元数据索引与正文分离——kernel 05 新增 [`skill-consolidation/skill-index.ts`](architecture-kernel/05-持续学习引擎/skill-consolidation/skill-index.ts) 契约（`SkillIndexEntry` 仅含 id/version/scope/owner/description/tags；确定性 `estimateTokens`：CJK 逐字计 1、其余每 4 字符计 1；单条预算 `SKILL_INDEX_TOKEN_BUDGET = 200`）；`gen-skill-artifacts.mjs` 派生 `skills/index.json`（45 条，与 SKILL.md 正文物理分离，`--check` 一并零漂移）；`SkillRegistry.loadIndex / listIndex / match(query)`（纯索引匹配 `matchSkillIndexEntries`：tag 命中权重 3 > id 2 > 描述 1，CJK 二元组 + latin 词分词，同分 id 升序）——检索先查索引不读正文，命中后经 `findByLogicalId` 延迟加载全量定义
+- **渐进披露回归套件**：`tests/integration/skill-progressive-disclosure.spec.ts`（9 例：index.json 零漂移、字段白名单无正文字段、45 条全过 200 token 预算、estimator 口径确定性、索引/正文注册表分离、match 命中不泄露正文、排序权重与 limit、两阶段闭环（命中前 `findByLogicalId` 为空 → 正文装载后可达）、planned 可发现不可加载）
+- **技能行为评测契约（P3-T5 · observe）**：`architecture-kernel/05-持续学习引擎/skill-consolidation/skill-eval.ts`——金样例评测纯函数语义：`skillTriggersOn`（确定性词面触发判定，CJK 二元组 + latin 词，独立实现不反向依赖 family-agents）、`outputShapeOk`（必含字段存在且非空）、`evaluateSkillCase`（触发 + 步骤计划 + 产出结构三维判定，violations 逐条记录）、`summarizeEval` 汇总、`SKILL_EVAL_MODE = 'observe'` 默认不阻断 + `enforceEvalOutcome` enforce 路径（违规即抛，治理显式升级）
+- **金样例资产与评测套件**：`tests/skills/golden.json`（44 例 = 44 条 active 技能全覆盖，输入取自清单 examples，提交资产可人工精化）+ `tests/skills/skill-behavior-eval.spec.ts`（9 例：资产结构与 id 升序、覆盖零漂移双向（planned `shared.a2a-delegate` 不入）、触发判定单测、结构判定单测、evaluateSkillCase 三类违规、observe 全量执行（44 例结构合法、汇总与明细一致、偏差仅打印）、模式开关 observe、重复评测确定性、enforce 路径、金样例与清单 examples 同源可追溯）
+- **面板能力供给卡片（P3-T6）**：`scripts/lib/capability-supply.mjs` 单一事实源（`countCapabilitySupply`：技能 = manifest 总数 45、工具 = active 技能映射的 MCP 工具名 44（`.` → `__`、`-` → `_`，planned 未准入不可见）、插件 = `plugins/{id}/plugin.yaml` 能力包 0（P4 预留））；`data.json` 增 `capabilities` 段，`pillar-dashboard/index.html` 新增「能力供给」卡片区（技能 / 工具 / 插件），回归控制台同步打印三元组
+- **能力供给契约套件**：`tests/contracts/capability-supply.contract.ts`（6 例：计数器结构合法、skills 与清单技能段交叉验证 45、tools=44 全合规唯一、planned 不可见 + MCP 名映射规则锚点 `qianhang__intent_detection`、plugins=0 缺失口径、面板产物与计数器同源零漂移（data.json 三数值 + index.html 卡片数值））
+- **能力包格式与校验（P4-T1）**：`plugins/{id}/plugin.yaml` 格式契约（`id/version/scope/description/contents[]/integrity/targets`）+ 金包样例 `plugins/family-core/plugin.yaml`（13 共用技能 + MCP 服务端 + 治理策略基线，scope=builtin、targets.agents=`["*"]`）；`scripts/check-plugins.mjs`（`pnpm plugins:check` / `plugins:integrity`）零依赖校验——结构完备、`contents.type` 仅限 skills / mcp-servers / policies / prompts 四类白名单、skills refs ⊆ manifest 技能集与 prompts refs ⊆ 清单提示词集交叉验证、targets.agents 家人白名单、目录名 ≡ id、`--json` 明细与 `--write-integrity` 回写幂等
+- **静态注册中心（P4-T2）与完整性校验（P4-T4）**：`architecture-kernel/10-能力注册中心/`——`catalog.ts` 纯函数 scope 合并（builtin/local，同 id local 覆盖 builtin、组内数组序后者胜，`buildCapabilityCatalog` 展开注册能力归属、覆盖顺序确定且可测、零网络）；`plugin-loader.ts` 仅注册不执行（`PluginLoader` fail-fast 校验 + 重复 id 拒绝 + id 升序确定性 list；无动态 import() / 远程安装 / vm 沙箱——插件 = 静态可校验清单 + 已编译模块的注册）；`integrity.ts` **纯 TypeScript SHA-256**（FIPS 180-4，零 node:crypto 依赖，浏览器/边缘可用）——canonical 摘要（entries 按 kind+ref 排序 → 逐项哈希 → 连接再哈希）+ `verifyPluginDigest`（算法降级即失败）
+- **能力包双套件（P4-T1/T2/T4）**：`tests/contracts/plugin-format.contract.ts`（8 例：脚本零错误退出、金包结构字段完备、skills refs 与清单交叉零漂移、**内核纯 TS SHA-256 ≡ node:crypto 实现**交叉断言、篡改检测 A 声明被改一位 / B SKILL.md 被改一字（虚拟 root）、坏包多重错误全捕获、`--write-integrity` 幂等）与 `tests/integration/capability-catalog.spec.ts`（8 例：loader 注册金包与 fixture 资产同源、fail-fast 三类校验、重复注册拒绝 + list 确定性、local 覆盖 builtin（overridden 记录）、合并确定性（乱序输入逐字节一致）、15 项能力归属展开、完整性权威实现（篡改 payload / 算法降级 verify false）、红线「仅注册不执行」（API 面断言））
+- **准入治理（P4-T3 · observe/enforce）**：`architecture-kernel/10-能力注册中心/allowlist.ts`——`CapabilityAllowlist` 准入清单判定（id 白名单由部署侧注入，内核零 IO）：默认 **observe**（未准入调用放行并**必定**写入 `ComplianceAudit` 不可篡改审计链，`policyId=capability-allowlist`），`enforce` 需**显式**开关（非法模式即抛）；enforce 下拒绝并计数（`rejectedCount`）、observe 留痕计数（`observedCount`）；审计链可注入共享（缺省自建）、`verifyAudit()` 防篡改断链即 false、`filterAllowed()` 未准入不可见（供 `tools/list` 复用）
+- **准入治理套件（P4-T3）**：`tests/integration/capability-allowlist.spec.ts`（8 例：默认 observe 与非法模式、准入零噪声、审计字段与链完整性、enforce 拒绝计数、共享审计链注入、决策确定性、金包 id 同源 + 可见性过滤、审计篡改断链）
+- **MCP 工具目录（P4-T5）**：`scripts/gen-mcp-tools.mjs`（`pnpm mcp:tools` / `mcp:tools:check`）——manifest active 技能 → `assets/mcp-tools.json`（44 工具 + 1 条 planned 不可见），工具名 `.`→`__`、`-`→`_` 且 `^[a-zA-Z0-9_-]+$`，产物可入 Git、`--check` 零漂移；`mcp-adapter/server/protocol.ts` 扩展 `tools/call`（参数校验 → 可见性 → Policy 裁决 → 分派）：`visible` 过滤未准入工具（tools/list 与 tools/call 同源，隐藏工具一律 -32602 不泄露存在性）、`policy` 可接 `CapabilityAllowlist`、`dispatch` 同步分派；执行失败按 MCP 语义返回 `isError`，通知类不执行
+- **工具目录双套件（P4-T5）**：`tests/contracts/mcp-tools.contract.ts`（6 例：`--check` 零漂移、命名与映射锚点、planned 不可见、45 = 44 + 1 与 `skills/index.json` 同源、面板 tools 44 同源、幂等不写盘）与 `tests/integration/mcp-tool-catalog.spec.ts`（8 例：目录 → tools/list 三字段、未准入不可见 + -32602、分派成功 / 策略拒绝不进入分派、参数与 -32603 边界、分派异常 `isError`、与 P4-T3 observe/enforce 协同）
+- **能力包打包 CLI（P4-T6）**：`scripts/pack-plugin.mjs`（`pnpm pack:plugins` / `pack:check`）——零依赖**确定性 ZIP** 打包器（node:zlib deflate level 9 + 手写 crc32 / ZIP 容器；固定 DOS 时间戳、条目按路径字典序、UTF-8 文件名标志——同输入恒同字节，产物可入 Git）；能力包 `plugins/{id}/plugin.yaml` → `assets/packs/{id}-{version}.skill`（打包前重算 canonical digest 与 `integrity.digest` 比对，**篡改即拒绝打包**，P4-T4 联动；包内 `{id}/plugin.yaml` + skills SKILL.md + prompts 文件）；分发副本 `packaging/{slug}/` → `docs/{slug}.skill`——`docs/yyc3-ai-family-coding.skill`（Agent Skills 开放规范形态：SKILL.md + references/）自此由源目录 `packaging/yyc3-ai-family-coding/` 打包生成，**不手改**；`--check` 字节级零漂移（CI/回归用）、`--json` 明细、`--root` 虚拟环境（篡改检测）
+- **打包分发双套件（P4-T6）**：`tests/contracts/pack-plugins.contract.ts`（6 例：`--check --json` 双产物零漂移、条目清单（14 = plugin.yaml + 13 SKILL.md；分发副本 3 文件与源一致 + frontmatter 锚点）、完整性联动（正常虚拟 root 可打包 / 篡改 SKILL.md 即拒绝）、确定性（连续两次打包逐字节一致）、幂等（仓库根重复打包不改字节 + 再 check 零漂移）、入库产物单字节翻转 → `--check` 报字节漂移）与 `tests/integration/plugin-pack.spec.ts`（6 例：产物可解包 + 命名契约 + 与仓库源逐字节一致、分发形态 kernel `verifyPluginDigest` 通过（含声明类 15 entries 双实现交叉）、打包 → 分发 → 注册全链路（产物清单 PluginLoader 静态注册 15 能力）、分发副本同受管、篡改检出、产物 id 衔接准入治理（observe 留痕 / enforce 拒绝））
 
 ### Changed
 
@@ -42,6 +65,39 @@
 - 回归口径：**135 / 135 → 143 / 143**（20 套件 · 0 跳过 · 0 静默）；门禁入口 18 → 19
 - 未接线模块清单 v1.9.0 → v1.10.0：统计 252 / 95 / 157 → **254 / 97 / 157**（kernel 94/36/58 · tests 20/20/0）
 - `package.json` 版本 2.14.0 → **2.15.0**（P1-T4b 协同度生产接线）
+- 回归口径：**143 / 143 → 156 / 156**（22 套件 · 0 跳过 · 0 静默）；五支柱 治 41 → 47、愈 43 → 49；门禁入口 19 → 21
+- CI 契约软校验步骤扩展 `gen-skill-artifacts.mjs --check`（P3-T2 技能产物 · 不阻断）
+- `package.json` 版本 2.15.0 → **2.16.0**（P3 首批里程碑）
+- 未接线模块清单 v1.10.0 → v1.11.0：统计 254 / 97 / 157 → **258 / 101 / 157**（kernel +2 文件、tests +2 入口）
+- **新增演进指导文档**：`docs/YYC3-AI-Family-Agent-智能应用落地专家-20261023/05-技能与生态演进指导.md`——技能 / 技能库 / MCP / 插件四维现状审计、2026 生态调研（MCP 2026-07-28 · Agent Skills 开放规范 · A2A 1.0 · Agent Plugins 1.0）、三层能力供给目标架构、P3/P4 路线（12 项任务带验收）与 6 条 ADR
+- 回归口径：**156 / 156 → 164 / 164**（23 套件 · 0 跳过 · 0 静默）；五支柱 知 25 → 33、学 61 → 69；门禁入口 21 → 22
+- 未接线模块清单 v1.11.0 → v1.12.0：统计 258 / 101 / 157 → **260 / 103 / 157**（kernel +1 文件、tests +1 入口）
+- `package.json` 版本 2.16.0 → **2.17.0**（P3-T3 统一技能 id）
+- 回归口径：**164 / 164 → 173 / 173**（24 套件 · 0 跳过 · 0 静默）；五支柱 知 33 → 42、学 69 → 78；门禁入口 22 → 23
+- 未接线模块清单 v1.12.0 → v1.13.0：统计 260 / 103 / 157 → **261 / 104 / 157**（kernel +1 文件、tests +1 入口）
+- `package.json` 版本 2.17.0 → **2.18.0**（P3-T4 渐进披露检索）
+- 回归口径：**173 / 173 → 182 / 182**（25 套件 · 0 跳过 · 0 静默）；五支柱 知 42 → 51、学 78 → 87；门禁入口 23 → 24
+- 未接线模块清单 v1.13.0 → v1.14.0：统计修正为 **264 / 107 / 157**（并修正 v1.13.0 合计笔误：kernel 98 + family 140 + tests 24 应为 262 编译 / 105 已接线，误记 261 / 104）
+- `package.json` 版本 2.18.0 → **2.19.0**（P3-T5 行为评测 · P3 六任务全部落地）
+- 回归口径：**182 / 182 → 188 / 188**（26 套件 · 0 跳过 · 0 静默）；五支柱不变（契约套件不计支柱）；门禁入口 24 → 25
+- 未接线模块清单 v1.14.0 → v1.15.0：统计 264 / 107 / 157 → **265 / 108 / 157**（tests +1 入口）
+- `package.json` 版本 2.19.0 → **2.20.0**（P3-T6 面板能力供给卡片 · M11 收官 P3 全 ✅）
+- CI 契约软校验步骤扩展 `check-plugins.mjs`（P4-T1 能力包格式 · 不阻断）
+- 回归口径：**188 / 188 → 204 / 204**（28 套件 · 0 跳过 · 0 静默）；五支柱 治 47 → 55；门禁入口 25 → 27
+- 未接线模块清单 v1.15.0 → v1.16.0：统计 265 / 108 / 157 → **270 / 113 / 157**（kernel +3 文件（10-能力注册中心）、tests +2 入口）
+- `package.json` 版本 2.20.0 → **2.21.0**（P4-M12 注册中心里程碑：能力包可打包、可校验、可由 catalog 解析）
+- 回归口径：**204 / 204 → 212 / 212**（29 套件 · 0 跳过 · 0 静默）；五支柱 治 55 → 63；门禁入口 27 → 28
+- 未接线模块清单 v1.16.0 → v1.17.0：统计 270 / 113 / 157 → **272 / 115 / 157**（kernel +1 文件（10-能力注册中心/allowlist.ts）、tests +1 入口）
+- `package.json` 版本 2.21.0 → **2.22.0**（P4-T3 准入治理：默认 observe · enforce 显式开关）
+- 回归口径：**212 / 212 → 226 / 226**（31 套件 · 0 跳过 · 0 静默）；五支柱 治 63 → 71；门禁入口 28 → 30
+- 未接线模块清单 v1.17.0 → v1.18.0：统计 272 / 115 / 157 → **274 / 117 / 157**（tests +2 入口）
+- `package.json` 版本 2.22.0 → **2.23.0**（P4-T5 MCP 工具目录：manifest → tools/list · tools/call 经 Policy 分派）
+- CI 契约软校验步骤扩展 `gen-mcp-tools.mjs --check`（P4-T5 工具目录 · 不阻断）
+- 回归口径：**226 / 226 → 238 / 238**（33 套件 · 0 跳过 · 0 静默）；五支柱 治 71 → 77；门禁入口 30 → 32
+- 未接线模块清单 v1.18.0 → v1.19.0：统计 274 / 117 / 157 → **276 / 119 / 157**（tests +2 入口）
+- `package.json` 版本 2.23.0 → **2.24.0**（P4-T6 打包/检查 CLI · **M13 收官 P4 六任务全 ✅**）
+- CI 契约软校验步骤扩展 `pack-plugin.mjs --check`（P4-T6 打包 CLI · 不阻断）
+- **`docs/yyc3-ai-family-coding.skill` 容器归一**：内容不变（SKILL.md + references/ 三文件 32,243 B），ZIP 容器由系统 zip 换为 T6 确定性打包器（固定时间戳 / 排序 / 压缩级别），此后零漂移可校验
 
 ## [2.13.0] - 2026-10-23
 

@@ -68,6 +68,12 @@ export interface LearningLoopOptions {
    * 由装配层上报指标（promoted / rolledBack / 回归失败用例数）。只读观测，不影响学习决策。
    */
   readonly onCycle?: (report: CycleReport) => void;
+  /**
+   * 统一 id 解析钩子（P3-T3）：把固化模式映射到统一命名空间 logicalId
+   * （如 `learned.qianhang.intent-detection`，见 skill-consolidation/skill-id.ts）。
+   * 缺省不设置——技能仅携带 FNV 内部主键，读取侧按归并规则查询。
+   */
+  readonly logicalIdResolver?: (pattern: PatternTriplet) => string | undefined;
 }
 
 /** 自愈回滚事件（回归失败 → 技能回滚，供 07-自愈中心记账）。 */
@@ -124,6 +130,7 @@ export class LearningLoop {
   private readonly healingRollback?: HealingRollbackHook;
   private readonly onCycle?: (report: CycleReport) => void;
   private readonly store: SkillStorePort;
+  private readonly logicalIdResolver?: (pattern: PatternTriplet) => string | undefined;
   /** traceId → 标签信号（ingest 时登记，runCycle 时消费）。 */
   private readonly pendingSignals = new Map<string, LabelSignal>();
 
@@ -139,6 +146,7 @@ export class LearningLoop {
     this.healingRollback = options.healingRollback;
     this.onCycle = options.onCycle;
     this.store = store ?? new InMemorySkillStore();
+    this.logicalIdResolver = options.logicalIdResolver;
   }
 
   /** 暴露子组件（供观测与测试）。 */
@@ -195,6 +203,7 @@ export class LearningLoop {
 
       const skill: SkillDefinition = {
         id: skillId,
+        logicalId: this.logicalIdResolver?.(pattern),
         name: `${pattern.condition} 最佳实践`,
         version,
         description: pattern.outcome,

@@ -142,6 +142,9 @@ export function validateManifest(root, manifest) {
     if (byId.has(skill.id)) errors.push(`技能 id 重复：${skill.id}`);
     byId.set(skill.id, skill);
     if (!/^[a-z0-9]+\.[a-z0-9-]+$/.test(skill.id)) errors.push(`技能 id 命名不合规：${skill.id}`);
+    if (!/^\d+\.\d+\.\d+$/.test(skill.version ?? '')) {
+      errors.push(`技能 ${skill.id} 缺少语义化 version（P3-T1：技能可版本化方可漂移校验与回滚）`);
+    }
     if (!['shared', 'dedicated'].includes(skill.scope)) errors.push(`技能 scope 非法：${skill.id}=${skill.scope}`);
     for (const field of ['name', 'description']) {
       if (!skill[field]) errors.push(`技能 ${skill.id} 缺少 ${field}`);

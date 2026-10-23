@@ -1,0 +1,510 @@
+{
+  "generatedFrom": "presets/family-manifest.yaml",
+  "budgetTokens": 200,
+  "count": 45,
+  "entries": [
+    {
+      "id": "bole.achievement-insight",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "bole",
+      "description": "成就面板数据解读与激励建议",
+      "tags": [
+        "achievement",
+        "incentive"
+      ]
+    },
+    {
+      "id": "bole.persona-profile",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "bole",
+      "description": "角色、偏好与行为特征的结构化画像",
+      "tags": [
+        "persona",
+        "profile"
+      ]
+    },
+    {
+      "id": "bole.personalize",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "bole",
+      "description": "基于画像与行为的对象/内容推荐",
+      "tags": [
+        "recommendation",
+        "personalization"
+      ]
+    },
+    {
+      "id": "bole.talent-match",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "bole",
+      "description": "岗位画像与人选能力匹配度评分",
+      "tags": [
+        "talent",
+        "matching"
+      ]
+    },
+    {
+      "id": "grace.copywriting",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grace",
+      "description": "面向不同受众的文案撰写与润色",
+      "tags": [
+        "copywriting",
+        "content"
+      ]
+    },
+    {
+      "id": "grace.ideation",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grace",
+      "description": "多方向创意发散与可行性初筛",
+      "tags": [
+        "ideation",
+        "creativity"
+      ]
+    },
+    {
+      "id": "grace.marketing-content",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grace",
+      "description": "营销主题、渠道话术与节奏编排",
+      "tags": [
+        "marketing",
+        "campaign"
+      ]
+    },
+    {
+      "id": "grace.style-direction",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grace",
+      "description": "品牌调性、版式与视觉呈现建议",
+      "tags": [
+        "style",
+        "visual"
+      ]
+    },
+    {
+      "id": "grandmaster.knowledge-distill",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grandmaster",
+      "description": "把复盘结论蒸馏为可复用程序记忆条目",
+      "tags": [
+        "distill",
+        "procedural"
+      ]
+    },
+    {
+      "id": "grandmaster.quality-gate",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grandmaster",
+      "description": "按标准/规范/数据化三档校验产出质量",
+      "tags": [
+        "quality",
+        "standard"
+      ]
+    },
+    {
+      "id": "grandmaster.regression-guard",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grandmaster",
+      "description": "变更前后的基线对比与退化拦截",
+      "tags": [
+        "regression",
+        "baseline"
+      ]
+    },
+    {
+      "id": "grandmaster.retrospective",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "grandmaster",
+      "description": "事件复盘、责任归位与改进项跟踪",
+      "tags": [
+        "retrospective",
+        "improvement"
+      ]
+    },
+    {
+      "id": "guardian.content-filter",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "guardian",
+      "description": "输入输出内容的安全与合规拦截",
+      "tags": [
+        "content",
+        "filter",
+        "safety"
+      ]
+    },
+    {
+      "id": "guardian.incident-response",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "guardian",
+      "description": "威胁等级判定、隔离与上报闭环",
+      "tags": [
+        "incident",
+        "response"
+      ]
+    },
+    {
+      "id": "guardian.security-audit",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "guardian",
+      "description": "权限、访问与数据流的合规审计与取证",
+      "tags": [
+        "security",
+        "audit",
+        "compliance"
+      ]
+    },
+    {
+      "id": "guardian.zero-trust",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "guardian",
+      "description": "每次调用均校验身份、权限与来源可信度",
+      "tags": [
+        "zero-trust",
+        "auth"
+      ]
+    },
+    {
+      "id": "prophet.capacity-forecast",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "prophet",
+      "description": "设备矩阵与算力负载的趋势预判",
+      "tags": [
+        "capacity",
+        "compute"
+      ]
+    },
+    {
+      "id": "prophet.risk-alert",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "prophet",
+      "description": "异常模式识别与提前预警，附触发阈值",
+      "tags": [
+        "risk",
+        "alert"
+      ]
+    },
+    {
+      "id": "prophet.scenario-simulate",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "prophet",
+      "description": "多情景假设下的结果推演与敏感度分析",
+      "tags": [
+        "scenario",
+        "simulation"
+      ]
+    },
+    {
+      "id": "prophet.trend-forecast",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "prophet",
+      "description": "时间序列趋势外推与区间估计",
+      "tags": [
+        "forecast",
+        "time-series"
+      ]
+    },
+    {
+      "id": "qianhang.ambiguity-clarify",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "qianhang",
+      "description": "候选间隔过小时登记假设并生成澄清提问",
+      "tags": [
+        "clarify",
+        "assumption"
+      ]
+    },
+    {
+      "id": "qianhang.context-session",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "qianhang",
+      "description": "多轮会话状态维护与跨家人上下文传递",
+      "tags": [
+        "context",
+        "session"
+      ]
+    },
+    {
+      "id": "qianhang.intent-detection",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "qianhang",
+      "description": "六类意图闭集识别，输出意图/置信度/理由",
+      "tags": [
+        "intent",
+        "classification"
+      ]
+    },
+    {
+      "id": "qianhang.nlq-to-api",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "qianhang",
+      "description": "把管理者的自然语言转译为结构化查询参数",
+      "tags": [
+        "nlq",
+        "mapping"
+      ]
+    },
+    {
+      "id": "shared.a2a-delegate",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "发现对端 Agent Card 并委托任务、归一结果",
+      "tags": [
+        "a2a",
+        "delegation"
+      ]
+    },
+    {
+      "id": "shared.compliance-audit",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "追加可验真的链式审计记录并校验完整性",
+      "tags": [
+        "audit",
+        "hash-chain"
+      ]
+    },
+    {
+      "id": "shared.experience-reflow",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "轨迹采集、模式提炼与学习周期触发",
+      "tags": [
+        "trajectory",
+        "learning"
+      ]
+    },
+    {
+      "id": "shared.fault-heal",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "故障侦测去抖、熔断降级、一致性修复与版本回滚",
+      "tags": [
+        "fault",
+        "circuit",
+        "rollback"
+      ]
+    },
+    {
+      "id": "shared.intent-route",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "六类意图闭集分类、置信度评分与路由分发",
+      "tags": [
+        "intent",
+        "routing"
+      ]
+    },
+    {
+      "id": "shared.llm-invoke",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "统一 provider 调用接口，按 openai→zhipu→ollama 顺序降级",
+      "tags": [
+        "llm",
+        "provider",
+        "fallback"
+      ]
+    },
+    {
+      "id": "shared.mcp-tool",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "通过 MCP 适配器（codec + 本地 stdio）调用外部工具与数据源",
+      "tags": [
+        "mcp",
+        "tool"
+      ]
+    },
+    {
+      "id": "shared.memory-retrieve",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "按语义与上下文检索情景/语义/程序记忆",
+      "tags": [
+        "memory",
+        "retrieval"
+      ]
+    },
+    {
+      "id": "shared.memory-write",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "按写入策略落盘情景记忆与程序记忆条目",
+      "tags": [
+        "memory",
+        "write",
+        "procedural"
+      ]
+    },
+    {
+      "id": "shared.observe-emit",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "以 traceId 贯穿事件并写入 family_* 指标",
+      "tags": [
+        "metrics",
+        "tracing"
+      ]
+    },
+    {
+      "id": "shared.policy-check",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "按作用域匹配策略并给出 allow/deny 裁决",
+      "tags": [
+        "policy",
+        "abac"
+      ]
+    },
+    {
+      "id": "shared.self-judge",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+      "tags": [
+        "confidence",
+        "assumption",
+        "escalation"
+      ]
+    },
+    {
+      "id": "shared.skill-consolidate",
+      "version": "1.0.0",
+      "scope": "shared",
+      "owner": "shared",
+      "description": "回归零退化后固化技能版本，退化时回滚到前一版本",
+      "tags": [
+        "skill",
+        "versioning",
+        "rollback"
+      ]
+    },
+    {
+      "id": "thinker.business-analysis",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "thinker",
+      "description": "结构化数据统计、对比、归因与洞察生成",
+      "tags": [
+        "analysis",
+        "statistics"
+      ]
+    },
+    {
+      "id": "thinker.decision-support",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "thinker",
+      "description": "从数据到洞察到决策建议的链路，附可追溯依据",
+      "tags": [
+        "decision",
+        "insight"
+      ]
+    },
+    {
+      "id": "thinker.report-compose",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "thinker",
+      "description": "结构化经营报告与图表建议输出",
+      "tags": [
+        "report",
+        "visualization"
+      ]
+    },
+    {
+      "id": "thinker.root-cause",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "thinker",
+      "description": "基于指标/日志/链路定位偏离根因",
+      "tags": [
+        "root-cause",
+        "diagnosis"
+      ]
+    },
+    {
+      "id": "tianshu.conflict-arbitration",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "tianshu",
+      "description": "跨家人结论冲突时的裁决与算力/预算再分配",
+      "tags": [
+        "arbitration",
+        "scheduling"
+      ]
+    },
+    {
+      "id": "tianshu.global-oversight",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "tianshu",
+      "description": "全局状态中心巡视、告警收敛与升级上报",
+      "tags": [
+        "status",
+        "alerting"
+      ]
+    },
+    {
+      "id": "tianshu.strategy-orchestration",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "tianshu",
+      "description": "全局最优导向的策略编排，平衡风险与长期价值",
+      "tags": [
+        "strategy",
+        "orchestration"
+      ]
+    },
+    {
+      "id": "tianshu.task-decomposition",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "tianshu",
+      "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
+      "tags": [
+        "decomposition",
+        "cageref",
+        "dispatch"
+      ]
+    }
+  ]
+}

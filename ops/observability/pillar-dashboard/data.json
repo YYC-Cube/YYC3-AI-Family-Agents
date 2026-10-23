@@ -1,13 +1,19 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-23T05:57:17.016Z",
-  "generatedAtCN": "2026/10/23 13:57:17",
+  "generatedAt": "2026-10-23T19:46:53.864Z",
+  "generatedAtCN": "2026/10/24 03:46:53",
   "gate": {
     "passed": true,
-    "totalPassed": 143,
+    "totalPassed": 238,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 20
+    "specs": 33
+  },
+  "capabilities": {
+    "skills": 45,
+    "activeSkills": 44,
+    "tools": 44,
+    "plugins": 1
   },
   "pillars": [
     {
@@ -21,28 +27,28 @@
       "id": "知",
       "label": "知 · 记忆",
       "green": true,
-      "passed": 25,
+      "passed": 51,
       "failed": 0
     },
     {
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 61,
+      "passed": 87,
       "failed": 0
     },
     {
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 41,
+      "passed": 77,
       "failed": 0
     },
     {
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 43,
+      "passed": 49,
       "failed": 0
     }
   ],
@@ -320,6 +326,66 @@
       "ok": true
     },
     {
+      "file": "tests/integration/mcp-server.spec.js",
+      "name": "MCP 服务端协议语义",
+      "phase": "P3-MCP",
+      "pillars": [
+        "治",
+        "愈"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/skill-id-unification.spec.js",
+      "name": "统一技能 id 与加载器",
+      "phase": "P3-T3",
+      "pillars": [
+        "知",
+        "学"
+      ],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/skill-progressive-disclosure.spec.js",
+      "name": "渐进披露检索",
+      "phase": "P3-T4",
+      "pillars": [
+        "知",
+        "学"
+      ],
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "total": 9,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/skills/skill-behavior-eval.spec.js",
+      "name": "技能行为评测（observe）",
+      "phase": "P3-T5",
+      "pillars": [
+        "知",
+        "学"
+      ],
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "total": 9,
+      "silent": false,
+      "ok": true
+    },
+    {
       "file": "tests/e2e/qianhang-intent-e2e.spec.js",
       "name": "千行意图端到端",
       "phase": "e2e",
@@ -379,6 +445,122 @@
       "failed": 0,
       "skipped": 0,
       "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/skill-artifacts.contract.js",
+      "name": "技能产物契约",
+      "phase": "契约 P3-T2",
+      "pillars": [],
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "total": 7,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/capability-supply.contract.js",
+      "name": "能力供给契约",
+      "phase": "契约 P3-T6",
+      "pillars": [],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/plugin-format.contract.js",
+      "name": "能力包格式契约",
+      "phase": "契约 P4-T1",
+      "pillars": [],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/capability-catalog.spec.js",
+      "name": "静态注册中心与完整性",
+      "phase": "P4-T2/T4",
+      "pillars": [
+        "治"
+      ],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/capability-allowlist.spec.js",
+      "name": "准入治理（observe/enforce）",
+      "phase": "P4-T3",
+      "pillars": [
+        "治"
+      ],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/mcp-tools.contract.js",
+      "name": "MCP 工具目录契约",
+      "phase": "契约 P4-T5",
+      "pillars": [],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/mcp-tool-catalog.spec.js",
+      "name": "MCP 工具目录与分派",
+      "phase": "P4-T5",
+      "pillars": [
+        "治"
+      ],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/pack-plugins.contract.js",
+      "name": "能力包打包 CLI 契约",
+      "phase": "契约 P4-T6",
+      "pillars": [],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/plugin-pack.spec.js",
+      "name": "打包分发注册闭环",
+      "phase": "P4-T6",
+      "pillars": [
+        "治"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
       "silent": false,
       "ok": true
     }

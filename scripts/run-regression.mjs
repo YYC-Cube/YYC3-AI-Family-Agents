@@ -20,6 +20,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { countCapabilitySupply } from './lib/capability-supply.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -40,6 +41,10 @@ const SPECS = [
   { file: 'tests/integration/collaboration-wiring.spec.js', pillars: ['自', '学', '治'], phase: 'P1-T4b', name: '协同度生产接线' },
   { file: 'tests/integration/llm-provider.spec.js', pillars: ['学'], phase: 'P1', name: 'LLM Provider（zhipu）' },
   { file: 'tests/integration/mcp-adapter.spec.js', pillars: ['治', '愈'], phase: 'P1-T3', name: 'MCP 适配层（codec + stdio）' },
+  { file: 'tests/integration/mcp-server.spec.js', pillars: ['治', '愈'], phase: 'P3-MCP', name: 'MCP 服务端协议语义' },
+  { file: 'tests/integration/skill-id-unification.spec.js', pillars: ['知', '学'], phase: 'P3-T3', name: '统一技能 id 与加载器' },
+  { file: 'tests/integration/skill-progressive-disclosure.spec.js', pillars: ['知', '学'], phase: 'P3-T4', name: '渐进披露检索' },
+  { file: 'tests/skills/skill-behavior-eval.spec.js', pillars: ['知', '学'], phase: 'P3-T5', name: '技能行为评测（observe）' },
   { file: 'tests/e2e/qianhang-intent-e2e.spec.js', pillars: ['自', '学'], phase: 'e2e', name: '千行意图端到端' },
   // UAT（tests/uat/llm-live-uat.spec.ts）刻意不进本清单：密钥类真实调用只走 `pnpm uat:llm` 本地门控，
   // 保持回归门禁 hermetic 与「跳过 0」口径。
@@ -47,6 +52,15 @@ const SPECS = [
   { file: 'tests/contracts/manifest.contract.js', pillars: [], phase: '契约 P1-T1', name: '家族契约清单' },
   { file: 'tests/contracts/agent-card.contract.js', pillars: [], phase: '契约 P1-T2', name: 'Agent Card' },
   { file: 'tests/contracts/prompt.contract.js', pillars: [], phase: '契约 P1-T5', name: '提示词契约' },
+  { file: 'tests/contracts/skill-artifacts.contract.js', pillars: [], phase: '契约 P3-T2', name: '技能产物契约' },
+  { file: 'tests/contracts/capability-supply.contract.js', pillars: [], phase: '契约 P3-T6', name: '能力供给契约' },
+  { file: 'tests/contracts/plugin-format.contract.js', pillars: [], phase: '契约 P4-T1', name: '能力包格式契约' },
+  { file: 'tests/integration/capability-catalog.spec.js', pillars: ['治'], phase: 'P4-T2/T4', name: '静态注册中心与完整性' },
+  { file: 'tests/integration/capability-allowlist.spec.js', pillars: ['治'], phase: 'P4-T3', name: '准入治理（observe/enforce）' },
+  { file: 'tests/contracts/mcp-tools.contract.js', pillars: [], phase: '契约 P4-T5', name: 'MCP 工具目录契约' },
+  { file: 'tests/integration/mcp-tool-catalog.spec.js', pillars: ['治'], phase: 'P4-T5', name: 'MCP 工具目录与分派' },
+  { file: 'tests/contracts/pack-plugins.contract.js', pillars: [], phase: '契约 P4-T6', name: '能力包打包 CLI 契约' },
+  { file: 'tests/integration/plugin-pack.spec.js', pillars: ['治'], phase: 'P4-T6', name: '打包分发注册闭环' },
 ];
 
 const FIVE = ['自', '知', '学', '治', '愈'];
@@ -218,11 +232,15 @@ const stamp = new Intl.DateTimeFormat('zh-CN', {
   hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
 }).format(now);
 
+// 能力供给三元组（P3-T6）：技能 / MCP 工具 / 插件，来源 scripts/lib/capability-supply.mjs（单一事实源）
+const supply = countCapabilitySupply(ROOT);
+
 const data = {
   schema: 'yyc3.pillar-dashboard/v1',
   generatedAt: now.toISOString(),
   generatedAtCN: stamp,
   gate: { passed: gatePassed, totalPassed, totalFailed, totalSkipped, specs: results.length },
+  capabilities: { skills: supply.skills, activeSkills: supply.activeSkills, tools: supply.tools, plugins: supply.plugins },
   pillars: FIVE.map((p) => ({ id: p, label: FIVE_LABEL[p], green: pillarStats[p].failed === 0, ...pillarStats[p] })),
   dimensions: FIVE_DIM_MAP.dimensions.map((d) => ({ id: d.id, label: d.label, focus: d.focus, metrics: d.metrics.length })),
   collaboration: FIVE_DIM_MAP.collaboration.metrics.map((m) => ({ name: m.name, dimension: m.dimension })),
@@ -286,6 +304,20 @@ const specRows = data.specs
     </tr>`,
   )
   .join('\n');
+const cap = data.capabilities;
+const capabilityCards = [
+  { pill: '技能', num: cap.skills, sub: `active ${cap.activeSkills} · planned ${cap.skills - cap.activeSkills}` },
+  { pill: '工具', num: cap.tools, sub: 'MCP tools/list 可见（active 映射）' },
+  { pill: '插件', num: cap.plugins, sub: '能力包 plugins/{id}（P4 预留）' },
+]
+  .map(
+    (c) => `<div class="card dim">
+      <div class="pill">${esc(c.pill)}</div>
+      <div class="num">${c.num}</div>
+      <div class="sub">${esc(c.sub)}</div>
+    </div>`,
+  )
+  .join('\n');
 
 const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -328,6 +360,8 @@ const html = `<!DOCTYPE html>
   <div class="meta">生成时间（Asia/Shanghai）：${esc(data.generatedAtCN)} ｜ 五维驱动 · 五高五标五化</div>
   <div class="gate ${gatePassed ? 'pass' : 'fail'}">${gatePassed ? `门禁通过 · ${totalPassed} 例全绿` : `门禁失败 · ${totalFailed} 例失败`}</div>
   <div class="grid">${pillarCards}</div>
+  <h2 class="section">能力供给（P3-T6 · 技能 / 工具 / 插件）</h2>
+  <div class="grid">${capabilityCards}</div>
   <h2 class="section">五维覆盖（P1-T4 · 时间 / 空间 / 属性 / 事件 / 关联）</h2>
   <div class="grid">${dimensionCards}</div>
   <table>
@@ -345,6 +379,7 @@ fs.writeFileSync(path.join(DASHBOARD_DIR, 'index.html'), html.replace('</body>',
 console.log('\n===== 五支柱汇总 =====');
 for (const p of data.pillars) console.log(`${p.green ? '🟢' : '🔴'} ${p.label}：${p.passed} 例通过${p.failed ? `，${p.failed} 失败` : ''}`);
 console.log(`\n五维覆盖：${data.dimensions.map((d) => `${d.label} ${d.metrics} 项`).join(' · ')}`);
+console.log(`能力供给：技能 ${cap.skills}（active ${cap.activeSkills}）· 工具 ${cap.tools} · 插件 ${cap.plugins}`);
 console.log(`\n静默 spec（exit 0 无用例计数）：${results.filter((r) => r.silent && r.ok).map((r) => r.file).join(', ') || '无'}`);
 console.log(`显式跳过用例：${totalSkipped} 例（原因见各 spec 输出与面板）`);
 console.log(`面板已生成：${path.join(DASHBOARD_DIR, 'index.html')}（file:// 直开）`);

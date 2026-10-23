@@ -21,6 +21,7 @@ export type {
 export { BusMcpCodec } from './bus-mcp-codec.js';
 export type { BusMcpCodecOptions } from './bus-mcp-codec.js';
 export { StdioMcpTransport } from './stdio-transport.js';
+export * from './server/index.js';
 
 /** 绑定选项。 */
 export interface McpBindingOptions {

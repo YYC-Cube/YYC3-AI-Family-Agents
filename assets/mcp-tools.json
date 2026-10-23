@@ -1,0 +1,499 @@
+{
+  "generatedFrom": "presets/family-manifest.yaml",
+  "protocolVersion": "2026-07-28",
+  "count": 44,
+  "hiddenCount": 1,
+  "tools": [
+    {
+      "name": "bole__achievement_insight",
+      "logicalId": "bole.achievement-insight",
+      "title": "成就与激励洞察",
+      "description": "成就面板数据解读与激励建议",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "bole__persona_profile",
+      "logicalId": "bole.persona-profile",
+      "title": "用户画像",
+      "description": "角色、偏好与行为特征的结构化画像",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "bole__personalize",
+      "logicalId": "bole.personalize",
+      "title": "个性化推荐",
+      "description": "基于画像与行为的对象/内容推荐",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "bole__talent_match",
+      "logicalId": "bole.talent-match",
+      "title": "人才匹配",
+      "description": "岗位画像与人选能力匹配度评分",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grace__copywriting",
+      "logicalId": "grace.copywriting",
+      "title": "文案与内容创作",
+      "description": "面向不同受众的文案撰写与润色",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grace__ideation",
+      "logicalId": "grace.ideation",
+      "title": "创意生成",
+      "description": "多方向创意发散与可行性初筛",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grace__marketing_content",
+      "logicalId": "grace.marketing-content",
+      "title": "营销内容策划",
+      "description": "营销主题、渠道话术与节奏编排",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grace__style_direction",
+      "logicalId": "grace.style-direction",
+      "title": "风格与视觉建议",
+      "description": "品牌调性、版式与视觉呈现建议",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grandmaster__knowledge_distill",
+      "logicalId": "grandmaster.knowledge-distill",
+      "title": "知识提炼与技能固化",
+      "description": "把复盘结论蒸馏为可复用程序记忆条目",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grandmaster__quality_gate",
+      "logicalId": "grandmaster.quality-gate",
+      "title": "质量标准校验",
+      "description": "按标准/规范/数据化三档校验产出质量",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grandmaster__regression_guard",
+      "logicalId": "grandmaster.regression-guard",
+      "title": "回归与退化检测",
+      "description": "变更前后的基线对比与退化拦截",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "grandmaster__retrospective",
+      "logicalId": "grandmaster.retrospective",
+      "title": "复盘与改进建议",
+      "description": "事件复盘、责任归位与改进项跟踪",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "guardian__content_filter",
+      "logicalId": "guardian.content-filter",
+      "title": "内容合规过滤",
+      "description": "输入输出内容的安全与合规拦截",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "guardian__incident_response",
+      "logicalId": "guardian.incident-response",
+      "title": "安全事件响应",
+      "description": "威胁等级判定、隔离与上报闭环",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "guardian__security_audit",
+      "logicalId": "guardian.security-audit",
+      "title": "安全审计",
+      "description": "权限、访问与数据流的合规审计与取证",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "guardian__zero_trust",
+      "logicalId": "guardian.zero-trust",
+      "title": "零信任鉴权",
+      "description": "每次调用均校验身份、权限与来源可信度",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "prophet__capacity_forecast",
+      "logicalId": "prophet.capacity-forecast",
+      "title": "容量与算力预警",
+      "description": "设备矩阵与算力负载的趋势预判",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "prophet__risk_alert",
+      "logicalId": "prophet.risk-alert",
+      "title": "风险预警",
+      "description": "异常模式识别与提前预警，附触发阈值",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "prophet__scenario_simulate",
+      "logicalId": "prophet.scenario-simulate",
+      "title": "场景推演",
+      "description": "多情景假设下的结果推演与敏感度分析",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "prophet__trend_forecast",
+      "logicalId": "prophet.trend-forecast",
+      "title": "趋势预测",
+      "description": "时间序列趋势外推与区间估计",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "qianhang__ambiguity_clarify",
+      "logicalId": "qianhang.ambiguity-clarify",
+      "title": "歧义澄清",
+      "description": "候选间隔过小时登记假设并生成澄清提问",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "qianhang__context_session",
+      "logicalId": "qianhang.context-session",
+      "title": "上下文会话管理",
+      "description": "多轮会话状态维护与跨家人上下文传递",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "qianhang__intent_detection",
+      "logicalId": "qianhang.intent-detection",
+      "title": "意图检测",
+      "description": "六类意图闭集识别，输出意图/置信度/理由",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "qianhang__nlq_to_api",
+      "logicalId": "qianhang.nlq-to-api",
+      "title": "自然语言查询转 API",
+      "description": "把管理者的自然语言转译为结构化查询参数",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__compliance_audit",
+      "logicalId": "shared.compliance-audit",
+      "title": "合规审计",
+      "description": "追加可验真的链式审计记录并校验完整性",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__experience_reflow",
+      "logicalId": "shared.experience-reflow",
+      "title": "经验回流",
+      "description": "轨迹采集、模式提炼与学习周期触发",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__fault_heal",
+      "logicalId": "shared.fault-heal",
+      "title": "故障降级与自愈",
+      "description": "故障侦测去抖、熔断降级、一致性修复与版本回滚",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__intent_route",
+      "logicalId": "shared.intent-route",
+      "title": "意图识别与路由",
+      "description": "六类意图闭集分类、置信度评分与路由分发",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__llm_invoke",
+      "logicalId": "shared.llm-invoke",
+      "title": "模型调用与降级链",
+      "description": "统一 provider 调用接口，按 openai→zhipu→ollama 顺序降级",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__mcp_tool",
+      "logicalId": "shared.mcp-tool",
+      "title": "MCP 工具调用",
+      "description": "通过 MCP 适配器（codec + 本地 stdio）调用外部工具与数据源",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__memory_retrieve",
+      "logicalId": "shared.memory-retrieve",
+      "title": "记忆检索",
+      "description": "按语义与上下文检索情景/语义/程序记忆",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__memory_write",
+      "logicalId": "shared.memory-write",
+      "title": "记忆写入",
+      "description": "按写入策略落盘情景记忆与程序记忆条目",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__observe_emit",
+      "logicalId": "shared.observe-emit",
+      "title": "指标与追踪埋点",
+      "description": "以 traceId 贯穿事件并写入 family_* 指标",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__policy_check",
+      "logicalId": "shared.policy-check",
+      "title": "策略校验",
+      "description": "按作用域匹配策略并给出 allow/deny 裁决",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__self_judge",
+      "logicalId": "shared.self-judge",
+      "title": "结构化自判断",
+      "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "shared__skill_consolidate",
+      "logicalId": "shared.skill-consolidate",
+      "title": "技能固化与回滚",
+      "description": "回归零退化后固化技能版本，退化时回滚到前一版本",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "thinker__business_analysis",
+      "logicalId": "thinker.business-analysis",
+      "title": "经营数据分析",
+      "description": "结构化数据统计、对比、归因与洞察生成",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "thinker__decision_support",
+      "logicalId": "thinker.decision-support",
+      "title": "经营决策支持",
+      "description": "从数据到洞察到决策建议的链路，附可追溯依据",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "thinker__report_compose",
+      "logicalId": "thinker.report-compose",
+      "title": "报告生成",
+      "description": "结构化经营报告与图表建议输出",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "thinker__root_cause",
+      "logicalId": "thinker.root-cause",
+      "title": "指标归因与根因分析",
+      "description": "基于指标/日志/链路定位偏离根因",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "tianshu__conflict_arbitration",
+      "logicalId": "tianshu.conflict-arbitration",
+      "title": "冲突裁决与资源调度",
+      "description": "跨家人结论冲突时的裁决与算力/预算再分配",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "tianshu__global_oversight",
+      "logicalId": "tianshu.global-oversight",
+      "title": "全局状态巡视",
+      "description": "全局状态中心巡视、告警收敛与升级上报",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "tianshu__strategy_orchestration",
+      "logicalId": "tianshu.strategy-orchestration",
+      "title": "战略决策编排",
+      "description": "全局最优导向的策略编排，平衡风险与长期价值",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "tianshu__task_decomposition",
+      "logicalId": "tianshu.task-decomposition",
+      "title": "任务分解与分派",
+      "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    }
+  ],
+  "hidden": [
+    {
+      "logicalId": "shared.a2a-delegate",
+      "name": "shared__a2a_delegate",
+      "reason": "planned"
+    }
+  ]
+}

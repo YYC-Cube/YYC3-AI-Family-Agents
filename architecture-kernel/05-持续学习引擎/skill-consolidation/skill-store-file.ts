@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { SkillDefinition } from '../../05-持续学习引擎/types.js';
 import type { SkillStorePort } from '../../05-持续学习引擎/learning-loop.js';
+import { logicalIdOfStored } from './skill-id.js';
 
 /** 文件系统技能库。 */
 export class FileSkillStore implements SkillStorePort {
@@ -58,6 +59,20 @@ export class FileSkillStore implements SkillStorePort {
   /** 已落盘技能数（供观测）。 */
   size(): number {
     return fs.readdirSync(this.dir).filter((n) => n.endsWith('.json')).length;
+  }
+
+  /**
+   * 按统一 logicalId 查询 active 技能（P3-T3）：显式 logicalId 优先，
+   * 无声明的历史 FNV 主键按 `learned.{内部 id}` 归并（演进指导 ADR-D2）。
+   */
+  findByLogicalId(logicalId: string): SkillDefinition | undefined {
+    for (const name of fs.readdirSync(this.dir)) {
+      if (!name.endsWith('.json')) continue;
+      for (const skill of this.historyOf(name.replace(/\.json$/, ''))) {
+        if (skill.status === 'active' && logicalIdOfStored(skill) === logicalId) return skill;
+      }
+    }
+    return undefined;
   }
 
   private fileOf(skillId: string): string {

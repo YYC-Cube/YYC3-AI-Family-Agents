@@ -78,6 +78,12 @@ export interface PatternTriplet {
 /** 技能定义（可版本化，固化自高频成功模式）。 */
 export interface SkillDefinition {
   readonly id: string;
+  /**
+   * 统一命名空间 id（P3-T3）：指向 manifest 契约 id 或 `learned.*` 沉淀命名空间；
+   * 缺省时由 skill-consolidation/skill-id.ts 的 `logicalIdOfStored` 派生
+   * （FNV 内部主键 `skill-xxxxxxxx` 归并为 `learned.skill-xxxxxxxx`）。
+   */
+  readonly logicalId?: string;
   readonly name: string;
   /** 语义化版本，如 "1.2.0"。 */
   readonly version: string;

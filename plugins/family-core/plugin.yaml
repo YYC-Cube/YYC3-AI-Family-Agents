@@ -1,0 +1,34 @@
+# 能力包（P4-T1 静态可校验清单 · 金包样例）
+# 边界：插件 = 静态清单 + 已编译模块的注册，不做动态 import() / 远程安装 / vm 沙箱。
+# digest 勿手改——内容变更后执行 `pnpm plugins:integrity` 重算回写（P4-T4 完整性）。
+id: family-core
+version: "1.0.0"
+scope: builtin
+description: YYC³ 家族核心能力包：13 条共用技能 + MCP 服务端 + 治理策略基线
+contents:
+  - type: skills
+    refs:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.intent-route
+      - shared.experience-reflow
+      - shared.skill-consolidate
+      - shared.policy-check
+      - shared.compliance-audit
+      - shared.fault-heal
+      - shared.llm-invoke
+      - shared.observe-emit
+      - shared.mcp-tool
+      - shared.a2a-delegate
+  - type: mcp-servers
+    refs:
+      - mcp-adapter/server
+  - type: policies
+    refs:
+      - governance/policy-registry
+integrity:
+  algorithm: sha256
+  digest: "7b0d3fc377f95ce4bb34e5e59df506fe77767a23d490d5b68637f11b018d9fe4"
+targets:
+  agents: ["*"]
