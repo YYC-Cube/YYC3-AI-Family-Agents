@@ -1,10 +1,10 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-22T23:52:40.026Z",
-  "generatedAtCN": "2026/10/23 07:52:40",
+  "generatedAt": "2026-10-23T00:00:48.616Z",
+  "generatedAtCN": "2026/10/23 08:00:48",
   "gate": {
     "passed": true,
-    "totalPassed": 88,
+    "totalPassed": 90,
     "totalFailed": 0,
     "totalSkipped": 5,
     "specs": 14
@@ -28,7 +28,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 47,
+      "passed": 49,
       "failed": 0
     },
     {
@@ -215,10 +215,10 @@
       "pillars": [
         "学"
       ],
-      "passed": 6,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "total": 6,
+      "total": 8,
       "silent": false,
       "ok": true
     },

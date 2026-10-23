@@ -19,7 +19,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 ### 项目徽章
 
 [![CI](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml/badge.svg)](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml)
-![Regression](https://img.shields.io/badge/Regression-88%2F88%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
+![Regression](https://img.shields.io/badge/Regression-90%2F90%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Zero Deps](https://img.shields.io/badge/Runtime%20Deps-0-8a2be2?style=for-the-badge)
@@ -165,7 +165,7 @@ await runtime.stop(); // 幂等
 
 环境变量：`YYC3_SKILL_STORE_DIR` · `YYC3_METRICS_PORT` · `YYC3_METRICS_HOST` · `YYC3_METRICS_TOKEN` · `YYC3_CONSISTENCY_INTERVAL_MS` · `YYC3_EXEMPLARS_ENABLED`
 
-LLM（P1）：`ZHIPU_API_KEY` 仅从环境变量读取（禁止入库/日志）；智谱 provider 支持超时、指数退避重试与 SSE 流式，成员目录下为薄转发，实现在 `shared-core/llm-adapter`。
+LLM（P1）：`ZHIPU_API_KEY` / `OPENAI_API_KEY` 仅从环境变量读取（禁止入库/日志）；两家 provider 共用 `shared-core/llm-adapter` 的 OpenAI 兼容客户端（超时、指数退避、SSE 流式），成员目录下为薄转发。
 
 ---
 
@@ -216,10 +216,10 @@ YYC3-AI-Family-Agent/
 
 | 项 | 结果 |
 | --- | --- |
-| 全量用例 | **88 / 88 通过** |
+| 全量用例 | **90 / 90 通过** |
 | 显式跳过 | **5 例**（DLQ 1 + 千行意图链路 4，均带原因） |
 | 静默套件 | **0** |
-| 五支柱 | 自 16 · 知 25 · 学 47 · 治 18 · 愈 27 |
+| 五支柱 | 自 16 · 知 25 · 学 49 · 治 18 · 愈 27 |
 | 类型检查 | `tsc --noEmit` exit 0 |
 
 ---
@@ -247,7 +247,7 @@ YYC3-AI-Family-Agent/
 
 | 文档 | 内容 |
 | ---- | ---- |
-| [架构设计](docs/YYC3-AI-Family-Agent-架构设计.md) | 五支柱定义、九层底座、§8.3 版本变更（至 v2.9.0） |
+| [架构设计](docs/YYC3-AI-Family-Agent-架构设计.md) | 五支柱定义、九层底座、§8.3 版本变更（至 v2.10.0） |
 | [P0 可观测数据面验收报告](docs/YYC3-AI-Family-Agent-P0可观测数据面验收报告.md) | 7 项 AC 实证、五维评估、遗留项闭环（v1.2.0） |
 | [装配层接线指导](docs/YYC3-AI-Family-Agent-装配层接线指导.md) | infra-1～4 分步接线、双采陷阱、适配器代码 |
 | [L7 / L8 落地计划](docs/YYC3-AI-Family-Agent-L7-L8落地计划.md) | Exemplars 方案 A · Git 基线 · 步骤/测试/验收/回滚 |
@@ -295,7 +295,7 @@ gh repo edit YYC-Cube/YYC3-AI-Family-Agents \
 | P0 可观测 | ✅ 完成 | 指标 → /metrics → 告警 → 面板（v2.7.0–v2.7.2） |
 | **L7 Exemplars** | ✅ 完成 | OpenMetrics 下钻（v2.8.0，默认关闭） |
 | **L8 Git 基线** | ✅ 完成 | 远端 main + 标签 + CI 门禁 + 分支保护 + Release v2.8.0 |
-| **P1 真实 LLM** | ◐ 部分完成 | 智谱 provider 已接入（超时/退避/SSE，6 例测试）；openai 待接入；意图链路待接线 |
+| **P1 真实 LLM** | ✅ Provider 完成 | 智谱 + OpenAI 共用兼容客户端（超时/退避/SSE，8 例测试）；余：千行意图链路接线 |
 
 ---
 

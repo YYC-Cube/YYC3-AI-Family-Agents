@@ -72,11 +72,11 @@ category: report
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
 | `02-智能协同架构内核` | 93 | **34** | **59** | 核心链路已接线；九层底座与治理/调度扩展为骨架 |
-| `03-家人Agent实现集` | 138 | **35** | **103** | `shared-core` 全接线（含新增 llm-adapter）；8 位家人仅 2 个 `self-judge` 被引用 |
+| `03-家人Agent实现集` | 140 | **37** | **103** | `shared-core` 全接线（含 llm-adapter 双 provider）；8 位家人仅 2 个 `self-judge` 被引用 |
 | `tests` | 14 | 14 | 0 | 门禁入口（含 P1 llm-provider） |
-| **合计** | **245** | **83** | **162** | 另：8 个家人自测 spec 未纳入编译与门禁 |
+| **合计** | **247** | **85** | **162** | 另：8 个家人自测 spec 未纳入编译与门禁 |
 
-> 已接线 83 = 02 的 34 + 03 的 35 + tests 的 14。
+> 已接线 85 = 02 的 34 + 03 的 37 + tests 的 14。
 
 ---
 
@@ -163,13 +163,13 @@ category: report
 
 ## 四、03-家人Agent实现集 · 未接线明细（103）
 
-### 4.1 `shared-core` — 33/34 全接线 ✅（仅 llm-adapter barrel 未用）
+### 4.1 `shared-core` — 35/36 全接线 ✅（仅 llm-adapter barrel 未用）
 
 | 子模块 | 文件数 | 引用方 |
 | ------ | ------ | ------ |
 | `self-judge-kit` | 6 | 9 处（家人 self-judge / 测试 / 契约） |
 | `memory-framework` | 25 | 5 处（测试、程序化记忆提取、编排器） |
-| `llm-adapter` | 3 | 2 可达（`zhipu-provider` + `types`，由 llm-provider 测试覆盖）；barrel 未用 |
+| `llm-adapter` | 5 | 4 可达（`types` / `openai-compatible-client` / `zhipu-provider` / `openai-provider`，由 llm-provider 测试覆盖）；barrel 未用 |
 
 > `memory-framework` 覆盖 sensory / working / episodic / semantic / procedural / write-policy / orchestrator 七层。
 
@@ -200,7 +200,7 @@ category: report
 | | `query-to-api.mapper.ts` | 查询 → API 映射 | ⬜ |
 | `prompts/` | `intent-detection.prompt.ts` | 意图识别提示词 | ⬜ |
 | | `query-parsing.prompt.ts` | 查询解析提示词 | ⬜ |
-| `providers/` | `openai.provider.ts` | OpenAI 适配（当前 TODO 桩） | ⬜ |
+| `providers/` | `openai.provider.ts` | OpenAI 适配 | ✅ 实现（shared-core；成员为薄转发，测试覆盖） |
 | | `zhipu.provider.ts` | 智谱适配 | ✅ 实现（shared-core；成员为薄转发，测试覆盖） |
 | `self-judge/` | `index.ts` | 家人专属自判断 | ✅（天枢/宗师/千行以外为 ⬜） |
 
@@ -294,6 +294,7 @@ category: report
 | ---- | ---- | ---- |
 | v1.0.0 | 2026-10-23 | 初版：静态可达性分析（241 编译文件 / 80 已接线 / 161 仅编译）；02 与 03 明细；配置未加载 40 个；标准与规范五维矩阵；维护规则 |
 | v1.1.0 | 2026-10-23 | P1 智谱 provider 接入后复核：新增 `shared-core/llm-adapter`（3 文件，2 可达）；统计更新为 245 / 83 / 162；8 位家人 `zhipu.provider.ts` 标记为「共享实现 + 薄转发」 |
+| v1.2.0 | 2026-10-23 | P1 OpenAI provider 接入后复核：新增兼容基类与 OpenAI provider（llm-adapter 共 5 文件，4 可达）；统计更新为 247 / 85 / 162；`openai.provider.ts` 标记为薄转发 |
 
 ---
 
