@@ -1,12 +1,12 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-23T00:00:48.616Z",
-  "generatedAtCN": "2026/10/23 08:00:48",
+  "generatedAt": "2026-10-23T00:16:49.395Z",
+  "generatedAtCN": "2026/10/23 08:16:49",
   "gate": {
     "passed": true,
-    "totalPassed": 90,
+    "totalPassed": 94,
     "totalFailed": 0,
-    "totalSkipped": 5,
+    "totalSkipped": 1,
     "specs": 14
   },
   "pillars": [
@@ -14,7 +14,7 @@
       "id": "自",
       "label": "自 · 自判断",
       "green": true,
-      "passed": 16,
+      "passed": 20,
       "failed": 0
     },
     {
@@ -28,7 +28,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 49,
+      "passed": 53,
       "failed": 0
     },
     {
@@ -226,10 +226,13 @@
       "file": "tests/e2e/qianhang-intent-e2e.spec.js",
       "name": "千行意图端到端",
       "phase": "e2e",
-      "pillars": [],
-      "passed": 0,
+      "pillars": [
+        "自",
+        "学"
+      ],
+      "passed": 4,
       "failed": 0,
-      "skipped": 4,
+      "skipped": 0,
       "total": 4,
       "silent": false,
       "ok": true

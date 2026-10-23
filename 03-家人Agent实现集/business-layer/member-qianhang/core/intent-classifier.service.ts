@@ -56,20 +56,25 @@ export class IntentClassifierService {
     return { primary, candidates, judgment };
   }
 
-  /** 生成候选（桩实现：关键词启发式）。 */
+  /** 生成候选（确定性关键词规则；与 procedural/intent-rules.yaml 对齐）。 */
   private proposeCandidates(text: string): readonly IntentCandidate[] {
     const t = text.toLowerCase();
     const rules: readonly (readonly [string, readonly string[]])[] = [
-      ['analysis', ['分析', '统计', '对比', '报告', 'analyze', 'analysis']],
-      ['prediction', ['预测', '趋势', '未来', 'forecast', 'predict']],
-      ['recommendation', ['推荐', '建议', '适合', 'recommend']],
-      ['creation', ['创作', '写', '生成', '设计', 'create', 'generate']],
-      ['orchestration', ['编排', '调度', '计划', 'orchestrate']],
+      ['analysis', ['分析', '统计', '对比', '报告', '查一下', '开销', '数据', 'analyze', 'analysis']],
+      ['prediction', ['预测', '趋势', '未来', '预估', 'forecast', 'predict']],
+      ['recommendation', ['推荐', '建议', '适合', '哪个好', 'recommend']],
+      ['creation', ['创作', '写', '生成', '设计', '草稿', 'create', 'generate']],
+      ['orchestration', ['整理', '待办', '清单', '安排', '编排', '调度', '计划', '提醒', 'orchestrate']],
       ['chat', ['你好', '谢谢', 'hello', 'hi']],
     ];
     const raw: IntentCandidate[] = rules.map(([label, kws]) => {
       const hits = kws.filter((k) => t.includes(k)).length;
-      return { label, score: clamp01(hits / kws.length), rationale: `命中 ${hits}/${kws.length} 关键词` };
+      // 命中即高置信（0.6 起），多命中递增；避免长关键词表稀释置信度
+      return {
+        label,
+        score: clamp01(0.6 + 0.2 * hits),
+        rationale: `命中 ${hits}/${kws.length} 关键词`,
+      };
     });
     return raw.filter((c) => c.score > 0);
   }

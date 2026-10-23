@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.0.0
+  Version : v1.3.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.0.0
+version: v1.3.0
 created: 2026-10-23
 updated: 2026-10-23
 status: active
@@ -71,16 +71,16 @@ category: report
 
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
-| `02-智能协同架构内核` | 93 | **34** | **59** | 核心链路已接线；九层底座与治理/调度扩展为骨架 |
-| `03-家人Agent实现集` | 140 | **37** | **103** | `shared-core` 全接线（含 llm-adapter 双 provider）；8 位家人仅 2 个 `self-judge` 被引用 |
-| `tests` | 14 | 14 | 0 | 门禁入口（含 P1 llm-provider） |
-| **合计** | **247** | **85** | **162** | 另：8 个家人自测 spec 未纳入编译与门禁 |
+| `02-智能协同架构内核` | 93 | **35** | **58** | 核心链路已接线（含 CAGEERF 分解）；九层底座与治理/调度扩展为骨架 |
+| `03-家人Agent实现集` | 140 | **41** | **99** | `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线 |
+| `tests` | 14 | 14 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e） |
+| **合计** | **247** | **90** | **157** | 另：8 个家人自测 spec 未纳入编译与门禁 |
 
-> 已接线 85 = 02 的 34 + 03 的 37 + tests 的 14。
+> 已接线 90 = 02 的 35 + 03 的 41 + tests 的 14。
 
 ---
 
-## 三、02-智能协同架构内核 · 未接线明细（59）
+## 三、02-智能协同架构内核 · 未接线明细（58）
 
 ### 3.1 `01-九层架构分层底座` — 0/20 接线
 
@@ -101,12 +101,11 @@ category: report
 
 > 每层均为 `*-capability.ts` + `index.ts` 两件套，共 9×2 + 2 = 20 个文件。
 
-### 3.2 `02-云枢核心引擎` — 9/21 接线
+### 3.2 `02-云枢核心引擎` — 10/21 接线
 
 | 文件 | 职责 | 状态 | 说明 / 计划 |
 | ---- | ---- | ---- | ----------- |
 | `cloud-pivot-orchestrator/orchestrator.ts` | 云枢编排器（接收意图 → 调度家人） | ⬜ | 依赖 P1 llm-adapter 与家人 intent 链路 |
-| `cloud-pivot-orchestrator/task-decomposer.ts` | CAGEERF 七阶段任务分解骨架 | ⬜ | 同上 |
 | `cloud-pivot-orchestrator/index.ts` | 编排器 barrel | ◐ | — |
 | `cloud-pivot-orchestrator/verification-gateway/index.ts` | 外验网关 barrel | ◐ | 实现已被直接引用，仅 barrel 未用 |
 | `dashu-self-healing/self-healing-controller.ts` | 大枢自愈控制器（K8s 扩缩容/重启） | ⬜ | 待接 K8s API；与 07 自愈中心分工需澄清 |
@@ -161,7 +160,7 @@ category: report
 
 ---
 
-## 四、03-家人Agent实现集 · 未接线明细（103）
+## 四、03-家人Agent实现集 · 未接线明细（99）
 
 ### 4.1 `shared-core` — 35/36 全接线 ✅（仅 llm-adapter barrel 未用）
 
@@ -173,7 +172,7 @@ category: report
 
 > `memory-framework` 覆盖 sensory / working / episodic / semantic / procedural / write-policy / orchestrator 七层。
 
-### 4.2 8 位家人 — 仅 2/104 接线
+### 4.2 8 位家人 — 6/104 接线
 
 | 家人 | 层级 | 文件数 | 未接线 | 已接线 |
 | ---- | ---- | ------ | ------ | ------ |
@@ -181,8 +180,8 @@ category: report
 | 格物·宗师 `member-grandmaster` | core-layer | 13 | 12 | **1**（`self-judge/index.ts`，2 处引用） |
 | 智云·守护 `member-guardian` | core-layer | 13 | 13 | 0 |
 | 创想·灵韵 `member-grace` | core-layer | 13 | 13 | 0 |
-| 言启·千行 `member-qianhang` | business-layer | 13 | 12 | **1**（`self-judge/index.ts`，1 处引用） |
-| 千里·伯乐 `member-bole` | business-layer | 13 | 13 | 0 |
+| 言启·千行 `member-qianhang` | business-layer | 13 | 9 | **4**（`self-judge` + `intent-classifier` / `intent-gateway` / `context-manager`） |
+| 千里·伯乐 `member-bole` | business-layer | 13 | 12 | **1**（`emotion/achievement-panel.ts`） |
 | 语枢·万物 `member-thinker` | business-layer | 13 | 13 | 0 |
 | 预见·先知 `member-prophet` | business-layer | 13 | 13 | 0 |
 
@@ -284,7 +283,7 @@ category: report
 
 - P0 验收（v1.2.0）针对「可观测数据面」，其 78 例门禁与 7 条告警均基于**已接线**模块
 - 未接线模块**不计入**已交付能力；路线图状态以本文与 `§8.3` 为准
-- `qianhang-intent-e2e` 的 4 个跳过用例，对应 `03/business-layer/member-qianhang/core/intent-gateway` 未接线；**智谱 provider 已就绪（v2.9.0）**，仍差意图分类与网关接线
+- `qianhang-intent-e2e` 已由跳过转为 **4 例真实断言（v2.11.0）**；provider 与意图链路均已接线
 
 ---
 
@@ -295,6 +294,7 @@ category: report
 | v1.0.0 | 2026-10-23 | 初版：静态可达性分析（241 编译文件 / 80 已接线 / 161 仅编译）；02 与 03 明细；配置未加载 40 个；标准与规范五维矩阵；维护规则 |
 | v1.1.0 | 2026-10-23 | P1 智谱 provider 接入后复核：新增 `shared-core/llm-adapter`（3 文件，2 可达）；统计更新为 245 / 83 / 162；8 位家人 `zhipu.provider.ts` 标记为「共享实现 + 薄转发」 |
 | v1.2.0 | 2026-10-23 | P1 OpenAI provider 接入后复核：新增兼容基类与 OpenAI provider（llm-adapter 共 5 文件，4 可达）；统计更新为 247 / 85 / 162；`openai.provider.ts` 标记为薄转发 |
+| v1.3.0 | 2026-10-23 | P1 意图链路接线后复核：`task-decomposer` 由骨架转实（CAGEERF 七阶段 + owner/dependsOn）；千行 4 文件与伯乐成就面板纳入 e2e 可达集；统计更新为 247 / 90 / 157；e2e 显式跳过降至 1 例（仅 DLQ） |
 
 ---
 

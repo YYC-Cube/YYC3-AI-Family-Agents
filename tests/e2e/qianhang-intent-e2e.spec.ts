@@ -1,11 +1,15 @@
 // @ts-nocheck
 /**
- * 千行意图端到端测试（qianhang-intent-e2e）—— 显式跳过版（v2.7.2，验收 L4）。
+ * 千行意图端到端（qianhang-intent-e2e）—— P1 真实链路（v2.11.0）。
  *
- * ⚠️ 现状：IntentGatewayService.handle 仍为骨架（throw「未实现」），
- *    IntentClassifierService.proposeCandidates 返回空候选（llm-adapter 与规则库未接入）。
- *    因此 4 个链路步骤**全部显式标记为跳过**并给出原因，不再静默「0 例通过」。
- * 解锁条件（P1）：llm-adapter 真实 provider + procedural/intent-rules.yaml 规则融合。
+ * 链路：用户话术 → 千行意图分类（self-judge）→ 路由家人 → 天枢 CAGEERF 分解 → 伯乐成就呈现。
+ * 覆盖 4 步：
+ *   E1 上下文写入（对话轮次可回溯）
+ *   E2 意图识别（intent / confidence / judgment / routeTo）
+ *   E3 任务分解（7 阶段、owner 绑定、依赖链、traceId 贯穿）
+ *   E4 交付呈现（成就面板判定）
+ *
+ * 运行：tsc 编译 + node（零依赖 harness）。
  */
 
 const __localShim = typeof describe === 'undefined';
@@ -18,40 +22,98 @@ if (__localShim) {
   globalThis.it = (name, fn) => {
     globalThis.__queue.push({ name: `${globalThis.__suiteName ?? ''} > ${name}`, fn });
   };
-  globalThis.it.skip = (name, reason) => {
-    globalThis.__queue.push({ name: `${globalThis.__suiteName ?? ''} > ${name}`, skip: true, reason });
-  };
+  globalThis.expect = (actual) => ({
+    toBe: (exp) => {
+      if (actual !== exp) throw new Error(`期望 ${JSON.stringify(exp)}，实际 ${JSON.stringify(actual)}`);
+    },
+    toBeTruthy: () => {
+      if (!actual) throw new Error(`期望真值，实际 ${JSON.stringify(actual)}`);
+    },
+    toContain: (exp) => {
+      if (!String(actual).includes(exp)) throw new Error(`期望包含 ${JSON.stringify(exp)}，实际 ${String(actual).slice(0, 200)}`);
+    },
+    toHaveLength: (n) => {
+      if (actual.length !== n) throw new Error(`期望长度 ${n}，实际 ${actual.length}`);
+    },
+  });
 }
 
-const REASON = '意图链路未实现：IntentGatewayService.handle 为骨架、proposeCandidates 返回空候选（待 P1 llm-adapter）';
+import { IntentGatewayService } from '@members/business-layer/member-qianhang/core/intent-gateway.service.js';
+import { IntentClassifierService } from '@members/business-layer/member-qianhang/core/intent-classifier.service.js';
+import { ContextManagerService } from '@members/business-layer/member-qianhang/core/context-manager.service.js';
+import { CAGEERF_STAGES, TaskDecomposer } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/task-decomposer.js';
+import { HEART_TO_HEART, createAchievementPanel } from '@members/business-layer/member-bole/emotion/achievement-panel.js';
+
+const TEXT = '帮我分析这个月的家庭开销数据';
+const TRACE = 'trace-qianhang-e2e';
 
 describe('千行意图端到端链路（话术 → 意图 → 编排 → 呈现）', () => {
-  it.skip('步骤1：用户话术输入（中文自然语言）', REASON);
-  it.skip('步骤2：千行意图识别返回结构化 intent', REASON);
-  it.skip('步骤3：天枢编排生成任务分解与家人分工', REASON);
-  it.skip('步骤4：伯乐呈现最终结果（情感面板/成就反馈）', REASON);
+  it('E1: 用户话术输入（上下文写入可回溯）', async () => {
+    const context = new ContextManagerService();
+    const gateway = new IntentGatewayService(new IntentClassifierService(), context);
+    await gateway.handle({ text: TEXT, sessionId: 'sess-e2e', traceId: TRACE });
+
+    const turns = context.turns('sess-e2e');
+    expect(turns).toHaveLength(1);
+    expect(turns[0].role).toBe('user');
+    expect(turns[0].text).toBe(TEXT);
+  });
+
+  it('E2: 意图识别（intent / confidence / judgment / routeTo）', async () => {
+    const gateway = new IntentGatewayService();
+    const result = await gateway.handle({ text: TEXT, sessionId: 'sess-e2e', traceId: TRACE });
+
+    expect(result.intent).toBe('analysis');
+    expect(result.routeTo).toBe('010301-02'); // 语枢·万物
+    expect(result.confidence >= 0.6).toBe(true);
+    expect(result.judgment.escalation).toBe('none');
+    expect(result.latencyMs >= 0).toBe(true);
+    expect(result.judgment.agent).toBe('010301-01');
+  });
+
+  it('E3: 天枢 CAGEERF 分解（7 阶段 / owner / 依赖链 / traceId）', () => {
+    const plan = new TaskDecomposer().decompose({
+      id: 'intent-e2e-1',
+      traceId: TRACE,
+      utterance: TEXT,
+      confidence: 0.9,
+    });
+
+    expect(plan.traceId).toBe(TRACE);
+    expect(plan.steps).toHaveLength(7);
+    expect(plan.steps.map((s) => s.stage).join(',')).toBe(CAGEERF_STAGES.join(','));
+    expect(plan.steps.every((s) => s.owner !== '待编排' && /^010301-\d{2}$/.test(s.owner))).toBe(true);
+    expect(plan.steps[0].dependsOn === undefined).toBe(true);
+    expect(plan.steps[1].dependsOn[0]).toBe(plan.steps[0].id);
+    expect(plan.steps[6].dependsOn[0]).toBe(plan.steps[5].id);
+    expect(plan.steps[0].goal).toContain(TEXT);
+    expect(plan.steps[6].owner).toBe('010301-04'); // 伯乐交付
+  });
+
+  it('E4: 伯乐呈现（成就面板：100 解锁 / 99 未解锁）', () => {
+    const unlocked = createAchievementPanel([HEART_TO_HEART], { interactions: 100 });
+    expect(unlocked[0].unlocked).toBe(true);
+    expect(unlocked[0].id).toBe('member-bole.heart-to-heart');
+
+    const locked = createAchievementPanel([HEART_TO_HEART], { interactions: 99 });
+    expect(locked[0].unlocked).toBe(false);
+  });
 });
 
 (async () => {
   const queue = globalThis.__queue ?? [];
   let passed = 0;
-  let failed = 0;
-  let skipped = 0;
+  const failures = [];
   for (const t of queue) {
-    if (t.skip) {
-      skipped += 1;
-      console.log(`SKIP ${t.name}\n      原因：${t.reason}`);
-      continue;
-    }
     try {
       await t.fn();
       passed += 1;
       console.log(`PASS ${t.name}`);
     } catch (e) {
-      failed += 1;
+      failures.push(t.name);
       console.log(`FAIL ${t.name}\n      ${e instanceof Error ? e.message : String(e)}`);
     }
   }
-  console.log(`\n结果：${passed} 通过 / ${failed} 失败 / ${skipped} 跳过 / 共 ${queue.length} 例`);
-  if (failed > 0) process.exit(1);
+  console.log(`\n结果：${passed} 通过 / ${failures.length} 失败 / ${queue.length - passed - failures.length} 跳过 / 共 ${queue.length} 例`);
+  if (failures.length > 0) process.exit(1);
 })();
