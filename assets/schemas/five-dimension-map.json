@@ -1,0 +1,67 @@
+{
+  "schema": "yyc3.five-dimension-map/v1",
+  "description": "五维评估 ↔ family_* 指标映射（P1-T4）。14 项运行时指标 + 2 项 CI 指标各归属唯一主维；4 项协同度指标单列。",
+  "updated": "2026-10-23",
+  "dimensions": [
+    {
+      "id": "time",
+      "label": "时间维",
+      "focus": "多久 / 多快",
+      "metrics": [
+        "family_task_execution_duration_seconds",
+        "family_memory_retrieval_duration_seconds",
+        "family_healing_rto_seconds"
+      ]
+    },
+    {
+      "id": "space",
+      "label": "空间维",
+      "focus": "多大 / 多占（分层与实例）",
+      "metrics": [
+        "family_healing_actions_total",
+        "family_circuit_state"
+      ]
+    },
+    {
+      "id": "attribute",
+      "label": "属性维",
+      "focus": "多好 / 多准（质量与契约）",
+      "metrics": [
+        "family_task_executed_total",
+        "family_selfjudge_agreement_ratio",
+        "family_selfjudge_mirage_total",
+        "family_healing_contract_met"
+      ]
+    },
+    {
+      "id": "event",
+      "label": "事件维",
+      "focus": "发生了什么 / 流转是否完整",
+      "metrics": [
+        "family_trajectory_bridge_events_total",
+        "family_learning_cycles_total",
+        "family_learning_regression_failed_cases",
+        "family_regression_gate_failed_total"
+      ]
+    },
+    {
+      "id": "association",
+      "label": "关联维",
+      "focus": "跨支柱 / 跨角色的耦合结果",
+      "metrics": [
+        "family_learning_promoted_total",
+        "family_learning_rolled_back_total",
+        "family_pillar_failed_cases"
+      ]
+    }
+  ],
+  "collaboration": {
+    "description": "人机协同度（P1-T4 新增 4 项，均由 FamilyMetrics.recordCollaboration 上报；生产端接线见 P1-T4b）",
+    "metrics": [
+      { "name": "family_collaboration_clarify_rate", "dimension": "attribute", "meaning": "澄清率：触发澄清的请求 / 全部请求" },
+      { "name": "family_collaboration_human_confirm_rate", "dimension": "association", "meaning": "人工确认率：关键决策经人终审 / 全部关键决策" },
+      { "name": "family_collaboration_trace_coverage", "dimension": "event", "meaning": "traceId 覆盖率：可追溯到审计链的决策 / 全部决策" },
+      { "name": "family_collaboration_replay_coverage", "dimension": "association", "meaning": "复盘覆盖率：已回流学习的周期 / 全部决策周期" }
+    ]
+  }
+}

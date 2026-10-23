@@ -1,7 +1,7 @@
 # member-agent 预设（家人 Agent 标准模板）
 
 本目录是 YYC³ AI Family **新家人代码骨架的规范模板**（canonical template）。
-`scripts/create-member.sh` 会把它复制到 `03-家人Agent实现集/<group>/<id>/`，去除 `.tpl`
+`scripts/create-member.sh` 会把它复制到 `family-agents/<group>/<id>/`，去除 `.tpl`
 后缀并替换占位符，从而一键生成与示例家人 `member-qianhang`（言启·千行）同构的目录。
 
 ## 目录结构（模板 = 示例家人的标准形状）

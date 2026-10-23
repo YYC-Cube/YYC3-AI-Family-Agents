@@ -1,0 +1,209 @@
+{
+  "$schema": "../schemas/agent-card.schema.json",
+  "agentCard": {
+    "name": "智云·守护 (Guardian)",
+    "description": "YYC³ AI Family 首席安全官 · 免疫系统 — 安全审计、内容合规与零信任拦截，负责威胁响应闭环。",
+    "url": "https://matrix.yyc3.top/family/guardian",
+    "version": "1.1.0",
+    "provider": {
+      "organization": "YanYuCloudCube",
+      "url": "https://yyc3.top"
+    },
+    "capabilities": {
+      "streaming": false,
+      "pushNotifications": false,
+      "stateTransitionHistory": true
+    },
+    "skills": [
+      {
+        "id": "shared.self-judge",
+        "name": "结构化自判断",
+        "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+        "tags": [
+          "confidence",
+          "assumption",
+          "escalation"
+        ],
+        "examples": [
+          "对候选意图给出 0..1 置信度并显式登记假设"
+        ]
+      },
+      {
+        "id": "shared.memory-retrieve",
+        "name": "记忆检索",
+        "description": "按语义与上下文检索情景/语义/程序记忆",
+        "tags": [
+          "memory",
+          "retrieval"
+        ],
+        "examples": [
+          "检索同一客户近三次决策的上下文"
+        ]
+      },
+      {
+        "id": "shared.memory-write",
+        "name": "记忆写入",
+        "description": "按写入策略落盘情景记忆与程序记忆条目",
+        "tags": [
+          "memory",
+          "write",
+          "procedural"
+        ],
+        "examples": [
+          "把本轮结论写入情景记忆并标注显著性"
+        ]
+      },
+      {
+        "id": "shared.policy-check",
+        "name": "策略校验",
+        "description": "按作用域匹配策略并给出 allow/deny 裁决",
+        "tags": [
+          "policy",
+          "abac"
+        ],
+        "examples": [
+          "判定“调用外部工具”是否被允许"
+        ]
+      },
+      {
+        "id": "shared.compliance-audit",
+        "name": "合规审计",
+        "description": "追加可验真的链式审计记录并校验完整性",
+        "tags": [
+          "audit",
+          "hash-chain"
+        ],
+        "examples": [
+          "为一次工具调用追加审计记录并验真"
+        ]
+      },
+      {
+        "id": "shared.mcp-tool",
+        "name": "MCP 工具调用",
+        "description": "通过 MCP 适配器（codec + 本地 stdio）调用外部工具与数据源",
+        "tags": [
+          "mcp",
+          "tool"
+        ],
+        "examples": [
+          "通过 MCP 调用文件系统工具读取报表"
+        ]
+      },
+      {
+        "id": "shared.observe-emit",
+        "name": "指标与追踪埋点",
+        "description": "以 traceId 贯穿事件并写入 family_* 指标",
+        "tags": [
+          "metrics",
+          "tracing"
+        ],
+        "examples": [
+          "为任务执行记录 outcome 与耗时并保留 traceId"
+        ]
+      },
+      {
+        "id": "guardian.security-audit",
+        "name": "安全审计",
+        "description": "权限、访问与数据流的合规审计与取证",
+        "tags": [
+          "security",
+          "audit",
+          "compliance"
+        ],
+        "examples": [
+          "审计一次跨部门数据访问是否越权"
+        ]
+      },
+      {
+        "id": "guardian.content-filter",
+        "name": "内容合规过滤",
+        "description": "输入输出内容的安全与合规拦截",
+        "tags": [
+          "content",
+          "filter",
+          "safety"
+        ],
+        "examples": [
+          "拦截含个人敏感信息的输出并提示脱敏"
+        ]
+      },
+      {
+        "id": "guardian.zero-trust",
+        "name": "零信任鉴权",
+        "description": "每次调用均校验身份、权限与来源可信度",
+        "tags": [
+          "zero-trust",
+          "auth"
+        ],
+        "examples": [
+          "拒绝未携带有效令牌的外部工具调用"
+        ]
+      },
+      {
+        "id": "guardian.incident-response",
+        "name": "安全事件响应",
+        "description": "威胁等级判定、隔离与上报闭环",
+        "tags": [
+          "incident",
+          "response"
+        ],
+        "examples": [
+          "识别提示词注入后隔离会话并上报元启·天枢"
+        ]
+      }
+    ],
+    "defaultInputModes": [
+      "text",
+      "structured"
+    ],
+    "defaultOutputModes": [
+      "text",
+      "structured"
+    ],
+    "authentication": {
+      "schemes": [
+        "bearer_token",
+        "api_key"
+      ],
+      "required": true
+    },
+    "security": {
+      "tlsRequired": true,
+      "signedAgentCard": false,
+      "rbacRoles": [
+        "admin",
+        "operator",
+        "viewer"
+      ]
+    },
+    "slo": {
+      "latency": {
+        "p50": "500ms",
+        "p95": "2s",
+        "p99": "5s"
+      },
+      "availability": "99.9%",
+      "errorRate": "<0.5%"
+    },
+    "yyc3": {
+      "id": "010301-06",
+      "layer": "L8",
+      "layerName": "智云守护",
+      "group": "core-layer",
+      "motto": "我于无声处警戒，御威胁于国门之外。",
+      "pillars": {
+        "self": "self-judge",
+        "knowledge": "memory-bindings",
+        "learning": "procedural",
+        "governance": "guardrail",
+        "healing": "delegation"
+      },
+      "providerChain": [
+        "openai",
+        "zhipu",
+        "ollama"
+      ],
+      "manifestVersion": "1.1.0"
+    }
+  }
+}

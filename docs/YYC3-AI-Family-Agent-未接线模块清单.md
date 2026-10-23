@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.5.0
+  Version : v1.10.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.5.0
+version: v1.10.0
 created: 2026-10-23
 updated: 2026-10-23
 status: active
@@ -36,12 +36,12 @@ category: report
 
 ## 一、目的与适用范围
 
-本清单回答一个问题：**`02-智能协同架构内核` 与 `03-家人Agent实现集` 里，哪些代码真正被运行时或门禁调用，哪些只是随编译存在。**
+本清单回答一个问题：**`architecture-kernel` 与 `family-agents` 里，哪些代码真正被运行时或门禁调用，哪些只是随编译存在。**
 
 适用范围：
 
-- 目录：`02-智能协同架构内核/**`、`03-家人Agent实现集/**`
-- 口径：从 **13 个门禁入口**（`tests/**/*.spec.ts` + `*.contract.ts`）出发的静态 import 可达性
+- 目录：`architecture-kernel/**`、`family-agents/**`
+- 口径：从 **19 个门禁入口**（`tests/**/*.spec.ts` + `*.contract.ts`）出发的静态 import 可达性
 - 不含：`docs/` 下的本地备份目录（已在 `.gitignore` 排除）、`node_modules/`、构建产物
 
 **用途**：作为「骨架保留」的治理依据——避免把未接线模块误判为已交付能力，也避免误删将来要接线的载体。
@@ -54,7 +54,7 @@ category: report
 
 1. 枚举编译范围内全部 `.ts`（对齐 `tsconfig.json` 的 `include` / `exclude`）
 2. 解析静态 `import` / `export ... from` / 动态 `import()`，解析 `@shared/*`、`@members/*` 与相对路径
-3. 以 13 个门禁入口为根，计算可达集
+3. 以 19 个门禁入口为根，计算可达集
 4. 与文件总数对比，得到「已接线 / 仅编译」
 
 ### 2.2 状态定义（RFC 2119 用语）
@@ -71,16 +71,16 @@ category: report
 
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
-| `02-智能协同架构内核` | 93 | **35** | **58** | 核心链路已接线（含 CAGEERF 分解）；九层底座与治理/调度扩展为骨架 |
-| `03-家人Agent实现集` | 140 | **41** | **99** | `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线 |
-| `tests` | 14 | 14 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e） |
-| **合计** | **247** | **90** | **157** | 另：8 个家人自测 spec 未纳入编译与门禁 |
+| `architecture-kernel` | 94 | **36** | **58** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表）；九层底座与治理/调度扩展为骨架 |
+| `family-agents` | 140 | **41** | **99** | `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线 |
+| `tests` | 20 | 20 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约） |
+| **合计** | **254** | **97** | **157** | 另：8 个家人自测 spec 未纳入编译与门禁 |
 
-> 已接线 90 = 02 的 35 + 03 的 41 + tests 的 14。
+> 已接线 97 = 02 的 36 + 03 的 41 + tests 的 20。
 
 ---
 
-## 三、02-智能协同架构内核 · 未接线明细（58）
+## 三、architecture-kernel · 未接线明细（58）
 
 ### 3.1 `01-九层架构分层底座` — 0/20 接线
 
@@ -156,11 +156,11 @@ category: report
 | 文件 | 状态 | 说明 |
 | ---- | ---- | ---- |
 | `08-系统装配/index.ts` | ◐ | barrel；实现 `runtime-assembly` / `runtime-entry` 已接线 |
-| `09-可观测性/index.ts` | ◐ | barrel；实现 `metrics-registry` / `family-metrics` / `metrics-server` 已接线 |
+| `09-可观测性/index.ts` | ◐ | barrel；实现 `metrics-registry` / `family-metrics` / `metrics-server` / `collaboration-instrumentation` 已接线 |
 
 ---
 
-## 四、03-家人Agent实现集 · 未接线明细（99）
+## 四、family-agents · 未接线明细（99）
 
 ### 4.1 `shared-core` — 35/36 全接线 ✅（仅 llm-adapter barrel 未用）
 
@@ -205,7 +205,7 @@ category: report
 
 ### 4.3 家人自测 — ⊘ 未纳入门禁（8 个）
 
-`03-家人Agent实现集/{core-layer,business-layer}/member-*/tests/self-judge.spec.ts`
+`family-agents/{core-layer,business-layer}/member-*/tests/self-judge.spec.ts`
 
 - 被 `tsconfig.json` 的 `**/*.spec.ts` 排除 → 不参与类型检查
 - 不在 `scripts/run-regression.mjs` 的 SPECS 清单 → 不执行
@@ -299,6 +299,11 @@ category: report
 | v1.3.0 | 2026-10-23 | P1 意图链路接线后复核：`task-decomposer` 由骨架转实（CAGEERF 七阶段 + owner/dependsOn）；千行 4 文件与伯乐成就面板纳入 e2e 可达集；统计更新为 247 / 90 / 157；e2e 显式跳过降至 1 例（仅 DLQ） |
 | v1.4.0 | 2026-10-23 | EventBus 重试 + DLQ 落地后复核：`event-bus` 属存量已接线文件（仅功能增强，无新增/移出编译单元），统计维持 247 / 90 / 157；family-bus 用例 7/7 并归入「愈」，显式跳过归零，门禁 97/97 |
 | v1.5.0 | 2026-10-23 | LLM 实答 UAT（v2.13.0）复核：`tests/uat/llm-live-uat.spec.ts` 不在 tsconfig include 内、不在回归 SPECS 清单，门禁入口维持 13 个；统计维持 247 / 90 / 157 |
+| v1.6.0 | 2026-10-23 | P1-T1/T2 落地：新增 `tests/contracts/manifest.contract.ts`、`tests/contracts/agent-card.contract.ts` 两个门禁入口（13 → 15）；统计 249 / 92 / 157；门禁 97 → **112 例全绿** |
+| v1.7.0 | 2026-10-23 | P1-T3 落地：MCP 适配层（codec + stdio transport）由骨架转实，`EventBus.registerMcpAdapter` 空壳补全；新增 `tests/integration/mcp-adapter.spec.ts` 门禁入口（15 → 16）；统计 250 / 93 / 157；门禁 112 → **121 例全绿** |
+| v1.8.0 | 2026-10-23 | P1-T4 落地：五维指标映射（`assets/schemas/five-dimension-map.json`）+ 协同度 4 项 Gauge + 4 条告警；新增 `tests/integration/five-dimension-metrics.spec.ts` 门禁入口（16 → 17）；统计 251 / 94 / 157；门禁 121 → **127 例全绿** |
+| v1.9.0 | 2026-10-23 | P1-T5 落地：提示词契约（16 个 `*.prompt.ts` 升级 CO-STAR 七要素 + `PROMPT_META` 元数据，版本回写清单 `prompts` 段）；新增 `tests/contracts/prompt.contract.ts` 门禁入口（17 → 18）；统计 252 / 95 / 157；门禁 127 → **135 例全绿** |
+| v1.10.0 | 2026-10-23 | 目录去编号（`02-architecture-kernel` → `architecture-kernel`、`03-family-agents` → `family-agents`，51 文件同步全仓 0 残留）+ P1-T4b 协同度生产接线（09 可观测性四仪表 + `recordReplay` 两端记账 + 装配层自动接线）；新增 `tests/integration/collaboration-wiring.spec.ts` 门禁入口（18 → 19）；统计 252 / 95 / 157 → **254 / 97 / 157**；门禁 135 → **143 例全绿** |
 
 ---
 

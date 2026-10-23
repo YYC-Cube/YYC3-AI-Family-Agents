@@ -41,7 +41,7 @@ if (__localShim) {
 import { IntentGatewayService } from '@members/business-layer/member-qianhang/core/intent-gateway.service.js';
 import { IntentClassifierService } from '@members/business-layer/member-qianhang/core/intent-classifier.service.js';
 import { ContextManagerService } from '@members/business-layer/member-qianhang/core/context-manager.service.js';
-import { CAGEERF_STAGES, TaskDecomposer } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/task-decomposer.js';
+import { CAGEERF_STAGES, TaskDecomposer } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/task-decomposer.js';
 import { HEART_TO_HEART, createAchievementPanel } from '@members/business-layer/member-bole/emotion/achievement-panel.js';
 
 const TEXT = '帮我分析这个月的家庭开销数据';

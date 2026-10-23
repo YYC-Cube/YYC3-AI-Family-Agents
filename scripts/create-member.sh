@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
 # YYC³ AI Family — 新家人一键创建脚本（create-member.sh）
-# 依据：YYC3-AI-Family-Agent-架构设计.md §4.1 / §4（03-家人Agent实现集）
+# 依据：YYC3-AI-Family-Agent-架构设计.md §4.1 / §4（family-agents）
 # 作用：把 presets/member-agent/ 模板复制为目标家人目录，
 #       去除 .tpl 后缀并替换占位符。
 #
@@ -17,7 +17,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 PRESET_DIR="${ROOT_DIR}/presets/member-agent"
-MEMBERS_DIR="${ROOT_DIR}/03-家人Agent实现集"
+MEMBERS_DIR="${ROOT_DIR}/family-agents"
 
 usage() {
   cat >&2 <<'USAGE'

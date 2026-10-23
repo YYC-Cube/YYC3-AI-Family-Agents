@@ -56,22 +56,22 @@ category: report
 
 | # | 类型 | 产物 | 落位 |
 | --- | --- | --- | --- |
-| 1 | 新增模块 | [metrics-registry.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/09-可观测性/metrics-registry.ts) —— 零依赖 Counter/Gauge/Histogram + 文本 exposition | 09-可观测性 |
-| 2 | 新增模块 | [family-metrics.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/09-可观测性/family-metrics.ts) —— 14 项 `family_*` 指标 + 埋点门面 + 记忆检索装饰器 | 09-可观测性 |
-| 3 | 新增模块 | [metrics-server.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/09-可观测性/metrics-server.ts) —— `/metrics` + `/healthz` | 09-可观测性 |
-| 4 | barrel | [index.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/09-可观测性/index.ts) | 09-可观测性 |
-| 5 | 埋点改造 | [trajectory-bridge.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/02-云枢核心引擎/family-communication-bus/trajectory-bridge.ts) 增 `onEvent` 观察者 | 02-云枢核心引擎 |
-| 6 | 埋点改造 | [learning-loop.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/05-持续学习引擎/learning-loop.ts) 增 `onCycle` 只读钩子 | 05-持续学习引擎 |
-| 7 | 装配接线 | [runtime-assembly.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/08-系统装配/runtime-assembly.ts) 增 `metrics` 选项与三处埋点 | 08-系统装配 |
+| 1 | 新增模块 | [metrics-registry.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/09-可观测性/metrics-registry.ts) —— 零依赖 Counter/Gauge/Histogram + 文本 exposition | 09-可观测性 |
+| 2 | 新增模块 | [family-metrics.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/09-可观测性/family-metrics.ts) —— 14 项 `family_*` 指标 + 埋点门面 + 记忆检索装饰器 | 09-可观测性 |
+| 3 | 新增模块 | [metrics-server.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/09-可观测性/metrics-server.ts) —— `/metrics` + `/healthz` | 09-可观测性 |
+| 4 | barrel | [index.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/09-可观测性/index.ts) | 09-可观测性 |
+| 5 | 埋点改造 | [trajectory-bridge.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/02-云枢核心引擎/family-communication-bus/trajectory-bridge.ts) 增 `onEvent` 观察者 | 02-云枢核心引擎 |
+| 6 | 埋点改造 | [learning-loop.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/05-持续学习引擎/learning-loop.ts) 增 `onCycle` 只读钩子 | 05-持续学习引擎 |
+| 7 | 装配接线 | [runtime-assembly.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/08-系统装配/runtime-assembly.ts) 增 `metrics` 选项与三处埋点 | 08-系统装配 |
 | 8 | 告警激活 | [prometheus-rules.yaml](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/ops/observability/prometheus-rules.yaml) 7 条 expr 全部接真实指标 | ops/observability |
 | 9 | CI 指标 | [run-regression.mjs](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/scripts/run-regression.mjs) 生成 `metrics.prom` | scripts |
 | 10 | 验收测试 | [metrics-observability.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/integration/metrics-observability.spec.ts) M1–M6 | tests/integration |
 | 11 | 变更记录 | 架构设计 §8.3 **v2.7.0** | docs |
-| 12 | 进程入口（v2.7.1） | [runtime-entry.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/08-系统装配/runtime-entry.ts) —— `startRuntime` / `startRuntimeFromEnv` | 08-系统装配 |
-| 13 | 鉴权加固（v2.7.1） | [metrics-server.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/09-可观测性/metrics-server.ts) Bearer 鉴权 + 默认回环绑定 | 09-可观测性 |
+| 12 | 进程入口（v2.7.1） | [runtime-entry.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/08-系统装配/runtime-entry.ts) —— `startRuntime` / `startRuntimeFromEnv` | 08-系统装配 |
+| 13 | 鉴权加固（v2.7.1） | [metrics-server.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/09-可观测性/metrics-server.ts) Bearer 鉴权 + 默认回环绑定 | 09-可观测性 |
 | 14 | 抓取配置（v2.7.1） | [prometheus.yml](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/ops/observability/prometheus.yml) —— 运行时 / Pushgateway / 自身三作业 | ops/observability |
 | 15 | 指标推送（v2.7.1） | [push-metrics.mjs](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/scripts/push-metrics.mjs) + CI 步骤 | scripts / CI |
-| 16 | 愈链路装配（v2.7.2） | [degradation-controller.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/07-自愈中心/degradation-controller/degradation-controller.ts) `onStateChange` + `runtime-assembly.handleSignal` | 07 / 08 |
+| 16 | 愈链路装配（v2.7.2） | [degradation-controller.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/07-自愈中心/degradation-controller/degradation-controller.ts) `onStateChange` + `runtime-assembly.handleSignal` | 07 / 08 |
 | 17 | 测试迁移（v2.7.2） | [self-judge-kit.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/unit/self-judge-kit.spec.ts) / [family-bus.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/integration/family-bus.spec.ts) / [pillars.contract.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/pillar-contracts/pillars.contract.ts) / [qianhang-intent-e2e.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/e2e/qianhang-intent-e2e.spec.ts) | tests |
 
 ### 2.2 不在本次范围
@@ -302,7 +302,7 @@ family_regression_spec_passed{spec="tests/integration/metrics-observability.spec
 
 ### 11.1 L1 + L6：运行时入口与一致性上报
 
-**产物**：[runtime-entry.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/08-系统装配/runtime-entry.ts)
+**产物**：[runtime-entry.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/08-系统装配/runtime-entry.ts)
 
 | 能力 | 实现 |
 | --- | --- |
@@ -339,7 +339,7 @@ body: # HELP family_regression_gate_failed_total ...
 
 ### 11.3 L3：端点鉴权与最小暴露
 
-**产物**：[metrics-server.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/09-可观测性/metrics-server.ts)
+**产物**：[metrics-server.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/09-可观测性/metrics-server.ts)
 
 | 检验 | 结果 |
 | --- | --- |
@@ -364,7 +364,7 @@ body: # HELP family_regression_gate_failed_total ...
 
 ### 12.1 L5：降级控制器纳入装配
 
-**产物**：[degradation-controller.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/07-自愈中心/degradation-controller/degradation-controller.ts) + [runtime-assembly.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/02-智能协同架构内核/08-系统装配/runtime-assembly.ts)
+**产物**：[degradation-controller.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/07-自愈中心/degradation-controller/degradation-controller.ts) + [runtime-assembly.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/08-系统装配/runtime-assembly.ts)
 
 | 能力 | 实现 |
 | --- | --- |

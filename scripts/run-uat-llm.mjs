@@ -65,12 +65,12 @@ fs.writeFileSync(
         isolatedModules: true,
         verbatimModuleSyntax: true,
         paths: {
-          '@shared/*': [path.join(ROOT, '03-家人Agent实现集', 'shared-core', '*')],
-          '@members/*': [path.join(ROOT, '03-家人Agent实现集', '*')],
+          '@shared/*': [path.join(ROOT, 'family-agents', 'shared-core', '*')],
+          '@members/*': [path.join(ROOT, 'family-agents', '*')],
         },
       },
-      include: [abs('02-智能协同架构内核/**/*.ts'), abs('03-家人Agent实现集/**/*.ts'), abs('tests/**/*.ts')],
-      exclude: [abs('node_modules'), abs('dist'), abs('03-家人Agent实现集/**/tests/**'), '**/*.tpl'],
+      include: [abs('architecture-kernel/**/*.ts'), abs('family-agents/**/*.ts'), abs('tests/**/*.ts')],
+      exclude: [abs('node_modules'), abs('dist'), abs('family-agents/**/tests/**'), '**/*.tpl'],
     },
     null,
     2,
@@ -84,7 +84,7 @@ import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 const BUILD = ${JSON.stringify(buildDir)};
-const MEMBERS = path.join(BUILD, '03-家人Agent实现集');
+const MEMBERS = path.join(BUILD, 'family-agents');
 
 function fileOf(base) {
   if (existsSync(base) && !base.endsWith('.js') && !base.endsWith('.json')) return path.join(base, 'index.js');

@@ -1,0 +1,183 @@
+{
+  "$schema": "../schemas/agent-card.schema.json",
+  "agentCard": {
+    "name": "千里·伯乐 (Bole)",
+    "description": "YYC³ AI Family 首席推荐官 · 知遇之人 — 人才匹配与个性化推荐，负责画像构建与激励洞察。",
+    "url": "https://matrix.yyc3.top/family/bole",
+    "version": "1.1.0",
+    "provider": {
+      "organization": "YanYuCloudCube",
+      "url": "https://yyc3.top"
+    },
+    "capabilities": {
+      "streaming": false,
+      "pushNotifications": false,
+      "stateTransitionHistory": true
+    },
+    "skills": [
+      {
+        "id": "shared.self-judge",
+        "name": "结构化自判断",
+        "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+        "tags": [
+          "confidence",
+          "assumption",
+          "escalation"
+        ],
+        "examples": [
+          "对候选意图给出 0..1 置信度并显式登记假设"
+        ]
+      },
+      {
+        "id": "shared.memory-retrieve",
+        "name": "记忆检索",
+        "description": "按语义与上下文检索情景/语义/程序记忆",
+        "tags": [
+          "memory",
+          "retrieval"
+        ],
+        "examples": [
+          "检索同一客户近三次决策的上下文"
+        ]
+      },
+      {
+        "id": "shared.memory-write",
+        "name": "记忆写入",
+        "description": "按写入策略落盘情景记忆与程序记忆条目",
+        "tags": [
+          "memory",
+          "write",
+          "procedural"
+        ],
+        "examples": [
+          "把本轮结论写入情景记忆并标注显著性"
+        ]
+      },
+      {
+        "id": "shared.experience-reflow",
+        "name": "经验回流",
+        "description": "轨迹采集、模式提炼与学习周期触发",
+        "tags": [
+          "trajectory",
+          "learning"
+        ],
+        "examples": [
+          "把一次成功分析沉淀为可复用轨迹"
+        ]
+      },
+      {
+        "id": "shared.observe-emit",
+        "name": "指标与追踪埋点",
+        "description": "以 traceId 贯穿事件并写入 family_* 指标",
+        "tags": [
+          "metrics",
+          "tracing"
+        ],
+        "examples": [
+          "为任务执行记录 outcome 与耗时并保留 traceId"
+        ]
+      },
+      {
+        "id": "bole.talent-match",
+        "name": "人才匹配",
+        "description": "岗位画像与人选能力匹配度评分",
+        "tags": [
+          "talent",
+          "matching"
+        ],
+        "examples": [
+          "为新设的区域运营岗匹配三位候选人"
+        ]
+      },
+      {
+        "id": "bole.personalize",
+        "name": "个性化推荐",
+        "description": "基于画像与行为的对象/内容推荐",
+        "tags": [
+          "recommendation",
+          "personalization"
+        ],
+        "examples": [
+          "为管理者推荐本周最应关注的三个指标"
+        ]
+      },
+      {
+        "id": "bole.persona-profile",
+        "name": "用户画像",
+        "description": "角色、偏好与行为特征的结构化画像",
+        "tags": [
+          "persona",
+          "profile"
+        ],
+        "examples": [
+          "生成“区域财务负责人”的决策偏好画像"
+        ]
+      },
+      {
+        "id": "bole.achievement-insight",
+        "name": "成就与激励洞察",
+        "description": "成就面板数据解读与激励建议",
+        "tags": [
+          "achievement",
+          "incentive"
+        ],
+        "examples": [
+          "依据成就面板给出团队激励节奏建议"
+        ]
+      }
+    ],
+    "defaultInputModes": [
+      "text",
+      "structured"
+    ],
+    "defaultOutputModes": [
+      "text",
+      "structured"
+    ],
+    "authentication": {
+      "schemes": [
+        "bearer_token",
+        "api_key"
+      ],
+      "required": true
+    },
+    "security": {
+      "tlsRequired": true,
+      "signedAgentCard": false,
+      "rbacRoles": [
+        "admin",
+        "operator",
+        "viewer"
+      ]
+    },
+    "slo": {
+      "latency": {
+        "p50": "500ms",
+        "p95": "2s",
+        "p99": "5s"
+      },
+      "availability": "99.9%",
+      "errorRate": "<0.5%"
+    },
+    "yyc3": {
+      "id": "010301-04",
+      "layer": "L2",
+      "layerName": "千里伯乐",
+      "group": "business-layer",
+      "motto": "我知您之所需，荐您之所未识。",
+      "pillars": {
+        "self": "self-judge",
+        "knowledge": "memory-bindings",
+        "learning": "procedural",
+        "governance": "guardrail",
+        "healing": "delegation"
+      },
+      "providerChain": [
+        "openai",
+        "zhipu",
+        "ollama"
+      ],
+      "manifestVersion": "1.1.0"
+    }
+  }
+}

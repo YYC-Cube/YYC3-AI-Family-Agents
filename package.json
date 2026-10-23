@@ -1,6 +1,6 @@
 {
   "name": "@yyc3/ai-family-agent",
-  "version": "2.13.0",
+  "version": "2.15.0",
   "private": true,
   "description": "YYC³ AI Family Agent 编程体系 — 自·知·学·治·愈 五支柱融合内核（TypeScript，零运行时依赖）",
   "license": "MIT",
@@ -22,7 +22,16 @@
     "observability",
     "self-healing",
     "memory-framework",
-    "zero-dependency"
+    "zero-dependency",
+    "a2a-protocol",
+    "model-context-protocol",
+    "agent-cards",
+    "prompt-engineering",
+    "co-star",
+    "event-bus",
+    "llm-orchestration",
+    "regression-gate",
+    "enterprise-agents"
   ],
   "packageManager": "pnpm@9.0.0",
   "type": "module",
@@ -35,6 +44,9 @@
     "test": "vitest",
     "regression": "node scripts/run-regression.mjs",
     "uat:llm": "node scripts/run-uat-llm.mjs",
+    "manifest:check": "node scripts/check-manifest.mjs",
+    "manifest:cards": "node scripts/gen-agent-cards.mjs",
+    "prompts:check": "node scripts/check-prompts.mjs",
     "create-member": "bash scripts/create-member.sh"
   },
   "devDependencies": {

@@ -54,10 +54,10 @@ if (__localShim) {
   });
 }
 
-import { OutcomeLabeler } from '../../02-智能协同架构内核/05-持续学习引擎/experience-reflow/outcome-labeler.js';
-import { PatternExtractor } from '../../02-智能协同架构内核/05-持续学习引擎/experience-reflow/pattern-extractor.js';
-import { TrajectoryCollector } from '../../02-智能协同架构内核/05-持续学习引擎/experience-reflow/trajectory-collector.js';
-import { InMemorySkillStore, LearningLoop } from '../../02-智能协同架构内核/05-持续学习引擎/learning-loop.js';
+import { OutcomeLabeler } from '../../architecture-kernel/05-持续学习引擎/experience-reflow/outcome-labeler.js';
+import { PatternExtractor } from '../../architecture-kernel/05-持续学习引擎/experience-reflow/pattern-extractor.js';
+import { TrajectoryCollector } from '../../architecture-kernel/05-持续学习引擎/experience-reflow/trajectory-collector.js';
+import { InMemorySkillStore, LearningLoop } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
 
 let seq = 0;
 

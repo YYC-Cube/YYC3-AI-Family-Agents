@@ -8,6 +8,41 @@
 
 ## [Unreleased]
 
+### Added
+
+- **家族契约清单（P1-T1）**：`presets/family-manifest.yaml` 成为八位家人身份 / 能力 / 技能 / 协同的唯一事实源——45 项技能（共用 13 · 专用 32）、8×8 委托矩阵（56 条边）、五支柱与协议栈声明；`scripts/check-manifest.mjs`（`pnpm manifest:check`）校验结构自洽、技能引用完整性、kernel 锚点存在，并与 8 份 `agent.yaml` 做规范性字段零漂移比对；零依赖 YAML 子集解析器见 `scripts/lib/yaml-lite.mjs`
+- **Agent Card（P1-T2）**：`assets/schemas/agent-card.schema.json`（对齐蓝图 1207 §3.2）+ `scripts/gen-agent-cards.mjs`（`pnpm manifest:cards`）由清单派生 8 张卡片到 `assets/agent-cards/`，`--check` 模式做「产物 ↔ 清单」零漂移校验；JSON Schema 子集校验器见 `scripts/lib/json-schema-lite.mjs`
+- **门禁新增两个契约套件**：`tests/contracts/manifest.contract.ts`（7 例）与 `tests/contracts/agent-card.contract.ts`（8 例），CI 另加不阻断的清单软校验步骤
+- **MCP 适配层（P1-T3）**：`02-云枢核心引擎/mcp-adapter/`——`BusMcpCodec`（BusEvent ↔ JSON-RPC 2.0 通知，含 key/topic/mode/target/payload/at 全字段校验）、`StdioMcpTransport`（子进程 stdin/stdout 换行分帧、请求-响应 id 关联与超时、脏行与超限上报、优雅关闭）、`bindMcpTransport`（传输 ↔ 总线绑定）；`EventBus` 的 `registerMcpAdapter` 由空壳转为真实注册表，并新增 `mcpAdapterIds` / `encodeForMcp` / `ingestMcp`——入站解码失败以合成事件写入 DLQ（`topic=mcp.undecodable`），不中断消息循环
+- **MCP 回归套件**：`tests/integration/mcp-adapter.spec.ts`（9 例：往返保真、非法消息拒绝、重复注册、合法投递、脏消息入 DLQ、未注册编码、真实本地子进程的请求-响应 / 入站通知 / 脏行上报）
+- **五维指标映射（P1-T4）**：`assets/schemas/five-dimension-map.json` 把 14 项运行时 + 2 项 CI 指标各归属唯一主维（时间 3 / 空间 2 / 属性 4 / 事件 4 / 关联 3）；`FamilyMetrics` 新增 4 项协同度 Gauge（澄清率 / 人工确认率 / traceId 覆盖率 / 复盘覆盖率，0..1）与 `recordCollaboration(kind, hit)` / `collaborationSnapshot()`，零样本时不产生样本行、不改变 `/metrics` 默认口径
+- **协同告警 4 条**：`CollaborationClarifyRateHigh` · `CollaborationHumanConfirmMissing` · `CollaborationTraceCoverageLow` · `CollaborationReplayCoverageLow`（`ops/observability/prometheus-rules.yaml` 新组 `yyc3-family-collaboration`）
+- **面板五维覆盖**：`pillar-dashboard` 新增「五维覆盖」卡片区（`data.json` 增 `dimensions` / `collaboration` 字段），生成时输出五维指标计数
+- **五维回归套件**：`tests/integration/five-dimension-metrics.spec.ts`（6 例：总量 18、映射完整且唯一、五维分布、协同零样本、比率折算、告警契约）
+- **提示词契约（P1-T5）**：16 个 `*.prompt.ts` 升级为 CO-STAR 七要素模板（【身份】【背景】【目标】【范围】【任务】【受众】【响应】，对齐蓝图 1206）+ `PROMPT_META` 统一元数据（严格 JSON：`id / version / status / framework / blueprint / vars / outputSchema`）；`outputSchema` 以 JSON Schema 声明意图/查询输出契约；A/B 以「清单中按家人固定 version（id + version 即变体键）」实现
+- **提示词契约校验**：`scripts/check-prompts.mjs`（`pnpm prompts:check`）——`PROMPT_META` 零依赖平衡括号提取、CO-STAR 要素与 `vars↔占位符` 双向对齐校验、磁盘孤儿文件扫描、`--json` 明细（含文件侧版本与 outputSchema）供套件消费；`manifest:check` 同步纳入 prompts 段校验
+- **提示词契约套件**：`tests/contracts/prompt.contract.ts`（8 例：脚本退出码、16 契约 0 错误、孤儿扫描、版本零漂移且语义化、CO-STAR 七要素、outputSchema 放行合法样本含 timeRange 双态、拦截越界与额外字段、vars 抽查）
+- **协同度指标生产端接线（P1-T4b）**：`architecture-kernel/09-可观测性/collaboration-instrumentation.ts` 四个零侵入 Proxy 仪表——`instrumentIntentGateway`（千行澄清命中：intent=unknown 或置信度 < τ_low，默认 0.6）、`instrumentEscalationPolicy`（human-confirm 命中）、`instrumentComplianceAudit`（traceId 非空命中）、`instrumentOutcomeLabeler`（学习回流标注即记分子）；结构化最小接口，内核不反向依赖 family-agents
+- **`FamilyMetrics.recordReplay(collected, labeled)`**：复盘覆盖率两端记账——装配层桥接受理记分母（`recordReplay(1,0)`）、labeler 标注记分子（`recordReplay(0,1)`），与 `recordCollaboration` 共用同一张 collaboration map；`runtime-assembly.ts` 在 metrics 注入时自动完成学习回流两端接线，千行澄清 / escalation / 审计链三类由部署侧包装接线
+- **协同度接线套件**：`tests/integration/collaboration-wiring.spec.ts`（8 例：千行澄清真实网关命中与未命中、零侵入同构、escalation 决策透出、审计链完整性与 Prometheus 渲染、端到端装配回流闭环、`recordReplay` 记账口径、四类仪表互不串扰）
+
+### Changed
+
+- **契约清单 v1.0.0 → v1.1.0**：新增 `prompts` 提示词契约段（16 条 = 8 家人 × 2，`id/owner/version/file`），文件内 `PROMPT_META` 版本回写零漂移；8 张 Agent Card `version` / `yyc3.manifestVersion` 同步 1.1.0
+- 回归口径：**97 / 97 → 135 / 135**（19 套件 · 0 跳过 · 0 静默）
+- CI 契约软校验步骤扩展 `check-prompts.mjs`（P1-T1/T2/T5 · 不阻断）
+- `package.json` 版本 2.13.0 → **2.14.0**（P1 里程碑）；`keywords` 扩充至 19 项（`a2a-protocol` · `model-context-protocol` · `agent-cards` · `prompt-engineering` · `co-star` · `event-bus` · `llm-orchestration` · `regression-gate` · `enterprise-agents`），README 新增「主题标签」徽章行与 GitHub Topics 建议（仓库页可视化）
+
+- 回归口径：**97 / 97 → 127 / 127**（18 套件 · 0 跳过 · 0 静默）
+- 未接线模块清单 v1.5.0 → v1.8.0：编译 247 → 251、已接线 90 → 94、门禁入口 13 → 17
+- **目录规范化命名（先行轮，数字编号过渡态）**：`02-智能协同架构内核` → `02-architecture-kernel`、`03-家人Agent实现集` → `03-family-agents`（`git mv` 保留历史）；同步 42 文件 141 处引用——tsconfig paths/include、`run-regression.mjs` / `run-uat-llm.mjs`（paths/include/exclude/loader MEMBERS）、tests 12 文件相对导入、`extract-procedural.ts` / `create-member.sh`、源码注释、`configs/staging.yaml` / `ops/observability/prometheus-rules.yaml`、README / CONTRIBUTING / presets README / docs 5 份活文档。`@shared/*` `@members/*` 别名逻辑名不变；`.gitignore` 指向的 docs 下本地备份目录与 `docs/_archive/建议文档.md`（历史归档）保留原名。CI 无硬编码路径不需改动。验证：回归 **97/97 · 0 跳过 · 0 静默**、`tsc --noEmit` 干净、未门控 `pnpm uat:llm` 编译通过且 5 例门控跳过 exit 0
+- **蓝图资产收敛**：保留 `docs/YYC3-FAmily-AI-Agent-企业蓝图/`（146 文件 · 2.5MB）为唯一蓝图源（只读，不进编译）；清除冗余副本 `docs/YYC3-AI-Family-Agents/`（368 文件 · 8.7MB，其 12/13 子树与留用目录逐字节一致，全仓零引用）；`.gitignore` 移除失效忽略项
+- **目录去数字编号（本轮）**：`02-architecture-kernel` → **`architecture-kernel`**、`03-family-agents` → **`family-agents`**（保留内核子目录 01~09 编号）；一次性 Node codemod 同步全仓 51 文件——tsconfig paths/include、`presets/family-manifest.yaml`（44 处）、scripts、tests 20 文件、README / CHANGELOG / docs 活文档；`0[23]-(architecture-kernel|family-agents)` 全仓 **0 残留**。验证：`tsc --noEmit` 干净、manifest / prompts / cards 三项 check 通过
+- **`.gitignore` 新增** `docs/YYC3-FAmily-AI-Agent-企业蓝图/`（只读蓝图源，独立仓治理，不入本仓）
+- 回归口径：**135 / 135 → 143 / 143**（20 套件 · 0 跳过 · 0 静默）；门禁入口 18 → 19
+- 未接线模块清单 v1.9.0 → v1.10.0：统计 252 / 95 / 157 → **254 / 97 / 157**（kernel 94/36/58 · tests 20/20/0）
+- `package.json` 版本 2.14.0 → **2.15.0**（P1-T4b 协同度生产接线）
+
 ## [2.13.0] - 2026-10-23
 
 ### Added

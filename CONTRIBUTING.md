@@ -40,8 +40,8 @@ pnpm regression      # 或：node scripts/run-regression.mjs
 
 | 路径 | 用途 | 变更约束 |
 | ---- | ---- | -------- |
-| `02-智能协同架构内核/` | 五支柱内核（编号顺延，新增模块顺延编号） | 不得跨层反向依赖；`05` 不得 import `07` |
-| `03-家人Agent实现集/` | 8 位家人与 `shared-core` | 名称变更需跨层同步（README / docs / presets） |
+| `architecture-kernel/` | 五支柱内核（编号顺延，新增模块顺延编号） | 不得跨层反向依赖；`05` 不得 import `07` |
+| `family-agents/` | 8 位家人与 `shared-core` | 名称变更需跨层同步（README / docs / presets） |
 | `08-系统装配/` | 唯一同时知道 `05` 与 `07` 的模块 | 装配顺序不可调换 |
 | `09-可观测性/` | 指标注册、埋点、端点 | 新增指标需登记 help/type 并接入告警或面板 |
 | `ops/` | 告警规则、抓取配置、面板、部署 | 规则/抓取变更需 YAML 解析验证 |

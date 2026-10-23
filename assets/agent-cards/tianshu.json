@@ -1,0 +1,233 @@
+{
+  "$schema": "../schemas/agent-card.schema.json",
+  "agentCard": {
+    "name": "元启·天枢 (TianShu)",
+    "description": "YYC³ AI Family 总指挥 · 决策中枢 — 全局调度与决策中枢，负责编排、裁决与对人类的升级上报。",
+    "url": "https://matrix.yyc3.top/family/tianshu",
+    "version": "1.1.0",
+    "provider": {
+      "organization": "YanYuCloudCube",
+      "url": "https://yyc3.top"
+    },
+    "capabilities": {
+      "streaming": false,
+      "pushNotifications": false,
+      "stateTransitionHistory": true
+    },
+    "skills": [
+      {
+        "id": "shared.self-judge",
+        "name": "结构化自判断",
+        "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+        "tags": [
+          "confidence",
+          "assumption",
+          "escalation"
+        ],
+        "examples": [
+          "对候选意图给出 0..1 置信度并显式登记假设"
+        ]
+      },
+      {
+        "id": "shared.memory-retrieve",
+        "name": "记忆检索",
+        "description": "按语义与上下文检索情景/语义/程序记忆",
+        "tags": [
+          "memory",
+          "retrieval"
+        ],
+        "examples": [
+          "检索同一客户近三次决策的上下文"
+        ]
+      },
+      {
+        "id": "shared.memory-write",
+        "name": "记忆写入",
+        "description": "按写入策略落盘情景记忆与程序记忆条目",
+        "tags": [
+          "memory",
+          "write",
+          "procedural"
+        ],
+        "examples": [
+          "把本轮结论写入情景记忆并标注显著性"
+        ]
+      },
+      {
+        "id": "shared.intent-route",
+        "name": "意图识别与路由",
+        "description": "六类意图闭集分类、置信度评分与路由分发",
+        "tags": [
+          "intent",
+          "routing"
+        ],
+        "examples": [
+          "把“帮我分析上月成本”路由到语枢·万物"
+        ]
+      },
+      {
+        "id": "shared.experience-reflow",
+        "name": "经验回流",
+        "description": "轨迹采集、模式提炼与学习周期触发",
+        "tags": [
+          "trajectory",
+          "learning"
+        ],
+        "examples": [
+          "把一次成功分析沉淀为可复用轨迹"
+        ]
+      },
+      {
+        "id": "shared.policy-check",
+        "name": "策略校验",
+        "description": "按作用域匹配策略并给出 allow/deny 裁决",
+        "tags": [
+          "policy",
+          "abac"
+        ],
+        "examples": [
+          "判定“调用外部工具”是否被允许"
+        ]
+      },
+      {
+        "id": "shared.fault-heal",
+        "name": "故障降级与自愈",
+        "description": "故障侦测去抖、熔断降级、一致性修复与版本回滚",
+        "tags": [
+          "fault",
+          "circuit",
+          "rollback"
+        ],
+        "examples": [
+          "失败率升高后熔断并回滚技能版本"
+        ]
+      },
+      {
+        "id": "shared.observe-emit",
+        "name": "指标与追踪埋点",
+        "description": "以 traceId 贯穿事件并写入 family_* 指标",
+        "tags": [
+          "metrics",
+          "tracing"
+        ],
+        "examples": [
+          "为任务执行记录 outcome 与耗时并保留 traceId"
+        ]
+      },
+      {
+        "id": "shared.a2a-delegate",
+        "name": "A2A 任务委托",
+        "description": "发现对端 Agent Card 并委托任务、归一结果",
+        "tags": [
+          "a2a",
+          "delegation"
+        ],
+        "examples": [
+          "元启·天枢向语枢·万物委托一次数据分析任务"
+        ]
+      },
+      {
+        "id": "tianshu.strategy-orchestration",
+        "name": "战略决策编排",
+        "description": "全局最优导向的策略编排，平衡风险与长期价值",
+        "tags": [
+          "strategy",
+          "orchestration"
+        ],
+        "examples": [
+          "为跨部门资源冲突给出三套方案并标注取舍"
+        ]
+      },
+      {
+        "id": "tianshu.task-decomposition",
+        "name": "任务分解与分派",
+        "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
+        "tags": [
+          "decomposition",
+          "cageref",
+          "dispatch"
+        ],
+        "examples": [
+          "把“降本 10%”拆成 5 个可执行子任务并派给对应家人"
+        ]
+      },
+      {
+        "id": "tianshu.conflict-arbitration",
+        "name": "冲突裁决与资源调度",
+        "description": "跨家人结论冲突时的裁决与算力/预算再分配",
+        "tags": [
+          "arbitration",
+          "scheduling"
+        ],
+        "examples": [
+          "语枢·万物与预见·先知结论相左时给出裁决依据"
+        ]
+      },
+      {
+        "id": "tianshu.global-oversight",
+        "name": "全局状态巡视",
+        "description": "全局状态中心巡视、告警收敛与升级上报",
+        "tags": [
+          "status",
+          "alerting"
+        ],
+        "examples": [
+          "汇总五支柱健康度并向人类高管上报异常"
+        ]
+      }
+    ],
+    "defaultInputModes": [
+      "text",
+      "structured"
+    ],
+    "defaultOutputModes": [
+      "text",
+      "structured"
+    ],
+    "authentication": {
+      "schemes": [
+        "bearer_token",
+        "api_key"
+      ],
+      "required": true
+    },
+    "security": {
+      "tlsRequired": true,
+      "signedAgentCard": false,
+      "rbacRoles": [
+        "admin",
+        "operator",
+        "viewer"
+      ]
+    },
+    "slo": {
+      "latency": {
+        "p50": "500ms",
+        "p95": "2s",
+        "p99": "5s"
+      },
+      "availability": "99.9%",
+      "errorRate": "<0.5%"
+    },
+    "yyc3": {
+      "id": "010301-05",
+      "layer": "L9",
+      "layerName": "万象归元",
+      "group": "core-layer",
+      "motto": "我观全局之流转，调度万物以归元。",
+      "pillars": {
+        "self": "self-judge",
+        "knowledge": "memory-bindings",
+        "learning": "procedural",
+        "governance": "guardrail",
+        "healing": "delegation"
+      },
+      "providerChain": [
+        "openai",
+        "zhipu",
+        "ollama"
+      ],
+      "manifestVersion": "1.1.0"
+    }
+  }
+}

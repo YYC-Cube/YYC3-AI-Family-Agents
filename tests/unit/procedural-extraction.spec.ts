@@ -65,7 +65,7 @@ if (__localShim) {
   });
 }
 
-import { ProceduralStore } from '../../03-家人Agent实现集/shared-core/memory-framework/procedural-memory/index.js';
+import { ProceduralStore } from '../../family-agents/shared-core/memory-framework/procedural-memory/index.js';
 import {
   compareSemver,
   extractRules,
@@ -73,7 +73,7 @@ import {
   salienceOf,
   stableHash,
   toSkillDrafts,
-} from '../../03-家人Agent实现集/shared-core/memory-framework/procedural-memory/prompt-rule-extractor.js';
+} from '../../family-agents/shared-core/memory-framework/procedural-memory/prompt-rule-extractor.js';
 
 // ---- 测试语料 ----
 const PROMPT = [

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yyc3.top/schemas/agent-card.schema.json",
+  "title": "YYC³ AI Family — AgentCard",
+  "description": "家人 Agent Card 契约（对齐蓝图 1207 §3.2 A2A Agent Card 设计）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "agentCard"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "agentCard": { "$ref": "#/$defs/AgentCard" }
+  },
+  "$defs": {
+    "AgentCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "description",
+        "url",
+        "version",
+        "provider",
+        "capabilities",
+        "skills",
+        "defaultInputModes",
+        "defaultOutputModes",
+        "authentication",
+        "security",
+        "slo",
+        "yyc3"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "pattern": "^https://" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "provider": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["organization", "url"],
+          "properties": {
+            "organization": { "type": "string", "minLength": 1 },
+            "url": { "type": "string", "pattern": "^https://" }
+          }
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["streaming", "pushNotifications", "stateTransitionHistory"],
+          "properties": {
+            "streaming": { "type": "boolean" },
+            "pushNotifications": { "type": "boolean" },
+            "stateTransitionHistory": { "type": "boolean" }
+          }
+        },
+        "skills": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Skill" }
+        },
+        "defaultInputModes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["text", "structured", "file", "audio"] }
+        },
+        "defaultOutputModes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["text", "structured", "streaming", "file"] }
+        },
+        "authentication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schemes", "required"],
+          "properties": {
+            "schemes": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "required": { "type": "boolean" }
+          }
+        },
+        "security": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tlsRequired", "signedAgentCard", "rbacRoles"],
+          "properties": {
+            "tlsRequired": { "type": "boolean" },
+            "signedAgentCard": { "type": "boolean" },
+            "rbacRoles": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+          }
+        },
+        "slo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["latency", "availability", "errorRate"],
+          "properties": {
+            "latency": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["p50", "p95", "p99"],
+              "properties": {
+                "p50": { "type": "string", "minLength": 1 },
+                "p95": { "type": "string", "minLength": 1 },
+                "p99": { "type": "string", "minLength": 1 }
+              }
+            },
+            "availability": { "type": "string", "minLength": 1 },
+            "errorRate": { "type": "string", "minLength": 1 }
+          }
+        },
+        "yyc3": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "layer",
+            "layerName",
+            "group",
+            "motto",
+            "pillars",
+            "providerChain",
+            "manifestVersion"
+          ],
+          "properties": {
+            "id": { "type": "string", "pattern": "^[0-9]{6}-[0-9]{2}$" },
+            "layer": { "type": "string", "pattern": "^L[0-9]$" },
+            "layerName": { "type": "string", "minLength": 1 },
+            "group": { "enum": ["business-layer", "core-layer"] },
+            "motto": { "type": "string", "minLength": 1 },
+            "pillars": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["self", "knowledge", "learning", "governance", "healing"],
+              "properties": {
+                "self": { "type": "string", "minLength": 1 },
+                "knowledge": { "type": "string", "minLength": 1 },
+                "learning": { "type": "string", "minLength": 1 },
+                "governance": { "type": "string", "minLength": 1 },
+                "healing": { "type": "string", "minLength": 1 }
+              }
+            },
+            "providerChain": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "manifestVersion": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "Skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "description", "tags", "examples"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+\\.[a-z0-9-]+$" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "examples": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}

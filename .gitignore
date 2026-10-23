@@ -29,5 +29,8 @@ coverage/
 data/
 
 # 本地备份（不入库）：docs 下复制的源码目录
-docs/02-智能协同架构内核/
-docs/03-家人Agent实现集/
+docs/YYC3-AI-Family-Agent-实现设计/
+docs/YYC3-AI-Family-Agent-架构内核/
+
+# 蓝图治理（只读蓝图源，独立仓治理，不入本仓）
+docs/YYC3-FAmily-AI-Agent-企业蓝图/

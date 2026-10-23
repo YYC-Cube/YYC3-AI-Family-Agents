@@ -19,7 +19,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 ### 项目徽章
 
 [![CI](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml/badge.svg)](https://github.com/YYC-Cube/YYC3-AI-Family-Agents/actions/workflows/regression-gate.yml)
-![Regression](https://img.shields.io/badge/Regression-97%2F97%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
+![Regression](https://img.shields.io/badge/Regression-143%2F143%20PASS-2ea44f?style=for-the-badge&logo=checkmarx)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Zero Deps](https://img.shields.io/badge/Runtime%20Deps-0-8a2be2?style=for-the-badge)
@@ -36,6 +36,23 @@ _万象归元于云枢 · 深栈智启新纪元_
 ![学](https://img.shields.io/badge/学·持续学习-Learning%20Loop-2e8b57?style=for-the-badge)
 ![治](https://img.shields.io/badge/治·治理-Governance-ff8c00?style=for-the-badge)
 ![愈](https://img.shields.io/badge/愈·自愈-Self--Healing-dc143c?style=for-the-badge)
+
+### 主题标签（GitHub Topics · 仓库页可视化）
+
+![Topic: multi-agent-systems](https://img.shields.io/badge/topic-multi--agent--systems-0969da?style=flat-square)
+![Topic: ai-family](https://img.shields.io/badge/topic-ai--family-0969da?style=flat-square)
+![Topic: zero-dependency](https://img.shields.io/badge/topic-zero--dependency-8250df?style=flat-square)
+![Topic: a2a-protocol](https://img.shields.io/badge/topic-a2a--protocol-8250df?style=flat-square)
+![Topic: model-context-protocol](https://img.shields.io/badge/topic-model--context--protocol-8250df?style=flat-square)
+![Topic: agent-cards](https://img.shields.io/badge/topic-agent--cards-8250df?style=flat-square)
+![Topic: prompt-engineering](https://img.shields.io/badge/topic-prompt--engineering-bf3989?style=flat-square)
+![Topic: co-star](https://img.shields.io/badge/topic-co--star-bf3989?style=flat-square)
+![Topic: event-bus](https://img.shields.io/badge/topic-event--bus-1f6feb?style=flat-square)
+![Topic: llm-orchestration](https://img.shields.io/badge/topic-llm--orchestration-1f6feb?style=flat-square)
+![Topic: regression-gate](https://img.shields.io/badge/topic-regression--gate-2ea44f?style=flat-square)
+![Topic: five-pillars](https://img.shields.io/badge/topic-five--pillars-2ea44f?style=flat-square)
+
+> 建议同步到 GitHub 仓库 Topics（≤20 个小写连字符标签）：`multi-agent-systems` `ai-agents` `ai-family` `agent-family` `typescript` `zero-dependency` `a2a-protocol` `model-context-protocol` `agent-cards` `prompt-engineering` `co-star` `llm-orchestration` `self-healing` `observability` `event-bus` `regression-gate` `five-pillars` `enterprise-agents` `yyc3` `chinese`
 
 ---
 
@@ -55,8 +72,8 @@ _万象归元于云枢 · 深栈智启新纪元_
 
 - **零运行时依赖**：指标、HTTP 端点、编译/回归脚本全部基于 Node 标准库
 - **端到端装配**：`createRuntimeAssembly()` 一次接线「总线 → 轨迹 → 学习 → 落盘 → 回滚」
-- **可观测闭环**：14 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 7 条告警 → 五支柱面板
-- **门禁可复现**：`pnpm regression` 单命令完成编译、78 例测试、面板生成与退出码判定
+- **可观测闭环**：18 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 11 条告警 → 五支柱面板
+- **门禁可复现**：`pnpm regression` 单命令完成编译、143 例测试、面板生成与退出码判定
 
 ---
 
@@ -82,7 +99,7 @@ flowchart TB
     end
 
     subgraph OBS["09-可观测性"]
-        MTR["FamilyMetrics（14 项）"]
+        MTR["FamilyMetrics（18 项）"]
         SRV["/metrics + /healthz<br/>Bearer 鉴权"]
         DASH["五支柱 Dashboard"]
     end
@@ -138,11 +155,16 @@ sequenceDiagram
 # 1. 类型检查（仓库根）
 pnpm typecheck          # 等价 tsc --noEmit
 
-# 2. 全量门禁：隔离编译 → 14 个套件 → 五支柱聚合 → 面板 → 退出码
-pnpm regression         # 97 例全绿；0 例跳过
+# 2. 全量门禁：隔离编译 → 20 个套件 → 五支柱聚合 → 面板 → 退出码
+pnpm regression         # 143 例全绿；0 例跳过
 
 # 3. 查看面板（自包含 HTML，无需服务器）
 open ops/observability/pillar-dashboard/index.html
+
+# 4. 家族契约清单（P1-T1/T2）与提示词契约（P1-T5）
+pnpm manifest:check      # 清单 ↔ 8 份 agent.yaml 漂移校验
+pnpm manifest:cards      # 由清单重建 assets/agent-cards/*.json
+pnpm prompts:check       # 16 条提示词契约：版本回写 / CO-STAR 要素 / 孤儿扫描
 ```
 
 > `pnpm regression` 不会污染工作区：临时编译目录在系统 temp 下创建并自动清理；`YYC3_KEEP_TMP=1` 可保留用于调试。
@@ -150,7 +172,7 @@ open ops/observability/pillar-dashboard/index.html
 ### 运行时接入（部署侧示例）
 
 ```ts
-import { startRuntime } from './02-智能协同架构内核/08-系统装配/runtime-entry.js';
+import { startRuntime } from './architecture-kernel/08-系统装配/runtime-entry.js';
 
 const runtime = await startRuntime({
   storeDir: process.env.YYC3_SKILL_STORE_DIR ?? './data/skills',
@@ -173,7 +195,7 @@ LLM（P1）：`ZHIPU_API_KEY` / `OPENAI_API_KEY` 仅从环境变量读取（禁�
 
 ```text
 YYC3-AI-Family-Agent/
-├── 02-智能协同架构内核/          ← 内核（编号顺延）
+├── architecture-kernel/          ← 内核（编号顺延）
 │   ├── 01-九层架构分层底座/
 │   ├── 02-云枢核心引擎/          ← 总线 · 编排 · 外验网关 · 全局态势
 │   ├── 05-持续学习引擎/          ← 经验回流 · 技能固化 · 稳定守卫
@@ -181,7 +203,7 @@ YYC3-AI-Family-Agent/
 │   ├── 07-自愈中心/              ← 侦测 · 降级熔断 · 一致性修复 · 回滚
 │   ├── 08-系统装配/              ← createRuntimeAssembly · startRuntime
 │   └── 09-可观测性/              ← 指标注册器 · FamilyMetrics · /metrics
-├── 03-家人Agent实现集/           ← 8 位家人实例与 shared-core
+├── family-agents/           ← 8 位家人实例与 shared-core
 │   ├── core-layer/  business-layer/
 │   └── shared-core/              ← self-judge-kit · memory-framework
 ├── assets/ · configs/ · presets/  ← 资源 / 配置 / 家人预设
@@ -198,7 +220,7 @@ YYC3-AI-Family-Agent/
 
 ## 📊 可观测与门禁
 
-### 指标（14 项运行期）
+### 指标（18 项运行期）
 
 | 类别 | 指标 | 类型 |
 | ---- | ---- | ---- |
@@ -207,8 +229,11 @@ YYC3-AI-Family-Agent/
 | 自判断 | `family_selfjudge_agreement_ratio` · `family_selfjudge_mirage_total` | Gauge |
 | 记忆 | `family_memory_retrieval_duration_seconds` | Histogram |
 | 自愈 | `family_healing_actions_total` · `family_healing_rto_seconds` · `family_healing_contract_met` · `family_circuit_state` | Counter / Gauge |
+| 人机协同（P1-T4，T4b 已接线生产链路） | `family_collaboration_clarify_rate` · `family_collaboration_human_confirm_rate` · `family_collaboration_trace_coverage` · `family_collaboration_replay_coverage` | Gauge（0..1） |
 
-**告警（7 条）**：P99 延迟 · 失败率 · 校准漂移 · 记忆检索 P95 · 学习回归失败 · 回归门禁失败 · 五支柱红牌。规则见 [`ops/observability/prometheus-rules.yaml`](ops/observability/prometheus-rules.yaml)。
+> 五维归属（时间 3 / 空间 2 / 属性 4 / 事件 4 / 关联 3，另 4 项协同度单列）见 [`assets/schemas/five-dimension-map.json`](assets/schemas/five-dimension-map.json)；面板以「五维覆盖」卡片呈现。
+
+**告警（11 条）**：P99 延迟 · 失败率 · 校准漂移 · 记忆检索 P95 · 学习回归失败 · 回归门禁失败 · 五支柱红牌 · 澄清率过高 · 人工确认率过低 · traceId 覆盖率过低 · 复盘覆盖率过低。规则见 [`ops/observability/prometheus-rules.yaml`](ops/observability/prometheus-rules.yaml)。
 
 **Exemplars（L7，默认关闭）**：设置 `YYC3_EXEMPLARS_ENABLED=1` 后，`/metrics` 支持 OpenMetrics 1.0，直方图落点桶附带 `trace_id`，可在 Grafana 从 P95/P99 直接下钻到 trace。默认关闭时输出与 v2.7.2 完全一致，不注册 `family_exemplars_dropped_total`。
 
@@ -216,10 +241,10 @@ YYC3-AI-Family-Agent/
 
 | 项 | 结果 |
 | --- | --- |
-| 全量用例 | **97 / 97 通过** |
+| 全量用例 | **143 / 143 通过** |
 | 显式跳过 | **0 例**（EventBus DLQ 已实现） |
 | 静默套件 | **0** |
-| 五支柱 | 自 20 · 知 25 · 学 53 · 治 18 · 愈 34 |
+| 五支柱 | 自 28 · 知 25 · 学 61 · 治 41 · 愈 43 |
 | 类型检查 | `tsc --noEmit` exit 0 |
 
 **LLM 实答 UAT（本地门控，默认跳过，不计入门禁）**：`pnpm uat:llm` 以真实 Key 对开放平台做身份与意图抽检（1 身份 + 4 意图，附规则主选对照）。三重门控（`UAT_LLM=1` + `UAT_LLM_CONFIRM=我知晓真实计费` + 密钥存在）缺一整体跳过且 exit 0：
@@ -232,16 +257,16 @@ UAT_LLM=1 UAT_LLM_CONFIRM='我知晓真实计费' ZHIPU_API_KEY=<你的Key> pnpm
 
 ## 🔌 模块接线状态
 
-> 口径：从 13 个门禁入口做静态 import 可达性分析；**「仅编译」不代表已交付能力**。
+> 口径：从 19 个门禁入口做静态 import 可达性分析；**「仅编译」不代表已交付能力**。
 
 | 范围 | 编译文件 | 已接线 | 仅编译 |
 | ---- | -------- | ------ | ------ |
-| `02-智能协同架构内核` | 93 | 34 | 59 |
-| `03-家人Agent实现集` | 135 | 33 | 102 |
-| `tests`（门禁入口） | 13 | 13 | 0 |
-| **合计** | **241** | **80** | **161** |
+| `architecture-kernel` | 94 | 36 | 58 |
+| `family-agents` | 140 | 41 | 99 |
+| `tests`（门禁入口） | 20 | 20 | 0 |
+| **合计** | **254** | **97** | **157** |
 
-- `shared-core` 31/31 全接线；8 位家人仅 `member-grandmaster`、`member-qianhang` 的 `self-judge` 被引用
+- `shared-core` 全接线；家人意图链路 4 文件 + 伯乐成就面板已接线
 - `01-九层架构分层底座` 20/20 为**契约骨架**，尚未接线
 - 8 个家人自测 spec 被 `tsconfig` 排除且不在回归清单
 

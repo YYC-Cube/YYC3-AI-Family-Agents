@@ -52,13 +52,13 @@ if (__localShim) {
   });
 }
 
-import { ComplianceAudit } from '../../02-智能协同架构内核/06-治理中心/compliance-audit/compliance-audit.js';
-import { ConsistencyRepair } from '../../02-智能协同架构内核/07-自愈中心/consistency-repair/consistency-repair.js';
-import { DegradationController } from '../../02-智能协同架构内核/07-自愈中心/degradation-controller/degradation-controller.js';
-import { FaultDetector } from '../../02-智能协同架构内核/07-自愈中心/fault-detector/fault-detector.js';
-import { RTO_RPO_TARGETS } from '../../02-智能协同架构内核/07-自愈中心/types.js';
-import { ConsistencyChecker } from '../../03-家人Agent实现集/shared-core/memory-framework/memory-orchestrator/consistency-checker.js';
-import { MemoryOrchestratorImpl } from '../../03-家人Agent实现集/shared-core/memory-framework/memory-orchestrator/index.js';
+import { ComplianceAudit } from '../../architecture-kernel/06-治理中心/compliance-audit/compliance-audit.js';
+import { ConsistencyRepair } from '../../architecture-kernel/07-自愈中心/consistency-repair/consistency-repair.js';
+import { DegradationController } from '../../architecture-kernel/07-自愈中心/degradation-controller/degradation-controller.js';
+import { FaultDetector } from '../../architecture-kernel/07-自愈中心/fault-detector/fault-detector.js';
+import { RTO_RPO_TARGETS } from '../../architecture-kernel/07-自愈中心/types.js';
+import { ConsistencyChecker } from '../../family-agents/shared-core/memory-framework/memory-orchestrator/consistency-checker.js';
+import { MemoryOrchestratorImpl } from '../../family-agents/shared-core/memory-framework/memory-orchestrator/index.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

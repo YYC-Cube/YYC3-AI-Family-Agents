@@ -31,7 +31,7 @@ if (__localShim) {
   });
 }
 
-import { EventBus } from '../../02-智能协同架构内核/02-云枢核心引擎/family-communication-bus/event-bus.js';
+import { EventBus } from '../../architecture-kernel/02-云枢核心引擎/family-communication-bus/event-bus.js';
 
 /** 构造一条总线事件。 */
 function makeEvent({ traceId = 't1', agentId = 'qianhang', seq = 1, topic = 'task.executed', mode = 'broadcast', target } = {}) {

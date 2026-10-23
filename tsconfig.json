@@ -23,16 +23,16 @@
     "verbatimModuleSyntax": true,
     "paths": {
       "@shared/*": [
-        "./03-家人Agent实现集/shared-core/*"
+        "./family-agents/shared-core/*"
       ],
       "@members/*": [
-        "./03-家人Agent实现集/*"
+        "./family-agents/*"
       ]
     }
   },
   "include": [
-    "02-智能协同架构内核/**/*.ts",
-    "03-家人Agent实现集/**/*.ts"
+    "architecture-kernel/**/*.ts",
+    "family-agents/**/*.ts"
   ],
   "exclude": [
     "node_modules",

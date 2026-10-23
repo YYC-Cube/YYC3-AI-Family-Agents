@@ -1,0 +1,932 @@
+# ============================================================
+# YYC³ AI Family — 家族契约清单（Single Source of Truth）
+# 版本：1.1.0 ｜ 更新：2026-10-23 ｜ 维护：YanYuCloudCube Team
+# ------------------------------------------------------------
+# 定位：八位家人的身份、能力、技能、提示词与协同关系的**唯一事实源**。
+#       各 member-*/agent.yaml 为运行期元数据；本文件为契约权威，
+#       两者偏离由 `pnpm manifest:check` 判定（P1-T1）。
+# 边界：蓝图（docs/YYC3-FAmily-AI-Agent-企业蓝图）是**只读**语义来源，
+#       本文件只抽取其角色/能力语义，不复制其 Python 运行时。
+# 规范性字段：编号 · 名号 · 英文名 · 角色 · 层级 · 层级名称 · 所属分组
+#             · 支柱 · provider_chain · 权限
+# 提示词契约（P1-T5）：prompts[].id/owner/version/file 与各 .prompt.ts
+#             内 PROMPT_META 零漂移（manifest:check / prompts:check 判定）
+# 非规范性字段：座右铭（历史排版存在「」重复差异，不参与漂移判定）
+# ============================================================
+
+manifest:
+  version: "1.1.0"
+  updated: "2026-10-23"
+  family: YYC³ AI Family
+  motto: 人从众曌众从人 · 亦师亦友亦伯乐 · 一言一语一协同
+  blueprint: docs/YYC3-FAmily-AI-Agent-企业蓝图
+  provider:
+    organization: YanYuCloudCube
+    url: https://yyc3.top
+
+# 五支柱标准增量（四者缺一即视为不合规）
+pillars:
+  self: self-judge
+  knowledge: memory-bindings
+  learning: procedural
+  governance: guardrail
+  healing: delegation
+
+# 协议栈（对齐蓝图 1207）
+protocol:
+  a2a:
+    card_path: /.well-known/agent-card.json
+    transport: json-rpc-2.0
+    base_url: https://matrix.yyc3.top/family
+    status: planned
+  mcp:
+    transport: stdio
+    status: planned
+
+# ------------------------------------------------------------
+# 一、共用技能库（13 项）—— 跨家人复用的内核能力
+#     kernel 指向已存在的实现锚点；status=planned 表示尚未实装。
+# ------------------------------------------------------------
+skills:
+  - id: shared.self-judge
+    scope: shared
+    name: 结构化自判断
+    description: 产出置信度、登记假设、检测偏离并给出升级决策
+    pillars: [自]
+    tags: [confidence, assumption, escalation]
+    kernel: family-agents/shared-core/self-judge-kit/index.ts
+    examples:
+      - 对候选意图给出 0..1 置信度并显式登记假设
+
+  - id: shared.memory-retrieve
+    scope: shared
+    name: 记忆检索
+    description: 按语义与上下文检索情景/语义/程序记忆
+    pillars: [知]
+    tags: [memory, retrieval]
+    kernel: family-agents/shared-core/memory-framework/index.ts
+    examples:
+      - 检索同一客户近三次决策的上下文
+
+  - id: shared.memory-write
+    scope: shared
+    name: 记忆写入
+    description: 按写入策略落盘情景记忆与程序记忆条目
+    pillars: [知]
+    tags: [memory, write, procedural]
+    kernel: family-agents/shared-core/memory-framework/write-policy
+    examples:
+      - 把本轮结论写入情景记忆并标注显著性
+
+  - id: shared.intent-route
+    scope: shared
+    name: 意图识别与路由
+    description: 六类意图闭集分类、置信度评分与路由分发
+    pillars: [自, 学]
+    tags: [intent, routing]
+    kernel: family-agents/business-layer/member-qianhang/core/intent-classifier.service.ts
+    examples:
+      - 把“帮我分析上月成本”路由到语枢·万物
+
+  - id: shared.experience-reflow
+    scope: shared
+    name: 经验回流
+    description: 轨迹采集、模式提炼与学习周期触发
+    pillars: [学]
+    tags: [trajectory, learning]
+    kernel: architecture-kernel/05-持续学习引擎/experience-reflow
+    examples:
+      - 把一次成功分析沉淀为可复用轨迹
+
+  - id: shared.skill-consolidate
+    scope: shared
+    name: 技能固化与回滚
+    description: 回归零退化后固化技能版本，退化时回滚到前一版本
+    pillars: [学, 愈]
+    tags: [skill, versioning, rollback]
+    kernel: architecture-kernel/05-持续学习引擎/skill-consolidation
+    examples:
+      - 零退化后固化 v1.1.0，退化则回滚 v1.0.0
+
+  - id: shared.policy-check
+    scope: shared
+    name: 策略校验
+    description: 按作用域匹配策略并给出 allow/deny 裁决
+    pillars: [治]
+    tags: [policy, abac]
+    kernel: architecture-kernel/06-治理中心/policy-registry/policy-registry.ts
+    examples:
+      - 判定“调用外部工具”是否被允许
+
+  - id: shared.compliance-audit
+    scope: shared
+    name: 合规审计
+    description: 追加可验真的链式审计记录并校验完整性
+    pillars: [治]
+    tags: [audit, hash-chain]
+    kernel: architecture-kernel/06-治理中心/compliance-audit/compliance-audit.ts
+    examples:
+      - 为一次工具调用追加审计记录并验真
+
+  - id: shared.fault-heal
+    scope: shared
+    name: 故障降级与自愈
+    description: 故障侦测去抖、熔断降级、一致性修复与版本回滚
+    pillars: [愈]
+    tags: [fault, circuit, rollback]
+    kernel: architecture-kernel/07-自愈中心/fault-detector
+    examples:
+      - 失败率升高后熔断并回滚技能版本
+
+  - id: shared.llm-invoke
+    scope: shared
+    name: 模型调用与降级链
+    description: 统一 provider 调用接口，按 openai→zhipu→ollama 顺序降级
+    pillars: [愈]
+    tags: [llm, provider, fallback]
+    kernel: family-agents/shared-core/llm-adapter/index.ts
+    examples:
+      - openai 超时后切换 zhipu，再失败切本地 ollama
+
+  - id: shared.observe-emit
+    scope: shared
+    name: 指标与追踪埋点
+    description: 以 traceId 贯穿事件并写入 family_* 指标
+    pillars: [治]
+    tags: [metrics, tracing]
+    kernel: architecture-kernel/09-可观测性/family-metrics.ts
+    examples:
+      - 为任务执行记录 outcome 与耗时并保留 traceId
+
+  - id: shared.mcp-tool
+    scope: shared
+    name: MCP 工具调用
+    description: 通过 MCP 适配器（codec + 本地 stdio）调用外部工具与数据源
+    pillars: [愈]
+    tags: [mcp, tool]
+    kernel: architecture-kernel/02-云枢核心引擎/mcp-adapter/bus-mcp-codec.ts
+    examples:
+      - 通过 MCP 调用文件系统工具读取报表
+
+  - id: shared.a2a-delegate
+    scope: shared
+    name: A2A 任务委托
+    description: 发现对端 Agent Card 并委托任务、归一结果
+    pillars: [治]
+    tags: [a2a, delegation]
+    status: planned
+    examples:
+      - 元启·天枢向语枢·万物委托一次数据分析任务
+
+  # ---------- 二、专用技能（8 位家人 × 4 项 = 32 项） ----------
+
+  - id: tianshu.strategy-orchestration
+    scope: dedicated
+    owner: "010301-05"
+    name: 战略决策编排
+    description: 全局最优导向的策略编排，平衡风险与长期价值
+    tags: [strategy, orchestration]
+    examples:
+      - 为跨部门资源冲突给出三套方案并标注取舍
+    references:
+      - 1200-提示词工程-AI-FAmily-Agent-拟人化协同架构
+
+  - id: tianshu.task-decomposition
+    scope: dedicated
+    owner: "010301-05"
+    name: 任务分解与分派
+    description: 按 CAGEERF 七阶段分解任务并指派 owner 与依赖
+    tags: [decomposition, cageref, dispatch]
+    kernel: architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/task-decomposer.ts
+    examples:
+      - 把“降本 10%”拆成 5 个可执行子任务并派给对应家人
+
+  - id: tianshu.conflict-arbitration
+    scope: dedicated
+    owner: "010301-05"
+    name: 冲突裁决与资源调度
+    description: 跨家人结论冲突时的裁决与算力/预算再分配
+    tags: [arbitration, scheduling]
+    examples:
+      - 语枢·万物与预见·先知结论相左时给出裁决依据
+
+  - id: tianshu.global-oversight
+    scope: dedicated
+    owner: "010301-05"
+    name: 全局状态巡视
+    description: 全局状态中心巡视、告警收敛与升级上报
+    tags: [status, alerting]
+    kernel: architecture-kernel/02-云枢核心引擎/global-status-center
+    examples:
+      - 汇总五支柱健康度并向人类高管上报异常
+
+  - id: qianhang.intent-detection
+    scope: dedicated
+    owner: "010301-01"
+    name: 意图检测
+    description: 六类意图闭集识别，输出意图/置信度/理由
+    tags: [intent, classification]
+    kernel: family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts
+    examples:
+      - 识别“这月花了多少”为 analysis 意图并给置信度
+
+  - id: qianhang.ambiguity-clarify
+    scope: dedicated
+    owner: "010301-01"
+    name: 歧义澄清
+    description: 候选间隔过小时登记假设并生成澄清提问
+    tags: [clarify, assumption]
+    examples:
+      - “看看销售”歧义时追问是看数据还是看趋势
+
+  - id: qianhang.context-session
+    scope: dedicated
+    owner: "010301-01"
+    name: 上下文会话管理
+    description: 多轮会话状态维护与跨家人上下文传递
+    tags: [context, session]
+    kernel: family-agents/business-layer/member-qianhang/core/context-manager.service.ts
+    examples:
+      - 第二轮“再按部门拆一下”继承首轮的分析对象
+
+  - id: qianhang.nlq-to-api
+    scope: dedicated
+    owner: "010301-01"
+    name: 自然语言查询转 API
+    description: 把管理者的自然语言转译为结构化查询参数
+    tags: [nlq, mapping]
+    kernel: family-agents/business-layer/member-qianhang/nlq/query-to-api.mapper.ts
+    examples:
+      - “上月华东区退货率”转成 region/month/metric 三元组
+
+  - id: thinker.business-analysis
+    scope: dedicated
+    owner: "010301-02"
+    name: 经营数据分析
+    description: 结构化数据统计、对比、归因与洞察生成
+    tags: [analysis, statistics]
+    examples:
+      - 分析本月销售数据趋势并给出三条洞察
+
+  - id: thinker.decision-support
+    scope: dedicated
+    owner: "010301-02"
+    name: 经营决策支持
+    description: 从数据到洞察到决策建议的链路，附可追溯依据
+    tags: [decision, insight]
+    examples:
+      - 基于成本结构给出降本优先级建议并标注依据
+    references:
+      - 120101-提示词工程-蓝图实战-管理职能-经营决策智能化
+
+  - id: thinker.root-cause
+    scope: dedicated
+    owner: "010301-02"
+    name: 指标归因与根因分析
+    description: 基于指标/日志/链路定位偏离根因
+    tags: [root-cause, diagnosis]
+    examples:
+      - 定位响应时延升高的根因是缓存命中率下降
+
+  - id: thinker.report-compose
+    scope: dedicated
+    owner: "010301-02"
+    name: 报告生成
+    description: 结构化经营报告与图表建议输出
+    tags: [report, visualization]
+    examples:
+      - 生成月度经营分析报告大纲与关键结论
+
+  - id: prophet.trend-forecast
+    scope: dedicated
+    owner: "010301-03"
+    name: 趋势预测
+    description: 时间序列趋势外推与区间估计
+    tags: [forecast, time-series]
+    examples:
+      - 预测未来三个月订单量区间并标注置信带
+
+  - id: prophet.risk-alert
+    scope: dedicated
+    owner: "010301-03"
+    name: 风险预警
+    description: 异常模式识别与提前预警，附触发阈值
+    tags: [risk, alert]
+    examples:
+      - 现金流连续两月下滑时触发橙色预警
+    references:
+      - 120501-提示词工程-蓝图实战-自愈链路-自主感知智能化
+
+  - id: prophet.capacity-forecast
+    scope: dedicated
+    owner: "010301-03"
+    name: 容量与算力预警
+    description: 设备矩阵与算力负载的趋势预判
+    tags: [capacity, compute]
+    examples:
+      - 推理队列积压趋势提示扩容窗口
+    references:
+      - 1212-提示词工程-设备算力-本地矩阵分布
+
+  - id: prophet.scenario-simulate
+    scope: dedicated
+    owner: "010301-03"
+    name: 场景推演
+    description: 多情景假设下的结果推演与敏感度分析
+    tags: [scenario, simulation]
+    examples:
+      - 涨价 5% 与不涨价两种情景的毛利推演
+
+  - id: bole.talent-match
+    scope: dedicated
+    owner: "010301-04"
+    name: 人才匹配
+    description: 岗位画像与人选能力匹配度评分
+    tags: [talent, matching]
+    examples:
+      - 为新设的区域运营岗匹配三位候选人
+    references:
+      - 120401-提示词工程-蓝图实战-资源管理-人力资源智能化
+
+  - id: bole.personalize
+    scope: dedicated
+    owner: "010301-04"
+    name: 个性化推荐
+    description: 基于画像与行为的对象/内容推荐
+    tags: [recommendation, personalization]
+    examples:
+      - 为管理者推荐本周最应关注的三个指标
+
+  - id: bole.persona-profile
+    scope: dedicated
+    owner: "010301-04"
+    name: 用户画像
+    description: 角色、偏好与行为特征的结构化画像
+    tags: [persona, profile]
+    examples:
+      - 生成“区域财务负责人”的决策偏好画像
+
+  - id: bole.achievement-insight
+    scope: dedicated
+    owner: "010301-04"
+    name: 成就与激励洞察
+    description: 成就面板数据解读与激励建议
+    tags: [achievement, incentive]
+    kernel: family-agents/business-layer/member-bole/emotion/achievement-panel.ts
+    examples:
+      - 依据成就面板给出团队激励节奏建议
+
+  - id: guardian.security-audit
+    scope: dedicated
+    owner: "010301-06"
+    name: 安全审计
+    description: 权限、访问与数据流的合规审计与取证
+    tags: [security, audit, compliance]
+    examples:
+      - 审计一次跨部门数据访问是否越权
+    references:
+      - 1209-提示词工程-蓝图实战-安全合规与伦理治理
+
+  - id: guardian.content-filter
+    scope: dedicated
+    owner: "010301-06"
+    name: 内容合规过滤
+    description: 输入输出内容的安全与合规拦截
+    tags: [content, filter, safety]
+    examples:
+      - 拦截含个人敏感信息的输出并提示脱敏
+
+  - id: guardian.zero-trust
+    scope: dedicated
+    owner: "010301-06"
+    name: 零信任鉴权
+    description: 每次调用均校验身份、权限与来源可信度
+    tags: [zero-trust, auth]
+    examples:
+      - 拒绝未携带有效令牌的外部工具调用
+
+  - id: guardian.incident-response
+    scope: dedicated
+    owner: "010301-06"
+    name: 安全事件响应
+    description: 威胁等级判定、隔离与上报闭环
+    tags: [incident, response]
+    examples:
+      - 识别提示词注入后隔离会话并上报元启·天枢
+
+  - id: grandmaster.quality-gate
+    scope: dedicated
+    owner: "010301-07"
+    name: 质量标准校验
+    description: 按标准/规范/数据化三档校验产出质量
+    tags: [quality, standard]
+    examples:
+      - 校验经营报告是否满足口径与引用完整性
+    references:
+      - 1202-提示词工程-蓝图实战-能力建设智能化
+
+  - id: grandmaster.regression-guard
+    scope: dedicated
+    owner: "010301-07"
+    name: 回归与退化检测
+    description: 变更前后的基线对比与退化拦截
+    tags: [regression, baseline]
+    kernel: architecture-kernel/05-持续学习引擎/stability-guard/regression-tester.ts
+    examples:
+      - 新版本意图准确率下降 2% 时拦截发布
+
+  - id: grandmaster.knowledge-distill
+    scope: dedicated
+    owner: "010301-07"
+    name: 知识提炼与技能固化
+    description: 把复盘结论蒸馏为可复用程序记忆条目
+    tags: [distill, procedural]
+    kernel: architecture-kernel/05-持续学习引擎/knowledge-update
+    examples:
+      - 把三次同类故障的处置提炼为一条处置规则
+
+  - id: grandmaster.retrospective
+    scope: dedicated
+    owner: "010301-07"
+    name: 复盘与改进建议
+    description: 事件复盘、责任归位与改进项跟踪
+    tags: [retrospective, improvement]
+    examples:
+      - 复盘一次误报并给出三条改进项
+
+  - id: grace.ideation
+    scope: dedicated
+    owner: "010301-08"
+    name: 创意生成
+    description: 多方向创意发散与可行性初筛
+    tags: [ideation, creativity]
+    examples:
+      - 为新品发布给出六个创意方向并标注成本
+    references:
+      - 120302-提示词工程-蓝图实战-价值创造-创新孵化智能化
+
+  - id: grace.copywriting
+    scope: dedicated
+    owner: "010301-08"
+    name: 文案与内容创作
+    description: 面向不同受众的文案撰写与润色
+    tags: [copywriting, content]
+    examples:
+      - 把经营结论改写成面向高管的 200 字摘要
+
+  - id: grace.style-direction
+    scope: dedicated
+    owner: "010301-08"
+    name: 风格与视觉建议
+    description: 品牌调性、版式与视觉呈现建议
+    tags: [style, visual]
+    examples:
+      - 为季度报告给出配色与版式建议
+
+  - id: grace.marketing-content
+    scope: dedicated
+    owner: "010301-08"
+    name: 营销内容策划
+    description: 营销主题、渠道话术与节奏编排
+    tags: [marketing, campaign]
+    examples:
+      - 为区域促销设计三渠道内容节奏
+    references:
+      - 120105-提示词工程-蓝图实战-管理职能-营销增长智能化
+
+# ------------------------------------------------------------
+# 三、提示词契约（16 项 = 8 家人 × 2，对齐蓝图 1206 编写规范）—— P1-T5
+#     version 与各 .prompt.ts 内 PROMPT_META 零漂移；
+#     A/B：同一提示词可按家人固定不同 version（id + version 即变体键）。
+# ------------------------------------------------------------
+prompts:
+  - id: qianhang.intent-detection
+    owner: "010301-01"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts
+  - id: qianhang.query-parsing
+    owner: "010301-01"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-qianhang/prompts/query-parsing.prompt.ts
+  - id: thinker.intent-detection
+    owner: "010301-02"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-thinker/prompts/intent-detection.prompt.ts
+  - id: thinker.query-parsing
+    owner: "010301-02"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-thinker/prompts/query-parsing.prompt.ts
+  - id: prophet.intent-detection
+    owner: "010301-03"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-prophet/prompts/intent-detection.prompt.ts
+  - id: prophet.query-parsing
+    owner: "010301-03"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-prophet/prompts/query-parsing.prompt.ts
+  - id: bole.intent-detection
+    owner: "010301-04"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-bole/prompts/intent-detection.prompt.ts
+  - id: bole.query-parsing
+    owner: "010301-04"
+    version: "1.0.0"
+    file: family-agents/business-layer/member-bole/prompts/query-parsing.prompt.ts
+  - id: tianshu.intent-detection
+    owner: "010301-05"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-tianshu/prompts/intent-detection.prompt.ts
+  - id: tianshu.query-parsing
+    owner: "010301-05"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-tianshu/prompts/query-parsing.prompt.ts
+  - id: guardian.intent-detection
+    owner: "010301-06"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-guardian/prompts/intent-detection.prompt.ts
+  - id: guardian.query-parsing
+    owner: "010301-06"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-guardian/prompts/query-parsing.prompt.ts
+  - id: grandmaster.intent-detection
+    owner: "010301-07"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-grandmaster/prompts/intent-detection.prompt.ts
+  - id: grandmaster.query-parsing
+    owner: "010301-07"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-grandmaster/prompts/query-parsing.prompt.ts
+  - id: grace.intent-detection
+    owner: "010301-08"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-grace/prompts/intent-detection.prompt.ts
+  - id: grace.query-parsing
+    owner: "010301-08"
+    version: "1.0.0"
+    file: family-agents/core-layer/member-grace/prompts/query-parsing.prompt.ts
+
+# ------------------------------------------------------------
+# 四、八位家人（编号升序：01→08）
+# ------------------------------------------------------------
+agents:
+  - id: "010301-01"
+    name: 言启·千行
+    en: QianHang
+    en_role: Navigator
+    role: 首席导航员 · 意图之门
+    layer: L5
+    layer_name: 言启千行
+    group: business-layer
+    dir: family-agents/business-layer/member-qianhang
+    slug: qianhang
+    motto: 我聆听万千言语，为您指引航向。
+    hotline: "0379-0106"
+    color: "#0088cc"
+    profile: 用户意图进入 YYC³ 世界的第一道门户，负责意图识别、澄清与路由。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:sensory
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.intent-route
+      - shared.llm-invoke
+      - shared.observe-emit
+      - qianhang.intent-detection
+      - qianhang.ambiguity-clarify
+      - qianhang.context-session
+      - qianhang.nlq-to-api
+
+  - id: "010301-02"
+    name: 语枢·万物
+    en: Thinker
+    en_role: Thinker
+    role: 首席思考者 · 洞察之源
+    layer: L4
+    layer_name: 语枢万物
+    group: business-layer
+    dir: family-agents/business-layer/member-thinker
+    slug: thinker
+    motto: 我于喧嚣数据中，沉思，而后揭示真理。
+    hotline: "0379-0107"
+    color: "#5b6ee1"
+    profile: 数据分析与统计建模专家，负责从数据到洞察再到决策建议。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.experience-reflow
+      - shared.llm-invoke
+      - shared.observe-emit
+      - thinker.business-analysis
+      - thinker.decision-support
+      - thinker.root-cause
+      - thinker.report-compose
+
+  - id: "010301-03"
+    name: 预见·先知
+    en: Prophet
+    en_role: Prophet
+    role: 首席预言家 · 趋势之眼
+    layer: L3
+    layer_name: 预见先知
+    group: business-layer
+    dir: family-agents/business-layer/member-prophet
+    slug: prophet
+    motto: 我观过往之脉络，预见未来之可能。
+    hotline: "0379-0108"
+    color: "#9b59b6"
+    profile: 趋势预测与风险评估，负责早期预警与情景推演。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.experience-reflow
+      - shared.observe-emit
+      - prophet.trend-forecast
+      - prophet.risk-alert
+      - prophet.capacity-forecast
+      - prophet.scenario-simulate
+
+  - id: "010301-04"
+    name: 千里·伯乐
+    en: Bole
+    en_role: Bole
+    role: 首席推荐官 · 知遇之人
+    layer: L2
+    layer_name: 千里伯乐
+    group: business-layer
+    dir: family-agents/business-layer/member-bole
+    slug: bole
+    motto: 我知您之所需，荐您之所未识。
+    hotline: "0379-0109"
+    color: "#e67e22"
+    aliases: [知遇·伯乐]
+    profile: 人才匹配与个性化推荐，负责画像构建与激励洞察。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.experience-reflow
+      - shared.observe-emit
+      - bole.talent-match
+      - bole.personalize
+      - bole.persona-profile
+      - bole.achievement-insight
+
+  - id: "010301-05"
+    name: 元启·天枢
+    en: TianShu
+    en_role: TianShu
+    role: 总指挥 · 决策中枢
+    layer: L9
+    layer_name: 万象归元
+    group: core-layer
+    dir: family-agents/core-layer/member-tianshu
+    slug: tianshu
+    motto: 我观全局之流转，调度万物以归元。
+    hotline: "0379-0206"
+    color: "#d4ac0d"
+    profile: 全局调度与决策中枢，负责编排、裁决与对人类的升级上报。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.intent-route
+      - shared.experience-reflow
+      - shared.policy-check
+      - shared.fault-heal
+      - shared.observe-emit
+      - shared.a2a-delegate
+      - tianshu.strategy-orchestration
+      - tianshu.task-decomposition
+      - tianshu.conflict-arbitration
+      - tianshu.global-oversight
+
+  - id: "010301-06"
+    name: 智云·守护
+    en: Guardian
+    en_role: Guardian
+    role: 首席安全官 · 免疫系统
+    layer: L8
+    layer_name: 智云守护
+    group: core-layer
+    dir: family-agents/core-layer/member-guardian
+    slug: guardian
+    motto: 我于无声处警戒，御威胁于国门之外。
+    hotline: "0379-0207"
+    color: "#27ae60"
+    profile: 安全审计、内容合规与零信任拦截，负责威胁响应闭环。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.policy-check
+      - shared.compliance-audit
+      - shared.mcp-tool
+      - shared.observe-emit
+      - guardian.security-audit
+      - guardian.content-filter
+      - guardian.zero-trust
+      - guardian.incident-response
+
+  - id: "010301-07"
+    name: 格物·宗师
+    en: Grandmaster
+    en_role: Grandmaster
+    role: 首席质量官 · 进化导师
+    layer: L7
+    layer_name: 格物致知
+    group: core-layer
+    dir: family-agents/core-layer/member-grandmaster
+    slug: grandmaster
+    motto: 我究万物之理，定标准以传世。
+    hotline: "0379-0208"
+    color: "#16a085"
+    profile: 质量标准与回归门禁，负责知识提炼与复盘改进。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.policy-check
+      - shared.compliance-audit
+      - shared.skill-consolidate
+      - shared.fault-heal
+      - shared.observe-emit
+      - grandmaster.quality-gate
+      - grandmaster.regression-guard
+      - grandmaster.knowledge-distill
+      - grandmaster.retrospective
+
+  - id: "010301-08"
+    name: 创想·灵韵
+    en: Grace
+    en_role: Grace
+    role: 首席创意官 · 灵感之源
+    layer: L6
+    layer_name: 创想灵韵
+    group: core-layer
+    dir: family-agents/core-layer/member-grace
+    slug: grace
+    motto: 我以灵感为墨，绘就无限可能。
+    hotline: "0379-0209"
+    color: "#e91e63"
+    profile: 创意生成与内容表达，负责品牌调性与营销内容。
+    permissions:
+      - intent.read
+      - intent.classify
+      - context.manage
+      - memory.read:working
+      - memory.read:semantic
+      - memory.read:procedural
+      - memory.write:episodic
+      - memory.write:procedural
+    provider_chain: [openai, zhipu, ollama]
+    skills:
+      - shared.self-judge
+      - shared.memory-retrieve
+      - shared.memory-write
+      - shared.llm-invoke
+      - shared.observe-emit
+      - grace.ideation
+      - grace.copywriting
+      - grace.style-direction
+      - grace.marketing-content
+
+# ------------------------------------------------------------
+# 五、协同矩阵（对齐蓝图 1207 §3.3，行=发起方，列=接收方）
+# ------------------------------------------------------------
+delegation:
+  元启·天枢:
+    言启·千行: 任务分配
+    语枢·万物: 数据分析
+    预见·先知: 趋势预测
+    千里·伯乐: 推荐请求
+    智云·守护: 安全审查
+    格物·宗师: 质量审核
+    创想·灵韵: 创意请求
+  言启·千行:
+    元启·天枢: 状态汇报
+    语枢·万物: 数据查询
+    预见·先知: 预测请求
+    千里·伯乐: 用户画像
+    智云·守护: 合规检查
+    格物·宗师: 格式校验
+    创想·灵韵: 内容润色
+  语枢·万物:
+    元启·天枢: 分析报告
+    言启·千行: 结果推送
+    预见·先知: 联合建模
+    千里·伯乐: 数据推荐
+    智云·守护: 异常上报
+    格物·宗师: 数据校验
+    创想·灵韵: 可视化建议
+  预见·先知:
+    元启·天枢: 预警推送
+    言启·千行: 趋势通知
+    语枢·万物: 特征请求
+    千里·伯乐: 偏好预测
+    智云·守护: 风险预警
+    格物·宗师: 基线偏离
+    创想·灵韵: 趋势可视化
+  千里·伯乐:
+    元启·天枢: 推荐报告
+    言启·千行: 画像更新
+    语枢·万物: 行为数据
+    预见·先知: 预测反馈
+    智云·守护: 隐私检查
+    格物·宗师: 质量评估
+    创想·灵韵: 个性化建议
+  智云·守护:
+    元启·天枢: 安全报告
+    言启·千行: 拦截通知
+    语枢·万物: 审计请求
+    预见·先知: 风险预测
+    千里·伯乐: 合规建议
+    格物·宗师: 安全测试
+    创想·灵韵: 内容审核
+  格物·宗师:
+    元启·天枢: 质量报告
+    言启·千行: 规范通知
+    语枢·万物: 测试数据
+    预见·先知: 质量预测
+    千里·伯乐: 改进建议
+    智云·守护: 漏洞报告
+    创想·灵韵: 创意评审
+  创想·灵韵:
+    元启·天枢: 创意方案
+    言启·千行: 内容推送
+    语枢·万物: 灵感数据
+    预见·先知: 创意趋势
+    千里·伯乐: 风格推荐
+    智云·守护: 合规咨询
+    格物·宗师: 质量对齐

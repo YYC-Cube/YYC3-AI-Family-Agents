@@ -1,0 +1,221 @@
+{
+  "$schema": "../schemas/agent-card.schema.json",
+  "agentCard": {
+    "name": "格物·宗师 (Grandmaster)",
+    "description": "YYC³ AI Family 首席质量官 · 进化导师 — 质量标准与回归门禁，负责知识提炼与复盘改进。",
+    "url": "https://matrix.yyc3.top/family/grandmaster",
+    "version": "1.1.0",
+    "provider": {
+      "organization": "YanYuCloudCube",
+      "url": "https://yyc3.top"
+    },
+    "capabilities": {
+      "streaming": false,
+      "pushNotifications": false,
+      "stateTransitionHistory": true
+    },
+    "skills": [
+      {
+        "id": "shared.self-judge",
+        "name": "结构化自判断",
+        "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+        "tags": [
+          "confidence",
+          "assumption",
+          "escalation"
+        ],
+        "examples": [
+          "对候选意图给出 0..1 置信度并显式登记假设"
+        ]
+      },
+      {
+        "id": "shared.memory-retrieve",
+        "name": "记忆检索",
+        "description": "按语义与上下文检索情景/语义/程序记忆",
+        "tags": [
+          "memory",
+          "retrieval"
+        ],
+        "examples": [
+          "检索同一客户近三次决策的上下文"
+        ]
+      },
+      {
+        "id": "shared.memory-write",
+        "name": "记忆写入",
+        "description": "按写入策略落盘情景记忆与程序记忆条目",
+        "tags": [
+          "memory",
+          "write",
+          "procedural"
+        ],
+        "examples": [
+          "把本轮结论写入情景记忆并标注显著性"
+        ]
+      },
+      {
+        "id": "shared.policy-check",
+        "name": "策略校验",
+        "description": "按作用域匹配策略并给出 allow/deny 裁决",
+        "tags": [
+          "policy",
+          "abac"
+        ],
+        "examples": [
+          "判定“调用外部工具”是否被允许"
+        ]
+      },
+      {
+        "id": "shared.compliance-audit",
+        "name": "合规审计",
+        "description": "追加可验真的链式审计记录并校验完整性",
+        "tags": [
+          "audit",
+          "hash-chain"
+        ],
+        "examples": [
+          "为一次工具调用追加审计记录并验真"
+        ]
+      },
+      {
+        "id": "shared.skill-consolidate",
+        "name": "技能固化与回滚",
+        "description": "回归零退化后固化技能版本，退化时回滚到前一版本",
+        "tags": [
+          "skill",
+          "versioning",
+          "rollback"
+        ],
+        "examples": [
+          "零退化后固化 v1.1.0，退化则回滚 v1.0.0"
+        ]
+      },
+      {
+        "id": "shared.fault-heal",
+        "name": "故障降级与自愈",
+        "description": "故障侦测去抖、熔断降级、一致性修复与版本回滚",
+        "tags": [
+          "fault",
+          "circuit",
+          "rollback"
+        ],
+        "examples": [
+          "失败率升高后熔断并回滚技能版本"
+        ]
+      },
+      {
+        "id": "shared.observe-emit",
+        "name": "指标与追踪埋点",
+        "description": "以 traceId 贯穿事件并写入 family_* 指标",
+        "tags": [
+          "metrics",
+          "tracing"
+        ],
+        "examples": [
+          "为任务执行记录 outcome 与耗时并保留 traceId"
+        ]
+      },
+      {
+        "id": "grandmaster.quality-gate",
+        "name": "质量标准校验",
+        "description": "按标准/规范/数据化三档校验产出质量",
+        "tags": [
+          "quality",
+          "standard"
+        ],
+        "examples": [
+          "校验经营报告是否满足口径与引用完整性"
+        ]
+      },
+      {
+        "id": "grandmaster.regression-guard",
+        "name": "回归与退化检测",
+        "description": "变更前后的基线对比与退化拦截",
+        "tags": [
+          "regression",
+          "baseline"
+        ],
+        "examples": [
+          "新版本意图准确率下降 2% 时拦截发布"
+        ]
+      },
+      {
+        "id": "grandmaster.knowledge-distill",
+        "name": "知识提炼与技能固化",
+        "description": "把复盘结论蒸馏为可复用程序记忆条目",
+        "tags": [
+          "distill",
+          "procedural"
+        ],
+        "examples": [
+          "把三次同类故障的处置提炼为一条处置规则"
+        ]
+      },
+      {
+        "id": "grandmaster.retrospective",
+        "name": "复盘与改进建议",
+        "description": "事件复盘、责任归位与改进项跟踪",
+        "tags": [
+          "retrospective",
+          "improvement"
+        ],
+        "examples": [
+          "复盘一次误报并给出三条改进项"
+        ]
+      }
+    ],
+    "defaultInputModes": [
+      "text",
+      "structured"
+    ],
+    "defaultOutputModes": [
+      "text",
+      "structured"
+    ],
+    "authentication": {
+      "schemes": [
+        "bearer_token",
+        "api_key"
+      ],
+      "required": true
+    },
+    "security": {
+      "tlsRequired": true,
+      "signedAgentCard": false,
+      "rbacRoles": [
+        "admin",
+        "operator",
+        "viewer"
+      ]
+    },
+    "slo": {
+      "latency": {
+        "p50": "500ms",
+        "p95": "2s",
+        "p99": "5s"
+      },
+      "availability": "99.9%",
+      "errorRate": "<0.5%"
+    },
+    "yyc3": {
+      "id": "010301-07",
+      "layer": "L7",
+      "layerName": "格物致知",
+      "group": "core-layer",
+      "motto": "我究万物之理，定标准以传世。",
+      "pillars": {
+        "self": "self-judge",
+        "knowledge": "memory-bindings",
+        "learning": "procedural",
+        "governance": "guardrail",
+        "healing": "delegation"
+      },
+      "providerChain": [
+        "openai",
+        "zhipu",
+        "ollama"
+      ],
+      "manifestVersion": "1.1.0"
+    }
+  }
+}

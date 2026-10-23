@@ -57,10 +57,10 @@ category: guide
 
 | 集成位 | 实现（已落地 ✅） | 独立测试（已过 ✅） | 装配缺口（本文档范围 ⬜） |
 | --- | --- | --- | --- |
-| infra-1 总线→轨迹 | [`trajectory-bridge.ts`](../02-智能协同架构内核/02-云枢核心引擎/family-communication-bus/trajectory-bridge.ts) `TrajectoryBridge(collector, topic='task.executed')` | infra-integration I1 | 无人调用 `attach(bus)` 挂真实总线 |
-| infra-2 抽象端口 | [`pattern-extractor.ts`](../02-智能协同架构内核/05-持续学习引擎/experience-reflow/pattern-extractor.ts) `SemanticAbstractor` 端口 | infra-integration I2 | 部署侧 llm-adapter 适配（**可选**，缺省确定性实现已可用） |
-| infra-3 技能落盘 | [`skill-store-file.ts`](../02-智能协同架构内核/05-持续学习引擎/skill-consolidation/skill-store-file.ts) `FileSkillStore(dir)` | infra-integration I3 | `LearningLoop` 仍默认 `InMemorySkillStore` |
-| infra-4 回滚委托 | [`learning-loop.ts`](../02-智能协同架构内核/05-持续学习引擎/learning-loop.ts) `healingRollback` 钩子 + [`rollback-controller.ts`](../02-智能协同架构内核/07-自愈中心/rollback-controller/rollback-controller.ts) | infra-integration I4 | 钩子无人实现；两侧端口形状不一致需适配器 |
+| infra-1 总线→轨迹 | [`trajectory-bridge.ts`](../architecture-kernel/02-云枢核心引擎/family-communication-bus/trajectory-bridge.ts) `TrajectoryBridge(collector, topic='task.executed')` | infra-integration I1 | 无人调用 `attach(bus)` 挂真实总线 |
+| infra-2 抽象端口 | [`pattern-extractor.ts`](../architecture-kernel/05-持续学习引擎/experience-reflow/pattern-extractor.ts) `SemanticAbstractor` 端口 | infra-integration I2 | 部署侧 llm-adapter 适配（**可选**，缺省确定性实现已可用） |
+| infra-3 技能落盘 | [`skill-store-file.ts`](../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-store-file.ts) `FileSkillStore(dir)` | infra-integration I3 | `LearningLoop` 仍默认 `InMemorySkillStore` |
+| infra-4 回滚委托 | [`learning-loop.ts`](../architecture-kernel/05-持续学习引擎/learning-loop.ts) `healingRollback` 钩子 + [`rollback-controller.ts`](../architecture-kernel/07-自愈中心/rollback-controller/rollback-controller.ts) | infra-integration I4 | 钩子无人实现；两侧端口形状不一致需适配器 |
 
 **依赖方向约束（不可违背）**：`05-持续学习引擎` 不得 import `07-自愈中心`——学习侧只暴露 `HealingRollbackHook` 结构化事件，07 依赖由装配层单向完成。
 
@@ -68,8 +68,8 @@ category: guide
 
 **源码事实**：
 
-- [`TrajectoryCollector.collect`](../02-智能协同架构内核/05-持续学习引擎/experience-reflow/trajectory-collector.ts#L41-L55) **无去重**（幂等由总线层保证，桥接层不再防重）；
-- [`LearningLoop.ingest`](../02-智能协同架构内核/05-持续学习引擎/learning-loop.ts#L148-L155) 会把事件 collect 进**自己的内部 collector**，同时登记 `goldenPass` 信号；
+- [`TrajectoryCollector.collect`](../architecture-kernel/05-持续学习引擎/experience-reflow/trajectory-collector.ts#L41-L55) **无去重**（幂等由总线层保证，桥接层不再防重）；
+- [`LearningLoop.ingest`](../architecture-kernel/05-持续学习引擎/learning-loop.ts#L148-L155) 会把事件 collect 进**自己的内部 collector**，同时登记 `goldenPass` 信号；
 - `TrajectoryBridge` 挂载后直接采集进注入的 collector（即 `loop.components.collector`）。
 
 **❌ 错误接线**（同一事件双采 → runCycle 成簇计数翻倍 → 置信度虚高、skillId 紊乱）：
@@ -79,7 +79,7 @@ bridge.attach(bus);                                  // 事件从总线进入内
 loop.ingest([{ event, goldenPass: true }]);          // 同一事件又采一次 → 双份！
 ```
 
-**✅ 方案 A（推荐，唯一触碰既有实现的点）**：为 [`learning-loop.ts`](../02-智能协同架构内核/05-持续学习引擎/learning-loop.ts) 增补公共信号方法（约 +5 行，增量无破坏）：
+**✅ 方案 A（推荐，唯一触碰既有实现的点）**：为 [`learning-loop.ts`](../architecture-kernel/05-持续学习引擎/learning-loop.ts) 增补公共信号方法（约 +5 行，增量无破坏）：
 
 ```ts
 /** 登记外验标签信号（只登记不采集；事件唯一入口为 TrajectoryBridge，避免双采）。 */
@@ -203,7 +203,7 @@ const loop = new LearningLoop(store, {
 
 | 产物 | 落位 | 说明 |
 | --- | --- | --- |
-| 装配门面 | `02-智能协同架构内核/08-系统装配/runtime-assembly.ts`（新建，编号顺延） | `createRuntimeAssembly(options)` 返回 `{bus, bridge, loop, store, rollbackController}`；全 barrel 导出 |
+| 装配门面 | `architecture-kernel/08-系统装配/runtime-assembly.ts`（新建，编号顺延） | `createRuntimeAssembly(options)` 返回 `{bus, bridge, loop, store, rollbackController}`；全 barrel 导出 |
 | 冒烟测试 | `tests/integration/assembly-e2e.spec.ts`（新建） | §一 验收表 A1–A5 五例，范式同 pillars-smoke（零依赖 harness） |
 | .gitignore | 追加 `data/` | 运行时技能库不入库 |
 | barrel | `08-系统装配/index.ts` | `export * from './runtime-assembly.js'` |
@@ -225,7 +225,7 @@ const loop = new LearningLoop(store, {
 ```text
 [ ] 1. 核对基线：docs/架构设计.md §8.3 v2.5.0 已合入，tests 全绿（pnpm regression）
 [ ] 2. learning-loop.ts 增补 signal() 方法（方案 A，约 5 行）+ barrel 无需改动
-[ ] 3. 新建 02-智能协同架构内核/08-系统装配/runtime-assembly.ts（按 §四 Step 1–4 + §五红线）
+[ ] 3. 新建 architecture-kernel/08-系统装配/runtime-assembly.ts（按 §四 Step 1–4 + §五红线）
 [ ] 4. 新建 08-系统装配/index.ts barrel
 [ ] 5. 新建 tests/integration/assembly-e2e.spec.ts（A1–A5 五例）
 [ ] 6. .gitignore 追加 data/

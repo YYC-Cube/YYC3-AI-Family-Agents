@@ -10,14 +10,14 @@
  *
  * 用法：
  *   node extract-procedural.js <家人实现集根目录>
- *   （缺省 = <repo>/03-家人Agent实现集）
+ *   （缺省 = <repo>/family-agents）
  *
  * 注：仓库零依赖（无 @types/node），故采用仓内既定 @ts-nocheck 垫片风格（同 tests/*）。
  */
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { extractRules } from '../03-家人Agent实现集/shared-core/memory-framework/procedural-memory/prompt-rule-extractor.js';
+import { extractRules } from '../family-agents/shared-core/memory-framework/procedural-memory/prompt-rule-extractor.js';
 
 /** YAML 标量安全序列化（JSON 字符串是合法 YAML 双引号标量）。 */
 const y = (v: unknown): string => JSON.stringify(v);
@@ -81,7 +81,7 @@ function renderDraft(
 
 function main(): void {
   // 缺省以 CWD 为仓库根（约定从仓库根运行），argv[2] 可显式指定家人实现集目录。
-  const base = process.argv[2] ?? join(process.cwd(), '03-家人Agent实现集');
+  const base = process.argv[2] ?? join(process.cwd(), 'family-agents');
   // 本地（Asia/Shanghai）日期，避免 UTC 偏差（如 UTC 10-16 vs 本地 10-17）。
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai' }).format(new Date());
 

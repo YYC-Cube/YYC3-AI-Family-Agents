@@ -119,7 +119,7 @@ YYC3-AI-Family-Agent-编程体系/
 │   ├── YYC3-AI-Family-Agent-家人档案/    # 8 位家人档案 + README（家人名号唯一权威源）
 │   └── _archive/                      # 已并入/失效文档归档（如 建议文档.md）
 │
-├── 02-智能协同架构内核/                # 对应云盘「智能协同架构」文档目录
+├── architecture-kernel/                # 对应云盘「智能协同架构」文档目录
 │   ├── 01-九层架构分层底座/            # 九层架构层级能力封装
 │   │   ├── layer-9-meta-oracle/       # 第9层·万象归元：全局调度能力底座
 │   │   ├── layer-8-guardian/          # 第8层·智云守护：安全能力底座
@@ -163,7 +163,7 @@ YYC3-AI-Family-Agent-编程体系/
 │       ├── rollback-controller/
 │       └── consistency-repair/
 │
-├── 03-家人Agent实现集/                 # 对应云盘「家人档案」文档目录
+├── family-agents/                 # 对应云盘「家人档案」文档目录
 │   ├── shared-core/                   # 【共享内核】所有家人公共依赖
 │   │   ├── llm-adapter/               # LLM 多模型适配器（OpenAI/智谱/Ollama）
 │   │   ├── tool-registry/             # 工具注册中心 + 安全执行引擎
@@ -547,7 +547,7 @@ interface FamilyPolicyBus { evaluate(req: ResourceRequest): Promise<PolicyDecisi
 | --- | --- |
 | 规范契约类（Schema、安全、评测） | `assets/schemas/`（含 memory/judgment schema）、`docs/YYC3-AI-Family-Agent-人机协同/`、`tests/eval-datasets/` |
 | Agent 实例描述文件 | 每位家人 `agent.yaml` + `system-prompt.md` + `memory-bindings/` |
-| 核心运行时代码 | `03-家人Agent实现集/shared-core/`（含 memory/self-judge/guardrail） |
+| 核心运行时代码 | `family-agents/shared-core/`（含 memory/self-judge/guardrail） |
 | 工具体系 | `shared-core/tool-registry/` + 各家人专属工具 |
 | 评测体系 | `scripts/run-5d-evaluation.sh` + `scripts/run-pillar-health.sh` + `tests/eval-datasets/` |
 | 工程&CI | 根目录配置 + `scripts/` 脚本集 |
@@ -558,8 +558,8 @@ interface FamilyPolicyBus { evaluate(req: ResourceRequest): Promise<PolicyDecisi
 | 云盘文档目录 | 编程体系对应位置 |
 | --- | --- |
 | 人机协同 | `docs/YYC3-AI-Family-Agent-人机协同/` |
-| 智能协同架构 | `docs/YYC3-AI-Family-Agent-协同架构/`（设计）＋ `02-智能协同架构内核/`（代码） |
-| 家人档案 | `docs/YYC3-AI-Family-Agent-家人档案/`（档案）＋ `03-家人Agent实现集/`（实现，每位家人对应一份档案） |
+| 智能协同架构 | `docs/YYC3-AI-Family-Agent-协同架构/`（设计）＋ `architecture-kernel/`（代码） |
+| 家人档案 | `docs/YYC3-AI-Family-Agent-家人档案/`（档案）＋ `family-agents/`（实现，每位家人对应一份档案） |
 | （架构总纲） | `docs/YYC3-AI-Family-Agent-架构设计.md`（本文档） |
 
 ### 8.3 变更记录
@@ -584,7 +584,7 @@ interface FamilyPolicyBus { evaluate(req: ResourceRequest): Promise<PolicyDecisi
 | **v2.7.2** | 2026-10-23 | **验收改进项 L4/L5 闭环**：①L5 降级控制器纳入装配：`DegradationOptions.onStateChange` 状态迁移回调（仅真实变化时触发）；`createRuntimeAssembly` 新增 `faultDetector` / `degradation` 选项与 `handleSignal(signal)` 一条调用完成「信号 → 去抖侦测 → 降级/熔断 → 指标记账」，初始 `closed` 态主动上报（修复无样本盲区）；`RuntimeAssembly` 暴露 `faultDetector` / `degradation`；②L4 静默 spec 清零（4 个全部产出汇总行）：`self-judge-kit` 转 3 例真实断言（低置信升级 / 校准误差门禁 / 检索 400ms 落 0.5 桶）；`family-bus` 转 4 例真实断言（发布订阅 traceId / 幂等去重 / 幂等粒度 seq / 点对点路由）+ 1 例显式跳过（DLQ 未实现）；`pillars.contract` 5 条契约由恒真占位改为真实校验（自：低置信升级；知：写入→检索 traceId 贯通；学：零退化放行且退化拦截；治：审计链可验真且篡改断链；愈：回滚 healed + RTO 契约达成）；`qianhang-intent-e2e` 4 步显式跳过并注明原因（IntentGatewayService.handle 仍为骨架，待 P1 llm-adapter）；③回归脚本支持跳过语义：解析「N 通过 / M 失败 / S 跳过 / 共 K 例」、面板与 data.json 展示跳过数、门禁仍以「exit 0 且零失败」判定；④全量门禁 **78/78 全绿**（自 16 / 知 25 / 学 37 / 治 18 / 愈 23），显式跳过 5 例，静默 spec **归零**，根 tsc exit 0 |
 | **v2.7.3** | 2026-10-23 | **接线边界治理：未接线模块清单 + 仓库基线**：①新增 `docs/YYC3-AI-Family-Agent-未接线模块清单.md`：以 13 个门禁入口做静态 import 可达性分析（241 编译文件 / **80 已接线** / 161 仅编译），逐目录登记状态（✅已接线 / ◐仅编译 / ⬜骨架 / ⚠配置未加载 / ⊘未纳入门禁）；核心结论：`01-九层底座` 0/20、`06-治理中心` 2/11、`03` 8 位家人仅 2 个 `self-judge` 被引用（102/104 未接线）、8 个家人自测 spec 被 tsconfig 排除且不在门禁清单、40 个 YAML/MD 配置无加载器；②清单内置「标准与规范五维矩阵」：YYC³ 协同开发文档、ISO/IEC/IEEE 42010、ISO/IEC 25010、SemVer 2.0.0、Keep a Changelog 1.1.0、Conventional Commits 1.0.0、RFC 2119/8174、Prometheus exposition 0.0.4、OpenMetrics 1.0（规划）、W3C Trace Context、SRE RTO/RPO、OWASP ASVS 4.0.3、SPDX MIT、Node LTS 策略，逐项标注时间/空间/属性/事件/关联维度与状态；③治理规则：新增骨架必须登记、接线完成必须移除、删除前先清 barrel、家人测试必须迁入 `tests/` 并改写零依赖 harness、每个 MINOR 发布前复核统计；④README 增「模块接线状态」段并链接清单；CONTRIBUTING PR 自检新增清单同步项；⑤仓库基线：`git init -b main` + 单次基线提交（405 文件 / 32,229 行），`docs/02-*`、`docs/03-*` 本地备份加入 `.gitignore` 不入远端 |
 | **v2.8.0** | 2026-10-23 | **L7 落地：Histogram Exemplars（OpenMetrics 下钻）**：①`09-可观测性/metrics-registry` 新增 `ExemplarOptions` / `Exemplar`：`Histogram.observe(value, labels, exemplar?)`、落点桶定位（超出上界归 +Inf 桶）、每桶上限（默认 1，保留最新）、TTL 惰性清理、`onDrop` 回调；新增 `MetricsRegistry.renderOpenMetrics()`（OpenMetrics 1.0，`# EOF` 收尾）；②`metrics-server` 按 `Accept` 协商：`application/openmetrics-text` → 1.0，否则维持 `text/plain; version=0.0.4`；③`family-metrics` 新增 `FamilyMetricsOptions.exemplars`：仅在启用时注册 `family_exemplars_dropped_total`，`observeMemoryRetrieval(ms, traceId?)` 与任务时长携带 `trace_id`，记忆检索装饰器从 `ctx.traceId` 提取；④`runtime-entry` 增 `exemplars` 选项与 `YYC3_EXEMPLARS_ENABLED=1` 环境开关；⑤`prometheus.yml` runtime 作业增 `scrape_protocols: [OpenMetricsText1.0.0, PrometheusText0.0.4]`；Grafana 新增记忆 P95 / 任务 P99 面板并启用 `exemplar: true`；⑥测试新增 M9（默认关闭零变化）/ M10（落点桶 + trace_id）/ M10b（上限+丢弃+TTL）/ M10c（协议协商），metrics-observability 12/12；全量门禁 **82/82 全绿**（自 16 / 知 25 / 学 41 / 治 18 / 愈 27），显式跳过 5 例，根 tsc exit 0；默认关闭时 `/metrics` 无 exemplar 行、无丢弃指标，CI `metrics.prom` 仅用例计数 8→12 |
-| **v2.9.0** | 2026-10-23 | **P1 智谱 Provider 接入（真实 HTTP）**：①新增 `03-家人Agent实现集/shared-core/llm-adapter`：`types.ts`（`ChatMessage` / `CompletionRequest` / `CompletionResponse` / `ProviderError`）与 `zhipu-provider.ts`——智谱开放平台 v4 `POST {baseUrl}/chat/completions`，支持标准补全、SSE 流式（`text/event-stream`，`[DONE]` 终止）、`AbortController` 超时（默认 30s）、429/5xx 指数退避（默认 2 次重试，基数 300ms）、错误分类（status + retryable）；②安全：密钥仅从 `ZHIPU_API_KEY` 读取，不落盘、不打印、错误信息不回显密钥；③8 位家人的 `providers/zhipu.provider.ts` 统一改为薄转发（`export { ZhiPuProvider } from '@shared/llm-adapter/zhipu-provider.js'`），消除 8 份重复骨架；④测试新增 `tests/integration/llm-provider.spec.ts` 6 例（补全请求形状 / 500→500→200 重试 / 401 不重试且不回显密钥 / 超时 / SSE 增量拼接 / isAvailable），全量门禁 **88/88 全绿**（自 16 / 知 25 / 学 47 / 治 18 / 愈 27），显式跳过 5 例，根 tsc exit 0；⑤P1 剩余：OpenAI provider（同协议适配）与千行意图链路接线 |
+| **v2.9.0** | 2026-10-23 | **P1 智谱 Provider 接入（真实 HTTP）**：①新增 `family-agents/shared-core/llm-adapter`：`types.ts`（`ChatMessage` / `CompletionRequest` / `CompletionResponse` / `ProviderError`）与 `zhipu-provider.ts`——智谱开放平台 v4 `POST {baseUrl}/chat/completions`，支持标准补全、SSE 流式（`text/event-stream`，`[DONE]` 终止）、`AbortController` 超时（默认 30s）、429/5xx 指数退避（默认 2 次重试，基数 300ms）、错误分类（status + retryable）；②安全：密钥仅从 `ZHIPU_API_KEY` 读取，不落盘、不打印、错误信息不回显密钥；③8 位家人的 `providers/zhipu.provider.ts` 统一改为薄转发（`export { ZhiPuProvider } from '@shared/llm-adapter/zhipu-provider.js'`），消除 8 份重复骨架；④测试新增 `tests/integration/llm-provider.spec.ts` 6 例（补全请求形状 / 500→500→200 重试 / 401 不重试且不回显密钥 / 超时 / SSE 增量拼接 / isAvailable），全量门禁 **88/88 全绿**（自 16 / 知 25 / 学 47 / 治 18 / 愈 27），显式跳过 5 例，根 tsc exit 0；⑤P1 剩余：OpenAI provider（同协议适配）与千行意图链路接线 |
 | **v2.10.0** | 2026-10-23 | **OpenAI Provider + 兼容客户端抽象**：①新增 `shared-core/llm-adapter/openai-compatible-client.ts`——把传输、超时（AbortController）、429/5xx 指数退避、SSE 解析、错误分类与密钥脱敏收敛为共享基类；`payload()` 可被子类覆盖以追加供应商字段；②新增 `openai-provider.ts`：OpenAI v1 `/chat/completions`，默认 `OPENAI_API_KEY`，支持可选 `OpenAI-Organization` / `OpenAI-Project` 头；③`zhipu-provider.ts` 改为基类薄配置（默认 `ZHIPU_API_KEY` + 智谱 v4 baseUrl），行为与测试保持不变；④8 位家人的 `providers/openai.provider.ts` 统一为薄转发，消除重复类型与骨架；⑤测试新增 O1（请求形状 / 组织头 / 响应整形）与 O2（`OPENAI_API_KEY` 与 `ZHIPU_API_KEY` 隔离），llm-provider 8/8；全量门禁 **90/90 全绿**（自 16 / 知 25 / 学 49 / 治 18 / 愈 27），显式跳过 5 例，根 tsc exit 0；⑥P1 剩余：千行意图链路接线（classifier + gateway） |
 | **v2.11.0** | 2026-10-23 | **P1 收尾：千行意图链路实装**：①`member-qianhang/core/intent-classifier` 规则扩展（整理/待办/清单/安排/提醒/开销/数据/查一下/草稿/哪个好/预估）并将评分改为「命中即 0.6 起、多命中递增」，避免长关键词表稀释置信度；②`intent-gateway` 分类 → 路由（010301-02 万物 / 03 先知 / 04 伯乐 / 05 天枢 / 06 宗师 / 08 灵韵 / 01 千行）实际打通；③`TaskDecomposer` 由骨架转实：CAGEERF 七阶段绑定 owner（clarify→千行 / analyze→万物 / generate·execute→天枢 / evaluate·review→宗师 / finalize→伯乐）、线性 `dependsOn`、goal 携带原始话语；④`tests/e2e/qianhang-intent-e2e.spec.ts` 由 4 例跳过改为**真实断言**（E1 上下文写入 / E2 intent=analysis + confidence≥0.6 + escalation=none + routeTo=010301-02 / E3 7 阶段 + owner 正则 + 依赖链 + traceId / E4 成就 100 解锁、99 未解锁）；⑤全量门禁 **94/94 全绿**（自 20 / 知 25 / 学 53 / 治 18 / 愈 27），**显式跳过降至 1 例**（仅 EventBus DLQ），静默 0，根 tsc exit 0；⑥P1 完成：双 provider + 意图链路闭环 |
 | **v2.12.0** | 2026-10-23 | **总线自愈：EventBus 重试与死信（DLQ）**：①`family-communication-bus/event-bus` 新增 `EventBusOptions`（`maxAttempts` 默认 3 / `retryDelayMs` 指数退避默认 0 / `dlqCapacity` 默认 100 / `now` 时钟注入 / `onDeadLetter` 自愈回调）；②单处理器投递独立重试，失败只影响自身，不再阻断同主题其它处理器与发布方（故障隔离）；③重试耗尽写入有界 FIFO 死信队列，`deadLetters()` 只读快照、`drainDeadLetters()` 批量取出，供 07-自愈中心 `dead-letter` 动作消费；④语义边界：进入 DLQ 的事件幂等键仍占用，重放由自愈中心基于 `letter.event` 决策；⑤family-bus 用例由「4 通过 + 1 跳过」升级为 **7/7**（D1 重试耗尽入 DLQ + 字段/drain 断言、D2 故障隔离、D3 瞬时失败重试成功），五支柱归属补入「愈」；⑥全量门禁 **97/97 全绿**（自 20 / 知 25 / 学 53 / 治 18 / 愈 34），**显式跳过归零**，静默 0，根 tsc exit 0 |

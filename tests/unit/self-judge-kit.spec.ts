@@ -30,8 +30,8 @@ if (__localShim) {
 }
 
 import { SelfJudge } from '@shared/self-judge-kit';
-import { ConsistencyTracker } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/consistency-metrics.js';
-import { FamilyMetrics } from '../../02-智能协同架构内核/09-可观测性/family-metrics.js';
+import { ConsistencyTracker } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/consistency-metrics.js';
+import { FamilyMetrics } from '../../architecture-kernel/09-可观测性/family-metrics.js';
 
 describe('self-judge-kit（自判断套件）', () => {
   it('置信度低于 tau_low=0.6 时应触发升级（§5.2）', () => {

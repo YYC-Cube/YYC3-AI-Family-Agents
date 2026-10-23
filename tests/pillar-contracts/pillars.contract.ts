@@ -8,9 +8,9 @@
 
 import { SelfJudge } from '@shared/self-judge-kit';
 import { EpisodicStore } from '@shared/memory-framework/episodic-store';
-import { RegressionTester } from '../../02-智能协同架构内核/05-持续学习引擎/stability-guard/regression-tester.js';
-import { ComplianceAudit } from '../../02-智能协同架构内核/06-治理中心/compliance-audit/compliance-audit.js';
-import { RollbackController } from '../../02-智能协同架构内核/07-自愈中心/rollback-controller/rollback-controller.js';
+import { RegressionTester } from '../../architecture-kernel/05-持续学习引擎/stability-guard/regression-tester.js';
+import { ComplianceAudit } from '../../architecture-kernel/06-治理中心/compliance-audit/compliance-audit.js';
+import { RollbackController } from '../../architecture-kernel/07-自愈中心/rollback-controller/rollback-controller.js';
 
 /** 契约定义：单支柱可校验的最小单元 */
 export interface PillarContract {

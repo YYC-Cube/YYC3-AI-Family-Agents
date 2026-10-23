@@ -1,0 +1,184 @@
+{
+  "$schema": "../schemas/agent-card.schema.json",
+  "agentCard": {
+    "name": "创想·灵韵 (Grace)",
+    "description": "YYC³ AI Family 首席创意官 · 灵感之源 — 创意生成与内容表达，负责品牌调性与营销内容。",
+    "url": "https://matrix.yyc3.top/family/grace",
+    "version": "1.1.0",
+    "provider": {
+      "organization": "YanYuCloudCube",
+      "url": "https://yyc3.top"
+    },
+    "capabilities": {
+      "streaming": false,
+      "pushNotifications": false,
+      "stateTransitionHistory": true
+    },
+    "skills": [
+      {
+        "id": "shared.self-judge",
+        "name": "结构化自判断",
+        "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+        "tags": [
+          "confidence",
+          "assumption",
+          "escalation"
+        ],
+        "examples": [
+          "对候选意图给出 0..1 置信度并显式登记假设"
+        ]
+      },
+      {
+        "id": "shared.memory-retrieve",
+        "name": "记忆检索",
+        "description": "按语义与上下文检索情景/语义/程序记忆",
+        "tags": [
+          "memory",
+          "retrieval"
+        ],
+        "examples": [
+          "检索同一客户近三次决策的上下文"
+        ]
+      },
+      {
+        "id": "shared.memory-write",
+        "name": "记忆写入",
+        "description": "按写入策略落盘情景记忆与程序记忆条目",
+        "tags": [
+          "memory",
+          "write",
+          "procedural"
+        ],
+        "examples": [
+          "把本轮结论写入情景记忆并标注显著性"
+        ]
+      },
+      {
+        "id": "shared.llm-invoke",
+        "name": "模型调用与降级链",
+        "description": "统一 provider 调用接口，按 openai→zhipu→ollama 顺序降级",
+        "tags": [
+          "llm",
+          "provider",
+          "fallback"
+        ],
+        "examples": [
+          "openai 超时后切换 zhipu，再失败切本地 ollama"
+        ]
+      },
+      {
+        "id": "shared.observe-emit",
+        "name": "指标与追踪埋点",
+        "description": "以 traceId 贯穿事件并写入 family_* 指标",
+        "tags": [
+          "metrics",
+          "tracing"
+        ],
+        "examples": [
+          "为任务执行记录 outcome 与耗时并保留 traceId"
+        ]
+      },
+      {
+        "id": "grace.ideation",
+        "name": "创意生成",
+        "description": "多方向创意发散与可行性初筛",
+        "tags": [
+          "ideation",
+          "creativity"
+        ],
+        "examples": [
+          "为新品发布给出六个创意方向并标注成本"
+        ]
+      },
+      {
+        "id": "grace.copywriting",
+        "name": "文案与内容创作",
+        "description": "面向不同受众的文案撰写与润色",
+        "tags": [
+          "copywriting",
+          "content"
+        ],
+        "examples": [
+          "把经营结论改写成面向高管的 200 字摘要"
+        ]
+      },
+      {
+        "id": "grace.style-direction",
+        "name": "风格与视觉建议",
+        "description": "品牌调性、版式与视觉呈现建议",
+        "tags": [
+          "style",
+          "visual"
+        ],
+        "examples": [
+          "为季度报告给出配色与版式建议"
+        ]
+      },
+      {
+        "id": "grace.marketing-content",
+        "name": "营销内容策划",
+        "description": "营销主题、渠道话术与节奏编排",
+        "tags": [
+          "marketing",
+          "campaign"
+        ],
+        "examples": [
+          "为区域促销设计三渠道内容节奏"
+        ]
+      }
+    ],
+    "defaultInputModes": [
+      "text",
+      "structured"
+    ],
+    "defaultOutputModes": [
+      "text",
+      "structured"
+    ],
+    "authentication": {
+      "schemes": [
+        "bearer_token",
+        "api_key"
+      ],
+      "required": true
+    },
+    "security": {
+      "tlsRequired": true,
+      "signedAgentCard": false,
+      "rbacRoles": [
+        "admin",
+        "operator",
+        "viewer"
+      ]
+    },
+    "slo": {
+      "latency": {
+        "p50": "500ms",
+        "p95": "2s",
+        "p99": "5s"
+      },
+      "availability": "99.9%",
+      "errorRate": "<0.5%"
+    },
+    "yyc3": {
+      "id": "010301-08",
+      "layer": "L6",
+      "layerName": "创想灵韵",
+      "group": "core-layer",
+      "motto": "我以灵感为墨，绘就无限可能。",
+      "pillars": {
+        "self": "self-judge",
+        "knowledge": "memory-bindings",
+        "learning": "procedural",
+        "governance": "guardrail",
+        "healing": "delegation"
+      },
+      "providerChain": [
+        "openai",
+        "zhipu",
+        "ollama"
+      ],
+      "manifestVersion": "1.1.0"
+    }
+  }
+}

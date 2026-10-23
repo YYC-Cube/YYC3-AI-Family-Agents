@@ -43,8 +43,8 @@ if (__localShim) {
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { createRuntimeAssembly } from '../../02-智能协同架构内核/08-系统装配/runtime-assembly.js';
-import { FamilyMetrics } from '../../02-智能协同架构内核/09-可观测性/family-metrics.js';
+import { createRuntimeAssembly } from '../../architecture-kernel/08-系统装配/runtime-assembly.js';
+import { FamilyMetrics } from '../../architecture-kernel/09-可观测性/family-metrics.js';
 
 /** 独立临时落盘目录（每例隔离，finally 清理）。 */
 function makeTmpDir() {

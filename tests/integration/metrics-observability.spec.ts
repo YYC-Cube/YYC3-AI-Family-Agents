@@ -50,12 +50,12 @@ if (__localShim) {
   });
 }
 
-import { InMemorySkillStore } from '../../02-智能协同架构内核/05-持续学习引擎/learning-loop.js';
-import { createRuntimeAssembly } from '../../02-智能协同架构内核/08-系统装配/runtime-assembly.js';
-import { startRuntime } from '../../02-智能协同架构内核/08-系统装配/runtime-entry.js';
-import { FamilyMetrics, instrumentMemoryOrchestrator } from '../../02-智能协同架构内核/09-可观测性/family-metrics.js';
-import { MetricsRegistry } from '../../02-智能协同架构内核/09-可观测性/metrics-registry.js';
-import { startMetricsServer } from '../../02-智能协同架构内核/09-可观测性/metrics-server.js';
+import { InMemorySkillStore } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
+import { createRuntimeAssembly } from '../../architecture-kernel/08-系统装配/runtime-assembly.js';
+import { startRuntime } from '../../architecture-kernel/08-系统装配/runtime-entry.js';
+import { FamilyMetrics, instrumentMemoryOrchestrator } from '../../architecture-kernel/09-可观测性/family-metrics.js';
+import { MetricsRegistry } from '../../architecture-kernel/09-可观测性/metrics-registry.js';
+import { startMetricsServer } from '../../architecture-kernel/09-可观测性/metrics-server.js';
 
 let seq = 0;
 

@@ -46,15 +46,15 @@ if (__localShim) {
   });
 }
 
-import { PreferenceTracker } from '../../02-智能协同架构内核/05-持续学习引擎/knowledge-update/preference-tracker.js';
-import { RuleEvolution } from '../../02-智能协同架构内核/05-持续学习引擎/knowledge-update/rule-evolution.js';
-import { SemanticDiffDetector } from '../../02-智能协同架构内核/05-持续学习引擎/knowledge-update/semantic-diff.js';
-import { InMemorySkillStore, LearningLoop } from '../../02-智能协同架构内核/05-持续学习引擎/learning-loop.js';
+import { PreferenceTracker } from '../../architecture-kernel/05-持续学习引擎/knowledge-update/preference-tracker.js';
+import { RuleEvolution } from '../../architecture-kernel/05-持续学习引擎/knowledge-update/rule-evolution.js';
+import { SemanticDiffDetector } from '../../architecture-kernel/05-持续学习引擎/knowledge-update/semantic-diff.js';
+import { InMemorySkillStore, LearningLoop } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
 import {
   PARAM_ADAPTATION_CONTRACT,
   ParamAdaptationGate,
-} from '../../02-智能协同架构内核/05-持续学习引擎/param-adaptation.js';
-import { MemoryOrchestratorImpl } from '../../03-家人Agent实现集/shared-core/memory-framework/memory-orchestrator/index.js';
+} from '../../architecture-kernel/05-持续学习引擎/param-adaptation.js';
+import { MemoryOrchestratorImpl } from '../../family-agents/shared-core/memory-framework/memory-orchestrator/index.js';
 
 /** 达门禁的模式样例。 */
 const strongPattern = {

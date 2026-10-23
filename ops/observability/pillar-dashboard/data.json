@@ -1,20 +1,20 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-23T01:59:35.952Z",
-  "generatedAtCN": "2026/10/23 09:59:35",
+  "generatedAt": "2026-10-23T05:57:17.016Z",
+  "generatedAtCN": "2026/10/23 13:57:17",
   "gate": {
     "passed": true,
-    "totalPassed": 97,
+    "totalPassed": 143,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 14
+    "specs": 20
   },
   "pillars": [
     {
       "id": "自",
       "label": "自 · 自判断",
       "green": true,
-      "passed": 20,
+      "passed": 28,
       "failed": 0
     },
     {
@@ -28,22 +28,72 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 53,
+      "passed": 61,
       "failed": 0
     },
     {
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 18,
+      "passed": 41,
       "failed": 0
     },
     {
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 34,
+      "passed": 43,
       "failed": 0
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "time",
+      "label": "时间维",
+      "focus": "多久 / 多快",
+      "metrics": 3
+    },
+    {
+      "id": "space",
+      "label": "空间维",
+      "focus": "多大 / 多占（分层与实例）",
+      "metrics": 2
+    },
+    {
+      "id": "attribute",
+      "label": "属性维",
+      "focus": "多好 / 多准（质量与契约）",
+      "metrics": 4
+    },
+    {
+      "id": "event",
+      "label": "事件维",
+      "focus": "发生了什么 / 流转是否完整",
+      "metrics": 4
+    },
+    {
+      "id": "association",
+      "label": "关联维",
+      "focus": "跨支柱 / 跨角色的耦合结果",
+      "metrics": 3
+    }
+  ],
+  "collaboration": [
+    {
+      "name": "family_collaboration_clarify_rate",
+      "dimension": "attribute"
+    },
+    {
+      "name": "family_collaboration_human_confirm_rate",
+      "dimension": "association"
+    },
+    {
+      "name": "family_collaboration_trace_coverage",
+      "dimension": "event"
+    },
+    {
+      "name": "family_collaboration_replay_coverage",
+      "dimension": "association"
     }
   ],
   "specs": [
@@ -211,6 +261,36 @@
       "ok": true
     },
     {
+      "file": "tests/integration/five-dimension-metrics.spec.js",
+      "name": "五维指标映射",
+      "phase": "P1-T4",
+      "pillars": [
+        "治"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/collaboration-wiring.spec.js",
+      "name": "协同度生产接线",
+      "phase": "P1-T4b",
+      "pillars": [
+        "自",
+        "学",
+        "治"
+      ],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
       "file": "tests/integration/llm-provider.spec.js",
       "name": "LLM Provider（zhipu）",
       "phase": "P1",
@@ -221,6 +301,21 @@
       "failed": 0,
       "skipped": 0,
       "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/mcp-adapter.spec.js",
+      "name": "MCP 适配层（codec + stdio）",
+      "phase": "P1-T3",
+      "pillars": [
+        "治",
+        "愈"
+      ],
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "total": 9,
       "silent": false,
       "ok": true
     },
@@ -248,6 +343,42 @@
       "failed": 0,
       "skipped": 0,
       "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/manifest.contract.js",
+      "name": "家族契约清单",
+      "phase": "契约 P1-T1",
+      "pillars": [],
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "total": 7,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/agent-card.contract.js",
+      "name": "Agent Card",
+      "phase": "契约 P1-T2",
+      "pillars": [],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/prompt.contract.js",
+      "name": "提示词契约",
+      "phase": "契约 P1-T5",
+      "pillars": [],
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "total": 8,
       "silent": false,
       "ok": true
     }

@@ -34,6 +34,13 @@ jobs:
       - name: 类型检查（门禁一）
         run: pnpm typecheck
 
+      - name: 契约清单与提示词软校验（P1-T1/T2/T5 · 不阻断）
+        continue-on-error: true
+        run: |
+          node scripts/check-manifest.mjs
+          node scripts/gen-agent-cards.mjs --check
+          node scripts/check-prompts.mjs
+
       - name: 全量回归 + 五支柱面板（门禁二）
         run: pnpm regression
 

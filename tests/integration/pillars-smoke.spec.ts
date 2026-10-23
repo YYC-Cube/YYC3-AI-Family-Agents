@@ -48,11 +48,11 @@ if (__localShim) {
 }
 
 import { createMemberSelfJudge } from '@members/core-layer/member-grandmaster/self-judge/index.js';
-import { CrossValidator } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/cross-validator.js';
-import { VerificationGateway } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/gateway.js';
-import { GroundTruthChecker } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/ground-truth-checker.js';
-import { OracleRegistry } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/oracle-registry.js';
-import { InMemorySkillStore, LearningLoop } from '../../02-智能协同架构内核/05-持续学习引擎/learning-loop.js';
+import { CrossValidator } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/cross-validator.js';
+import { VerificationGateway } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/gateway.js';
+import { GroundTruthChecker } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/ground-truth-checker.js';
+import { OracleRegistry } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/oracle-registry.js';
+import { InMemorySkillStore, LearningLoop } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
 
 let seq = 0;
 const grandmaster = createMemberSelfJudge();

@@ -245,7 +245,7 @@ d1d1fa0 docs: 新增未接线模块清单（v2.7.3）并忽略 docs 本地备份
 74f9281 chore: 初始化 YYC³ AI Family Agent 五支柱编程体系 v2.7.2 基线   ← 405 文件 / 32,229 行
 ```
 
-- 忽略规则已生效：`docs/02-智能协同架构内核/`、`docs/03-家人Agent实现集/`（本地备份，`git check-ignore` 已验证）
+- 忽略规则已生效：`docs/architecture-kernel/`、`docs/family-agents/`（本地备份，`git check-ignore` 已验证）
 - **已推送**：`main` 与标签已同步至远端（L8-5 完成）
 
 ## 十三、执行步骤（已完成）

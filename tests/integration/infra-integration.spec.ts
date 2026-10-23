@@ -59,16 +59,16 @@ if (__localShim) {
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { EventBus } from '../../02-智能协同架构内核/02-云枢核心引擎/family-communication-bus/event-bus.js';
-import { TrajectoryBridge } from '../../02-智能协同架构内核/02-云枢核心引擎/family-communication-bus/trajectory-bridge.js';
-import { TrajectoryCollector } from '../../02-智能协同架构内核/05-持续学习引擎/experience-reflow/trajectory-collector.js';
+import { EventBus } from '../../architecture-kernel/02-云枢核心引擎/family-communication-bus/event-bus.js';
+import { TrajectoryBridge } from '../../architecture-kernel/02-云枢核心引擎/family-communication-bus/trajectory-bridge.js';
+import { TrajectoryCollector } from '../../architecture-kernel/05-持续学习引擎/experience-reflow/trajectory-collector.js';
 import {
   DeterministicSemanticAbstractor,
   PatternExtractor,
-} from '../../02-智能协同架构内核/05-持续学习引擎/experience-reflow/pattern-extractor.js';
-import { InMemorySkillStore, LearningLoop } from '../../02-智能协同架构内核/05-持续学习引擎/learning-loop.js';
-import { FileSkillStore } from '../../02-智能协同架构内核/05-持续学习引擎/skill-consolidation/skill-store-file.js';
-import { RollbackController } from '../../02-智能协同架构内核/07-自愈中心/rollback-controller/rollback-controller.js';
+} from '../../architecture-kernel/05-持续学习引擎/experience-reflow/pattern-extractor.js';
+import { InMemorySkillStore, LearningLoop } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
+import { FileSkillStore } from '../../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-store-file.js';
+import { RollbackController } from '../../architecture-kernel/07-自愈中心/rollback-controller/rollback-controller.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

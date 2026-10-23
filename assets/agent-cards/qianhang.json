@@ -1,0 +1,196 @@
+{
+  "$schema": "../schemas/agent-card.schema.json",
+  "agentCard": {
+    "name": "言启·千行 (QianHang)",
+    "description": "YYC³ AI Family 首席导航员 · 意图之门 — 用户意图进入 YYC³ 世界的第一道门户，负责意图识别、澄清与路由。",
+    "url": "https://matrix.yyc3.top/family/qianhang",
+    "version": "1.1.0",
+    "provider": {
+      "organization": "YanYuCloudCube",
+      "url": "https://yyc3.top"
+    },
+    "capabilities": {
+      "streaming": false,
+      "pushNotifications": false,
+      "stateTransitionHistory": true
+    },
+    "skills": [
+      {
+        "id": "shared.self-judge",
+        "name": "结构化自判断",
+        "description": "产出置信度、登记假设、检测偏离并给出升级决策",
+        "tags": [
+          "confidence",
+          "assumption",
+          "escalation"
+        ],
+        "examples": [
+          "对候选意图给出 0..1 置信度并显式登记假设"
+        ]
+      },
+      {
+        "id": "shared.memory-retrieve",
+        "name": "记忆检索",
+        "description": "按语义与上下文检索情景/语义/程序记忆",
+        "tags": [
+          "memory",
+          "retrieval"
+        ],
+        "examples": [
+          "检索同一客户近三次决策的上下文"
+        ]
+      },
+      {
+        "id": "shared.memory-write",
+        "name": "记忆写入",
+        "description": "按写入策略落盘情景记忆与程序记忆条目",
+        "tags": [
+          "memory",
+          "write",
+          "procedural"
+        ],
+        "examples": [
+          "把本轮结论写入情景记忆并标注显著性"
+        ]
+      },
+      {
+        "id": "shared.intent-route",
+        "name": "意图识别与路由",
+        "description": "六类意图闭集分类、置信度评分与路由分发",
+        "tags": [
+          "intent",
+          "routing"
+        ],
+        "examples": [
+          "把“帮我分析上月成本”路由到语枢·万物"
+        ]
+      },
+      {
+        "id": "shared.llm-invoke",
+        "name": "模型调用与降级链",
+        "description": "统一 provider 调用接口，按 openai→zhipu→ollama 顺序降级",
+        "tags": [
+          "llm",
+          "provider",
+          "fallback"
+        ],
+        "examples": [
+          "openai 超时后切换 zhipu，再失败切本地 ollama"
+        ]
+      },
+      {
+        "id": "shared.observe-emit",
+        "name": "指标与追踪埋点",
+        "description": "以 traceId 贯穿事件并写入 family_* 指标",
+        "tags": [
+          "metrics",
+          "tracing"
+        ],
+        "examples": [
+          "为任务执行记录 outcome 与耗时并保留 traceId"
+        ]
+      },
+      {
+        "id": "qianhang.intent-detection",
+        "name": "意图检测",
+        "description": "六类意图闭集识别，输出意图/置信度/理由",
+        "tags": [
+          "intent",
+          "classification"
+        ],
+        "examples": [
+          "识别“这月花了多少”为 analysis 意图并给置信度"
+        ]
+      },
+      {
+        "id": "qianhang.ambiguity-clarify",
+        "name": "歧义澄清",
+        "description": "候选间隔过小时登记假设并生成澄清提问",
+        "tags": [
+          "clarify",
+          "assumption"
+        ],
+        "examples": [
+          "“看看销售”歧义时追问是看数据还是看趋势"
+        ]
+      },
+      {
+        "id": "qianhang.context-session",
+        "name": "上下文会话管理",
+        "description": "多轮会话状态维护与跨家人上下文传递",
+        "tags": [
+          "context",
+          "session"
+        ],
+        "examples": [
+          "第二轮“再按部门拆一下”继承首轮的分析对象"
+        ]
+      },
+      {
+        "id": "qianhang.nlq-to-api",
+        "name": "自然语言查询转 API",
+        "description": "把管理者的自然语言转译为结构化查询参数",
+        "tags": [
+          "nlq",
+          "mapping"
+        ],
+        "examples": [
+          "“上月华东区退货率”转成 region/month/metric 三元组"
+        ]
+      }
+    ],
+    "defaultInputModes": [
+      "text",
+      "structured"
+    ],
+    "defaultOutputModes": [
+      "text",
+      "structured"
+    ],
+    "authentication": {
+      "schemes": [
+        "bearer_token",
+        "api_key"
+      ],
+      "required": true
+    },
+    "security": {
+      "tlsRequired": true,
+      "signedAgentCard": false,
+      "rbacRoles": [
+        "admin",
+        "operator",
+        "viewer"
+      ]
+    },
+    "slo": {
+      "latency": {
+        "p50": "500ms",
+        "p95": "2s",
+        "p99": "5s"
+      },
+      "availability": "99.9%",
+      "errorRate": "<0.5%"
+    },
+    "yyc3": {
+      "id": "010301-01",
+      "layer": "L5",
+      "layerName": "言启千行",
+      "group": "business-layer",
+      "motto": "我聆听万千言语，为您指引航向。",
+      "pillars": {
+        "self": "self-judge",
+        "knowledge": "memory-bindings",
+        "learning": "procedural",
+        "governance": "guardrail",
+        "healing": "delegation"
+      },
+      "providerChain": [
+        "openai",
+        "zhipu",
+        "ollama"
+      ],
+      "manifestVersion": "1.1.0"
+    }
+  }
+}

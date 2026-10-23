@@ -1,6 +1,6 @@
 # YYC³ AI Family · 五高 SLO + 回归门禁告警规则（Prometheus 原生规则格式）
 # 指标来源（v2.7.0 P0 数据面已打通）：
-#   - 运行时指标：02-智能协同架构内核/09-可观测性（FamilyMetrics），
+#   - 运行时指标：architecture-kernel/09-可观测性（FamilyMetrics），
 #     由装配层 createRuntimeAssembly({ metrics }) 自动埋点，经 GET /metrics 暴露；
 #   - CI 指标：scripts/run-regression.mjs 生成 ops/observability/pillar-dashboard/metrics.prom。
 # 消费方式（本文件为 rule_files 直采格式，顶层 groups）：
@@ -87,3 +87,51 @@ groups:
           pillar: five-pillar
         annotations:
           summary: "五支柱 Dashboard 存在失败用例：{{ $labels.pillar }}"
+
+  # 人机协同组（P1-T4）：4 项协同度指标 ↔ 4 条告警（「众从人」可度量）
+  - name: yyc3-family-collaboration
+    rules:
+      # ⑧ 澄清率过高：意图识别在退化（大量请求需二次澄清）
+      #    数据源：FamilyMetrics.recordCollaboration('clarification', hit)
+      - alert: CollaborationClarifyRateHigh
+        expr: family_collaboration_clarify_rate > 0.5
+        for: 30m
+        labels:
+          severity: warning
+          pillar: collaboration
+        annotations:
+          summary: "澄清率 > 50%，意图识别质量下降（不得臆断 vs 过度打断）"
+          description: "当前 {value}，请检查千行意图分类与澄清策略。"
+
+      # ⑨ 人工确认率过低：关键决策绕过人的终审（「众从人」红线）
+      - alert: CollaborationHumanConfirmMissing
+        expr: family_collaboration_human_confirm_rate < 0.05
+        for: 30m
+        labels:
+          severity: critical
+          pillar: collaboration
+        annotations:
+          summary: "关键决策人工确认率 < 5%，存在绕过终审风险"
+          description: "当前 {value}，请检查 self-judge escalation 策略与 human-confirm 通道。"
+
+      # ⑩ traceId 覆盖率过低：决策无法追溯到审计链（「瞾」双向照见失效）
+      - alert: CollaborationTraceCoverageLow
+        expr: family_collaboration_trace_coverage < 0.95
+        for: 10m
+        labels:
+          severity: critical
+          pillar: collaboration
+        annotations:
+          summary: "traceId 覆盖率 < 95%，决策链路存在断点"
+          description: "当前 {value}，请检查总线 key.traceId 与审计写入是否贯穿。"
+
+      # ⑪ 复盘覆盖率过低：决策未回流学习（学支柱空转）
+      - alert: CollaborationReplayCoverageLow
+        expr: family_collaboration_replay_coverage < 0.3
+        for: 30m
+        labels:
+          severity: warning
+          pillar: collaboration
+        annotations:
+          summary: "复盘覆盖率 < 30%，决策经验未回流学习引擎"
+          description: "当前 {value}，请检查 LearningLoop 周期与轨迹采集。"

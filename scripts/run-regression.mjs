@@ -36,16 +36,25 @@ const SPECS = [
   { file: 'tests/integration/knowledge-evolution.spec.js', pillars: ['知', '学'], phase: 'Phase E', name: '知识更新 + 参数护栏' },
   { file: 'tests/integration/assembly-e2e.spec.js', pillars: ['学', '愈'], phase: '装配', name: '装配层端到端（infra 1–4）' },
   { file: 'tests/integration/metrics-observability.spec.js', pillars: ['学', '愈'], phase: 'P0 数据面', name: '指标采集与暴露' },
+  { file: 'tests/integration/five-dimension-metrics.spec.js', pillars: ['治'], phase: 'P1-T4', name: '五维指标映射' },
+  { file: 'tests/integration/collaboration-wiring.spec.js', pillars: ['自', '学', '治'], phase: 'P1-T4b', name: '协同度生产接线' },
   { file: 'tests/integration/llm-provider.spec.js', pillars: ['学'], phase: 'P1', name: 'LLM Provider（zhipu）' },
+  { file: 'tests/integration/mcp-adapter.spec.js', pillars: ['治', '愈'], phase: 'P1-T3', name: 'MCP 适配层（codec + stdio）' },
   { file: 'tests/e2e/qianhang-intent-e2e.spec.js', pillars: ['自', '学'], phase: 'e2e', name: '千行意图端到端' },
   // UAT（tests/uat/llm-live-uat.spec.ts）刻意不进本清单：密钥类真实调用只走 `pnpm uat:llm` 本地门控，
   // 保持回归门禁 hermetic 与「跳过 0」口径。
   { file: 'tests/pillar-contracts/pillars.contract.js', pillars: [], phase: '契约', name: '五支柱契约' },
+  { file: 'tests/contracts/manifest.contract.js', pillars: [], phase: '契约 P1-T1', name: '家族契约清单' },
+  { file: 'tests/contracts/agent-card.contract.js', pillars: [], phase: '契约 P1-T2', name: 'Agent Card' },
+  { file: 'tests/contracts/prompt.contract.js', pillars: [], phase: '契约 P1-T5', name: '提示词契约' },
 ];
 
 const FIVE = ['自', '知', '学', '治', '愈'];
 const FIVE_LABEL = { 自: '自 · 自判断', 知: '知 · 记忆', 学: '学 · 持续学习', 治: '治 · 治理', 愈: '愈 · 自愈' };
 const DASHBOARD_DIR = path.join(ROOT, 'ops', 'observability', 'pillar-dashboard');
+const FIVE_DIM_MAP = JSON.parse(
+  fs.readFileSync(path.join(ROOT, 'assets', 'schemas', 'five-dimension-map.json'), 'utf8'),
+);
 
 // ---------- 1. 隔离编译环境 ----------
 
@@ -76,16 +85,16 @@ const tsconfig = {
     isolatedModules: true,
     verbatimModuleSyntax: true,
     paths: {
-      '@shared/*': [path.join(ROOT, '03-家人Agent实现集', 'shared-core', '*')],
-      '@members/*': [path.join(ROOT, '03-家人Agent实现集', '*')],
+      '@shared/*': [path.join(ROOT, 'family-agents', 'shared-core', '*')],
+      '@members/*': [path.join(ROOT, 'family-agents', '*')],
     },
   },
   include: [
-    abs('02-智能协同架构内核/**/*.ts'),
-    abs('03-家人Agent实现集/**/*.ts'),
+    abs('architecture-kernel/**/*.ts'),
+    abs('family-agents/**/*.ts'),
     abs('tests/**/*.ts'),
   ],
-  exclude: [abs('node_modules'), abs('dist'), abs('03-家人Agent实现集/**/tests/**'), '**/*.tpl'],
+  exclude: [abs('node_modules'), abs('dist'), abs('family-agents/**/tests/**'), '**/*.tpl'],
 };
 
 fs.writeFileSync(path.join(tmp, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
@@ -98,7 +107,7 @@ import { existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const BUILD = ${JSON.stringify(buildDir)};
-const MEMBERS = path.join(BUILD, '03-家人Agent实现集');
+const MEMBERS = path.join(BUILD, 'family-agents');
 
 function fileOf(base) {
   if (existsSync(base) && !base.endsWith('.js') && !base.endsWith('.json')) return path.join(base, 'index.js');
@@ -215,6 +224,8 @@ const data = {
   generatedAtCN: stamp,
   gate: { passed: gatePassed, totalPassed, totalFailed, totalSkipped, specs: results.length },
   pillars: FIVE.map((p) => ({ id: p, label: FIVE_LABEL[p], green: pillarStats[p].failed === 0, ...pillarStats[p] })),
+  dimensions: FIVE_DIM_MAP.dimensions.map((d) => ({ id: d.id, label: d.label, focus: d.focus, metrics: d.metrics.length })),
+  collaboration: FIVE_DIM_MAP.collaboration.metrics.map((m) => ({ name: m.name, dimension: m.dimension })),
   specs: results.map((r) => ({
     file: r.file, name: r.name, phase: r.phase, pillars: r.pillars,
     passed: r.passed, failed: r.failed, skipped: r.skipped, total: r.total, silent: r.silent, ok: r.ok,
@@ -254,6 +265,16 @@ const pillarCards = data.pillars
     </div>`,
   )
   .join('\n');
+const dimensionCards = data.dimensions
+  .map(
+    (d) => `<div class="card dim">
+      <div class="pill">${esc(d.label)}</div>
+      <div class="label">${esc(d.focus)}</div>
+      <div class="num">${d.metrics} 项指标</div>
+      <div class="sub">${esc(d.id)}</div>
+    </div>`,
+  )
+  .join('\n');
 const specRows = data.specs
   .map(
     (s) => `<tr class="${s.ok ? 'ok' : 'bad'}">
@@ -288,6 +309,8 @@ const html = `<!DOCTYPE html>
   .card.red { border-color: var(--red); }
   .pill { display: inline-block; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
   .card.green .pill { color: var(--green); } .card.red .pill { color: var(--red); }
+  .card.dim .pill { color: var(--gold); font-size: 15px; }
+  h2.section { font-size: 15px; margin: 4px 0 12px; color: var(--dim); font-weight: 600; }
   .label { color: var(--dim); font-size: 12px; }
   .num { font-size: 16px; font-weight: 600; margin-top: 8px; }
   .sub { color: var(--dim); font-size: 12px; }
@@ -305,6 +328,8 @@ const html = `<!DOCTYPE html>
   <div class="meta">生成时间（Asia/Shanghai）：${esc(data.generatedAtCN)} ｜ 五维驱动 · 五高五标五化</div>
   <div class="gate ${gatePassed ? 'pass' : 'fail'}">${gatePassed ? `门禁通过 · ${totalPassed} 例全绿` : `门禁失败 · ${totalFailed} 例失败`}</div>
   <div class="grid">${pillarCards}</div>
+  <h2 class="section">五维覆盖（P1-T4 · 时间 / 空间 / 属性 / 事件 / 关联）</h2>
+  <div class="grid">${dimensionCards}</div>
   <table>
     <thead><tr><th>阶段</th><th>套件</th><th>文件</th><th>支柱</th><th>通过</th><th>状态</th></tr></thead>
     <tbody>${specRows}</tbody>
@@ -319,6 +344,7 @@ fs.writeFileSync(path.join(DASHBOARD_DIR, 'index.html'), html.replace('</body>',
 
 console.log('\n===== 五支柱汇总 =====');
 for (const p of data.pillars) console.log(`${p.green ? '🟢' : '🔴'} ${p.label}：${p.passed} 例通过${p.failed ? `，${p.failed} 失败` : ''}`);
+console.log(`\n五维覆盖：${data.dimensions.map((d) => `${d.label} ${d.metrics} 项`).join(' · ')}`);
 console.log(`\n静默 spec（exit 0 无用例计数）：${results.filter((r) => r.silent && r.ok).map((r) => r.file).join(', ') || '无'}`);
 console.log(`显式跳过用例：${totalSkipped} 例（原因见各 spec 输出与面板）`);
 console.log(`面板已生成：${path.join(DASHBOARD_DIR, 'index.html')}（file:// 直开）`);

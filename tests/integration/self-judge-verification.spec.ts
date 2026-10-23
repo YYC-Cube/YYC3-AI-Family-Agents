@@ -61,12 +61,12 @@ import {
   createMemberSelfJudge
 } from '@members/core-layer/member-grandmaster/self-judge/index.js';
 import type { Candidate, JudgmentSignal } from '@shared/self-judge-kit';
-import { ConfidenceCalibrator } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/confidence-calibrator.js';
-import { CrossValidator } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/cross-validator.js';
-import { VerificationGateway } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/gateway.js';
-import { GroundTruthChecker } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/ground-truth-checker.js';
-import { OracleRegistry } from '../../02-智能协同架构内核/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/oracle-registry.js';
-import type { VerificationRequest, VerificationResult } from '../../02-智能协同架构内核/02-云枢核心引擎/types.js';
+import { ConfidenceCalibrator } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/confidence-calibrator.js';
+import { CrossValidator } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/cross-validator.js';
+import { VerificationGateway } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/gateway.js';
+import { GroundTruthChecker } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/ground-truth-checker.js';
+import { OracleRegistry } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/oracle-registry.js';
+import type { VerificationRequest, VerificationResult } from '../../architecture-kernel/02-云枢核心引擎/types.js';
 
 // ---- 模拟世界状态（oracle 背后的"真实世界"）----
 const truthIntent = new Map<string, string>(); // traceId → 真实意图
