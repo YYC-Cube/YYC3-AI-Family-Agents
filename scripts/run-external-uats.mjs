@@ -173,6 +173,8 @@ const r = spawnSync(process.execPath, ['--import', pathToFileURL(path.join(tmp, 
   cwd: ROOT,
   stdio: 'inherit',
   timeout: 120_000,
+  // 闸 3 解析出的端点（env 或实例文件）注入子进程——spec 侧门控与预检同源
+  env: { ...process.env, EXT_WORKER_ENDPOINT: endpoint },
 });
 if (r.error) {
   console.error(`❌ 运行异常：${r.error.message}`);

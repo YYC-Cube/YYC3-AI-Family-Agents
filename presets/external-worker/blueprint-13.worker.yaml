@@ -1,0 +1,16 @@
+# 外部 worker 实例（blueprint-13 · M20 真实联调首例）
+# 契约模板见 worker.yaml.tpl；校验：pnpm external:check
+worker:
+  id: blueprint-13
+  endpoint: http://127.0.0.1:3130
+  auth:
+    scheme: bearer_token
+    token_env: WORKER_13_TOKEN
+  timeout_ms: 5000
+  fallback: rule-default
+  capabilities:
+    - shared.self-judge
+    - shared.memory-retrieve
+    - qianhang.nlq-to-api
+  capabilitiesRef:
+    manifest: presets/family-manifest.yaml
