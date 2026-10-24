@@ -1,10 +1,10 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-24T00:48:04.675Z",
-  "generatedAtCN": "2026/10/24 08:48:04",
+  "generatedAt": "2026-10-24T00:57:08.056Z",
+  "generatedAtCN": "2026/10/24 08:57:08",
   "gate": {
     "passed": true,
-    "totalPassed": 285,
+    "totalPassed": 288,
     "totalFailed": 0,
     "totalSkipped": 0,
     "specs": 40
@@ -41,14 +41,14 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 102,
+      "passed": 105,
       "failed": 0
     },
     {
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 52,
+      "passed": 53,
       "failed": 0
     }
   ],
@@ -333,10 +333,10 @@
         "治",
         "愈"
       ],
-      "passed": 8,
+      "passed": 9,
       "failed": 0,
       "skipped": 0,
-      "total": 8,
+      "total": 9,
       "silent": false,
       "ok": true
     },
@@ -583,10 +583,10 @@
       "pillars": [
         "治"
       ],
-      "passed": 6,
+      "passed": 7,
       "failed": 0,
       "skipped": 0,
-      "total": 6,
+      "total": 7,
       "silent": false,
       "ok": true
     },
@@ -625,10 +625,10 @@
       "pillars": [
         "治"
       ],
-      "passed": 7,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "total": 7,
+      "total": 8,
       "silent": false,
       "ok": true
     },

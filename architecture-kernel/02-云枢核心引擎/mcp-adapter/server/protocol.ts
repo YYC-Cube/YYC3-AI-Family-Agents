@@ -31,14 +31,38 @@ export interface McpServerInfo {
   readonly version: string;
 }
 
+/** W3C Trace Context 解析结果（traceparent 头）。 */
+export interface TraceContext {
+  readonly traceId: string;
+  readonly spanId: string;
+  readonly flags: string;
+}
+
+const TRACEPARENT_RE = /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
+
+/**
+ * 严格解析 W3C `traceparent`（M21 关联维）：`00-<32hex traceId>-<16hex spanId>-<2hex flags>`；
+ * 版本 ff、全零 traceId/spanId、长度或字符集不符 → null（调用方按未携带处理，不炸协议层）。
+ */
+export function parseTraceparent(header: string): TraceContext | null {
+  const m = (header ?? '').trim().toLowerCase().match(TRACEPARENT_RE);
+  if (!m) return null;
+  const [, version, traceId, spanId, flags] = m;
+  if (version === 'ff') return null;
+  if (/^0+$/.test(traceId) || /^0+$/.test(spanId)) return null;
+  return { traceId, spanId, flags };
+}
+
 /** tools/call 上下文（策略裁决与分派共用）。 */
 export interface McpToolCallContext {
   readonly toolName: string;
   /** 工具入参（缺省 `{}`）。 */
   readonly args: unknown;
-  /** 可选链路 / 主体（部署侧经 `params._meta` 注入）。 */
+  /** 可选链路 / 主体（部署侧经 `params._meta` 注入）；traceId 优先级：显式 > traceparent 派生。 */
   readonly traceId?: string;
   readonly actor?: string;
+  /** W3C Trace Context（`_meta.traceparent` 严格解析通过时存在，M21）。 */
+  readonly traceparent?: TraceContext;
 }
 
 /** 策略裁决（tools/call 唯一闸门；`admitted=false` 即拒绝）。 */
@@ -140,11 +164,17 @@ export function createMcpRequestHandler(options: McpServerOptions): McpRequestHa
     if (!visibleByName.has(name)) return jsonError(id, -32602, `Unknown tool: ${name}`);
     if (!options.dispatch) return jsonError(id, -32603, 'Tool dispatch not configured');
 
+    // W3C traceparent（M21 关联维）：严格解析，非法即按未携带；traceId 优先级：显式 > 派生
+    const traceparent = typeof meta?.traceparent === 'string' ? parseTraceparent(meta.traceparent) : undefined;
     const ctx: McpToolCallContext = {
       toolName: name,
       args: rawArgs ?? {},
-      traceId: typeof meta?.traceId === 'string' ? meta.traceId : undefined,
+      traceId:
+        typeof meta?.traceId === 'string' && meta.traceId.length > 0
+          ? meta.traceId
+          : (traceparent?.traceId ?? undefined),
       actor: typeof meta?.actor === 'string' ? meta.actor : undefined,
+      ...(traceparent ? { traceparent } : {}),
     };
     const verdict = options.policy?.(ctx);
     if (verdict && !verdict.admitted) {

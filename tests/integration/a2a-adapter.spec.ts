@@ -101,6 +101,29 @@ describe('A2A 适配层（P2-T2 · 纯内存 stub）', () => {
     globalThis.expect(client.deadLetters().length).toBe(0);
   });
 
+  it('W3C traceparent 外发（M21）：32hex traceId 附带标准头，非 W3C traceId 不造假', async () => {
+    let captured = null;
+    const dir = makeDirectory();
+    const client = new DelegateClient({
+      directory: dir,
+      transport: {
+        send: async (url, body) => {
+          captured = { url, body: JSON.parse(body) };
+          return JSON.stringify({ jsonrpc: '2.0', id: captured.body.id, result: { taskId: 'task-w3c', state: 'completed' } });
+        },
+      },
+    });
+    const w3c = '4bf92f3577b34da6a3ce929d0e0e4736';
+    await client.delegate({ skillId: 'qianhang.nlq-to-api', input: {}, traceId: w3c });
+    const tp = String(captured.body.params.traceparent ?? '');
+    globalThis.expect(tp.startsWith(`00-${w3c}-`)).toBeTruthy();
+    globalThis.expect(/^[0-9a-f]{16}$/.test(tp.split('-')[2] ?? '')).toBeTruthy();
+    globalThis.expect(tp.endsWith('-01')).toBeTruthy();
+
+    await client.delegate({ skillId: 'qianhang.nlq-to-api', input: {}, traceId: 'trace-42' });
+    globalThis.expect(captured.body.params.traceparent).toBe(undefined);
+  });
+
   it('超时/传输失败：transport 抛错 → 归一 ok:false + 入 DLQ + 回调（不抛出）', async () => {
     const letters = [];
     const client = new DelegateClient({

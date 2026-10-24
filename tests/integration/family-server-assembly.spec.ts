@@ -190,6 +190,22 @@ describe('家族服务装配（P6-A · M14）', () => {
     expect(res.result.isError).toBe(true);
     expect(assembly.allowlist.rejectedCount).toBe(1);
   });
+
+  it('A8 W3C traceparent 贯穿审计链（M21）：无显式 traceId 时按头派生', async () => {
+    const audit = new ComplianceAudit();
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES.slice(0, 1),
+      admission: { allowed: ['family-core'], mode: 'observe', audit },
+      pluginOfTool: () => 'rogue-pack',
+    });
+    const w3c = '4bf92f3577b34da6a3ce929d0e0e4736';
+    call(server, 'shared__a2a_delegate', { traceparent: `00-${w3c}-00f067aa0ba902b7-01` });
+    expect(server.mcp.allowlist.auditRecords).toHaveLength(1);
+    expect(server.mcp.allowlist.auditRecords[0].traceId).toBe(w3c);
+    await server.stop();
+  });
 });
 
 (async () => {

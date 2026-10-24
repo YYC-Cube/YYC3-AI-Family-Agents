@@ -96,6 +96,11 @@ export class DelegateClient {
       return this.dead(req, `无 card 声明能力 ${req.skillId}（card 目录 ${this.deps.directory.size} 张）`, now());
     }
     const slug = card.url.replace(/\/+$/, '').split('/').pop() ?? '';
+    // W3C traceparent 外发（M21 关联维）：traceId 为原生 32hex 时附带标准头（spanId 取本委托序号），否则不造假格式
+    const w3cTrace = /^[0-9a-f]{32}$/.test(req.traceId) ? req.traceId : undefined;
+    const traceparent = w3cTrace
+      ? `00-${w3cTrace}-${(this.seq + 1).toString(16).padStart(16, '0')}-01`
+      : undefined;
     let raw: string;
     try {
       raw = await this.deps.transport.send(
@@ -104,7 +109,7 @@ export class DelegateClient {
           jsonrpc: '2.0',
           id: this.deps.nextId ? this.deps.nextId() : `a2a-${++this.seq}`,
           method: A2A_METHOD,
-          params: { skillId: req.skillId, input: req.input, traceId: req.traceId },
+          params: { skillId: req.skillId, input: req.input, traceId: req.traceId, ...(traceparent ? { traceparent } : {}) },
         }),
       );
     } catch (error) {
