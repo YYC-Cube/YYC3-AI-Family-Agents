@@ -63,6 +63,7 @@
 - **LLM 首跑与调优（P6-D · M17）**：`pnpm start:selftest:llm`（三闸门控 + `.env` 密钥兜底解析不回显）经完整协议链路采样实测；排障两处——selftest 调用缺 `await`（异步化遗留）与步骤提示词未声明输出契约；**调优后真实智谱调用输出字段填充 5/5**（self-judge 3/3 · memory-retrieve 1/1 · memory-write 1/1），最终步骤提示词强制声明 io.output 字段清单
 - **LLM 全量采样实测（P6-E · M18）**：`LLM_STEP_SAMPLE=45` 门控全量首跑——21 条 io 契约技能（其余 24 条无 io 按设计不入采样）× 真实智谱调用，**输出字段填充 34/34 · 100% · 零失败**，M17 输出契约声明在全量成立无需再调优；门控自检超时放宽至 540s（135+ 次顺序真实调用）
 - **LLM 观测增强（P6-F · M19）**：`FamilyMetrics` +`family_llm_steps_total`（Counter，skill 标签）+`family_llm_output_fill_ratio`（Gauge 0..1）与 `recordLlmExecution(skillId, steps, filled, fields)`——`skill-step-executor` 注入 metrics 即自动上报，`family-server.entry` 语义臂全链接线；`five-dimension-map.json` capability 组 3→5 项（+event/attribute 各一）；告警 +`LlmOutputFillLow`（填充率 < 0.8 · 10 分钟 · warning）→ **13 条**；五维修映射口径 21→23、llm 套件 +G8 观测注入例，门禁 284 → **285**
+- **外部 Worker 真实联调（P7-c · M20）**：`workers/blueprint-13/`（stdlib 零依赖参照实现 · 回环 3130 · well-known card 发现 + `message/send`/`tasks/send` 双方法委托 + `WORKER_13_TOKEN` 可选鉴权）+ 实例契约 `presets/external-worker/blueprint-13.worker.yaml`（capabilities 全量引 manifest 真实 id，`external:check` 通过）+ `run-external-uats.mjs` 修复闸 3 端点未注入子进程脱节——**三闸 UAT 真实首跑 3/3 全过**，P2 生态外挂真实闭环；契约套件首例改实例数无关断言（M20 起 1 份实例）
 
 ### Changed
 
