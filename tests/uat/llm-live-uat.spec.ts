@@ -77,7 +77,14 @@ if (!LIVE) {
 /** 构造真实 Provider（未门控时不应被调用）。 */
 function makeProvider() {
   const opts = { timeoutMs: 30_000, maxRetries: 1, retryBaseMs: 500 };
-  const base = process.env.UAT_LLM_BASE_URL;
+  let base = process.env.UAT_LLM_BASE_URL;
+  if (base) {
+    // 跨文件污点收窄：外部覆盖的 base 仅放行显式 https（拒绝其余 scheme）
+    const parsed = new URL(base);
+    if (parsed.protocol !== 'https:') throw new Error(`UAT_LLM_BASE_URL 仅允许 https（实际 ${parsed.protocol}）`);
+  } else {
+    base = undefined;
+  }
   if (PROVIDER === 'openai') return new OpenAiProvider(API_KEY_ENV, base ?? 'https://api.openai.com/v1', opts);
   return new ZhiPuProvider(API_KEY_ENV, base ?? 'https://open.bigmodel.cn/api/paas/v4', opts);
 }

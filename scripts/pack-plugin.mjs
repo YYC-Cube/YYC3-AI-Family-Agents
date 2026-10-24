@@ -12,7 +12,7 @@
  *      （演进指导 §七：docs/yyc3-ai-family-coding.skill 定位为对外分发副本，由本 CLI 生成，不手改。）
  *   3. --check：重打包与磁盘产物字节级比对，零漂移不写盘（CI/回归用）。
  *
- * 确定性 ZIP（零依赖）：node:zlib deflateRawSync（level 9）+ 手写 crc32 / local header /
+ * 确定性 ZIP（零依赖）：STORED 零压缩（跨 zlib 字节确定）+ 手写 crc32 / local header /
  *   central directory / EOCD；固定 DOS 时间戳（1980-01-01）、条目按路径字典序排序、
  *   UTF-8 文件名标志（0x0800）、无目录条目 / extra field / data descriptor——
  *   同输入恒同字节，产物可入 Git，CI 可零漂移校验。
@@ -25,7 +25,6 @@
  */
 
 import { createHash } from 'node:crypto';
-import { deflateRawSync } from 'node:zlib';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -76,7 +75,8 @@ const u32 = (v) => Buffer.from([v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (
 
 /**
  * 确定性打包：entries = [{ path, data: Buffer }]（调用方保证已按 path 排序且唯一）。
- * 返回 ZIP 字节（deflate level 9 · 固定时间戳 · UTF-8 文件名标志）。
+ * 返回 ZIP 字节（**STORED 零压缩** · 固定时间戳 · UTF-8 文件名标志）——
+ * 不用 deflate：跨平台 zlib 版本的压缩字节不确定，会破「同输入恒同字节」CI 零漂移门禁。
  */
 function buildZip(entries) {
   const locals = [];
@@ -85,23 +85,23 @@ function buildZip(entries) {
   for (const { path: p, data } of entries) {
     const name = Buffer.from(p, 'utf8');
     const crc = crc32(data);
-    const compressed = deflateRawSync(data, { level: 9 });
+    const stored = data;
     const local = Buffer.concat([
-      u32(0x04034b50), u16(20), u16(0x0800), u16(8),
+      u32(0x04034b50), u16(20), u16(0x0800), u16(0),
       u16(DOS_TIME), u16(DOS_DATE), u32(crc),
-      u32(compressed.length), u32(data.length),
+      u32(stored.length), u32(data.length),
       u16(name.length), u16(0), name,
     ]);
-    locals.push(local, compressed);
+    locals.push(local, stored);
     centrals.push(
       Buffer.concat([
-        u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(8),
+        u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0),
         u16(DOS_TIME), u16(DOS_DATE), u32(crc),
-        u32(compressed.length), u32(data.length),
+        u32(stored.length), u32(data.length),
         u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset), name,
       ]),
     );
-    offset += local.length + compressed.length;
+    offset += local.length + stored.length;
   }
   const central = Buffer.concat(centrals);
   const eocd = Buffer.concat([
