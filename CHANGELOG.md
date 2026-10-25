@@ -67,6 +67,8 @@
 - **W3C traceparent 关联维补全（P7-a · M21）**：`protocol.ts` `parseTraceparent`（严格格式 `00-<32hex>-<16hex>-<2hex>`；版本 ff / 全零 / 格式不符 → null 不炸协议层）+ `McpToolCallContext.traceparent` + traceId 优先级（显式 `_meta.traceId` > 头派生）；`a2a-adapter/task-delegate` 委托外发标准头（仅 32hex 原生 traceId 附带，不造假格式）；套件 +3 例（解析与 ctx 传播 / a2a 外发双向 / A8 审计链贯穿——无显式 traceId 时审计 traceId = 头 traceId），门禁 285 → **288**；包 2.33.0
 - **运行时编排升级（P7-c · M22）**：`family-server.entry.ts` 新增 `external`（ExternalFamilyOptions）——`shared.a2a-delegate` 工具经 `a2a-adapter DelegateClient` 真实委托外部家人：`HttpA2aTransport`（fetch + 超时 + 可选令牌）+ 启动期 well-known card 发现（http(s) 闸 + 形态校验）+ 能力清单闸（card 未声明技能即拒）+ traceId 优先级链（ctx 显式/头派生 > UUID 32hex，使外发携带 W3C traceparent）；启动器按 `blueprint-13.worker.yaml` 实例契约自动装配；`instrumentMcpDispatcher` **异步感知修正**（thenable 归一——M16 起异步拒绝被错记 ok）；A9 套件 +1（hermetic 注入传输 + traceparent 贯穿断言 + 清单外拒绝 error 计账）；实活 selftest 实测委托 `taskId/state=completed`；门禁 288 → **289/289**；包 2.34.0
 - **未接线清单逐文件复核（P7-b · v1.24.0）**：新增 §2.5「仅编译 167 文件逐文件归类」——A 九层底座骨架 20 · B 再导出 barrel 22（冷是消费方式而非未交付）· C 功能骨架 9（待装配）· D 家人同构模板衍生 108（create-member 脚手架，拆线即破坏家人目录契约）· E shared-core 部件 6 · F UAT 门控 2；结论**无一处误判已交付或应拆未拆**，learning-scheduler 为下轮接线首选
+- **学习调度器转实（P8-a · M23）**：`budget-allocator.ts` 由桩转实——剩余配额记账 + 授予预扣（token/调用分维度 min(申请,剩余)）+ `ZERO_BUDGET` 等待信号（零配额不入账）+ `release` 归还（失败/提前退出）；`priority-queue.ts` 由 FIFO 桩转实——priority 降序稳定有序插入（同分 FIFO）+ `peek`/`list` 只读面；新套件 `tests/integration/learning-scheduler.spec.ts` 5 例（学）：有序与稳定 / 分维度授予与预扣 / 耗尽归还再授予 / 非法输入 / 调度闭环（优先序 + 失败归还唤醒 + 账目守恒）；门禁 289 → **294/294**
+- **双臂合并链路实测（P8-b · M23）**：`pnpm start:selftest:llm`（实例契约自动装配 + LLM 三闸同开）一次自检走通**三链齐跑**——确定性执行（plan/骨架）+ LLM 语义臂（真实智谱 2 技能填充 4/4）+ A2A 外部委托（blueprint-13 实活 `state=completed`）——「本地语义执行 + 外部委托」混合编排端到端成立
 
 ### Changed
 

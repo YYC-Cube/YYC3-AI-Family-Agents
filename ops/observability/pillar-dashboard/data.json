@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-25T05:55:16.493Z",
-  "generatedAtCN": "2026/10/25 13:55:16",
+  "generatedAt": "2026-10-25T07:55:46.384Z",
+  "generatedAtCN": "2026/10/25 15:55:46",
   "gate": {
     "passed": true,
-    "totalPassed": 289,
+    "totalPassed": 294,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 40
+    "specs": 41
   },
   "capabilities": {
     "skills": 45,
@@ -34,7 +34,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 101,
+      "passed": 106,
       "failed": 0
     },
     {
@@ -657,6 +657,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 7,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/learning-scheduler.spec.js",
+      "name": "学习调度器（配额+队列）",
+      "phase": "P8-a",
+      "pillars": [
+        "学"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
       "silent": false,
       "ok": true
     }

@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.24.0
+  Version : v1.25.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.24.0
+version: v1.25.0
 created: 2026-10-23
 updated: 2026-10-24
 status: active
@@ -41,7 +41,7 @@ category: report
 适用范围：
 
 - 目录：`architecture-kernel/**`、`family-agents/**`
-- 口径：从 **40 个门禁入口**（`tests/**/*.spec.ts` + `*.contract.ts`，UAT 门控 spec 不作入口）出发的静态 import 可达性
+- 口径：从 **41 个门禁入口**（`tests/**/*.spec.ts` + `*.contract.ts`，UAT 门控 spec 不作入口）出发的静态 import 可达性
 - 不含：`docs/` 下的本地备份目录（已在 `.gitignore` 排除）、`node_modules/`、构建产物
 
 **用途**：作为「骨架保留」的治理依据——避免把未接线模块误判为已交付能力，也避免误删将来要接线的载体。
@@ -54,7 +54,7 @@ category: report
 
 1. 枚举编译范围内全部 `.ts`（对齐 `tsconfig.json` 的 `include` / `exclude`）
 2. 解析静态 `import` / `export ... from` / 动态 `import()`，解析 `@shared/*`、`@members/*` 与相对路径
-3. 以 40 个门禁入口为根，计算可达集
+3. 以 41 个门禁入口为根，计算可达集
 4. 与文件总数对比，得到「已接线 / 仅编译」
 
 ### 2.2 状态定义（RFC 2119 用语）
@@ -71,27 +71,27 @@ category: report
 
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
-| `architecture-kernel` | 115 | **64** | **51** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派 + P2 a2a-adapter 与安全策略映射 + §6.3 能力供给接线仪表）；九层底座与治理/调度扩展为骨架 |
+| `architecture-kernel` | 115 | **66** | **49** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派 + P2 a2a-adapter 与安全策略映射 + §6.3 能力供给接线仪表）；九层底座与治理/调度扩展为骨架 |
 | `family-agents` | 150 | **36** | **114** | `shared-core` 记忆 / 学习 / LLM 主链路全接线；家人意图链路 4 文件 + 伯乐成就面板已接线；8 位家人薄转发 provider 与 llm-adapter barrel 属部署侧消费（纯可达口径计仅编译） |
-| `tests` | 40 | 40 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线） |
-| **合计** | **305** | **140** | **165** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
+| `tests` | 41 | 41 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线） |
+| **合计** | **306** | **143** | **163** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
 
-> 已接线 140 = kernel 64 + agents 36 + tests 40（门禁入口 40，UAT 门控 2 不计入）。v1.20.0 起「已接线」统一为**纯静态可达**口径（可复现 BFS：相对导入 + `@shared` 别名 + barrel 透传，以门禁入口为根）：与 v1.19.0 手工盘点相比，agents 41 → 34 全部来自口径统一（家人薄转发 provider 等部署侧消费文件移入仅编译，**无实际拆线**——family-agents 文件数与内容在 P5 零变更）；kernel 45 → 64 含 P5 新增 5 文件 + P6 新增（mcp-server-assembly / skill-executor）与别名解析补全。**v1.24.0 已完成仅编译 167 文件逐文件归类复核（见 §2.5）**；§三 / §四 的逐行 ✅/◐ 明细以 §2.5 归类结论为准（本表为权威口径）。
+> 已接线 143 = kernel 66 + agents 36 + tests 41（门禁入口 41，UAT 门控 2 不计入）。v1.20.0 起「已接线」统一为**纯静态可达**口径（可复现 BFS：相对导入 + `@shared` 别名 + barrel 透传，以门禁入口为根）：与 v1.19.0 手工盘点相比，agents 41 → 34 全部来自口径统一（家人薄转发 provider 等部署侧消费文件移入仅编译，**无实际拆线**——family-agents 文件数与内容在 P5 零变更）；kernel 45 → 66 含 P5 新增 5 文件 + P6 新增（mcp-server-assembly / skill-executor）与别名解析补全。**v1.24.0 已完成仅编译文件逐文件归类复核（见 §2.5，v1.25.0 起随接线滚动更新）**；§三 / §四 的逐行 ✅/◐ 明细以 §2.5 归类结论为准（本表为权威口径）。
 
-### 2.5 仅编译文件逐文件归类（v1.24.0 复核 · 167 = 在册 165 + UAT 2）
+### 2.5 仅编译文件逐文件归类（v1.24.0 复核 167；v1.25.0 时点 165 = 在册 163 + UAT 2）
 
-以 40 门禁入口为根的 BFS 复核（2026-10-24，M22 时点），167 个仅编译文件全部归入六类，无一遗漏：
+以门禁入口为根的 BFS 复核（首版 2026-10-24 · M22 时点 40 入口 167 文件；当前 M23 时点 41 入口 165 文件），全部归入六类，无一遗漏：
 
 | 类 | 数量 | 文件构成 | 处置结论 |
 | -- | ---- | -------- | -------- |
 | A. 九层底座契约骨架 | 20 | `01-九层架构分层底座/`（index + types + layer-1..9 ×2） | 路线图载体，保留（§三 3.1 原判维持） |
 | B. 内核再导出 barrel | 22 | 02/05/07/08/09 各模块 `index.ts`（含 mcp-adapter、verification-gateway、scheduler、stability-guard、rollback 等子 barrel） | 深路径消费的再导出聚合，无功能缺失——冷是**消费方式**（消费方 import 深路径）而非未交付；保留 |
-| C. 内核功能骨架 | 9 | orchestrator · phone-system · status-center · self-healing-controller · budget-allocator · priority-queue · skill-merger · skill-pruner · forgetting-detector | 多数有实现体、待装配接线（§三原「计划」列维持；learning-scheduler 与 stability-guard 为 M 系列候选） |
+| C. 内核功能骨架 | 7（v1.25.0 起） | orchestrator · phone-system · status-center · self-healing-controller · skill-merger · skill-pruner · forgetting-detector（budget-allocator/priority-queue 已 M23 转实接线） | 多数有实现体、待装配接线（§三原「计划」列维持；learning-scheduler 与 stability-guard 为 M 系列候选） |
 | D. 家人同构模板衍生 | 108 | 千行 ×10（core 三件已接线）+ 其余 7 家人 ×14（core 3 · emotion 3 · nlq 2 · prompts 2 · providers 2 · self-judge 1 · tests 1） | `create-member` 模板衍生的部署侧消费文件；意图链路语义已由千行套件 + e2e 门禁覆盖同构实现，其余为八家人运行时脚手架——**保留不拆**（拆线即破坏家人目录契约） |
 | E. shared-core 部件 | 6 | self-judge-kit 四件（assumption-tracker / confidence-scorer / deviation-detector / index）+ llm-adapter/index + memory-framework/index | escalation-policy 与 types 已接线；三部件功能由内核等价实现覆盖（一致性比率指标消费 ConsistencyTracker）；barrel 同 B 类 |
 | F. UAT 门控 spec | 2 | `tests/uat/llm-live-uat.spec.ts` · `tests/uat/external-worker-uat.spec.ts` | 设计上不作门禁入口（三闸门控、hermetic 不破），不计入 §2.3 |
 
-> 复核结论：**无一处「误判已交付」或「应拆未拆」**——165 个在册仅编译文件全部为有意的骨架/模板/barrel 保留，与「骨架保留」治理用途一致；下一轮建议以 learning-scheduler（C 类）为首个接线候选。
+> 复核结论：**无一处「误判已交付」或「应拆未拆」**；v1.25.0：C 类 budget-allocator/priority-queue 桩转实并入门禁（learning-scheduler 子模块整体转已接线），kernel 已接线 64 → 66——165 个在册仅编译文件全部为有意的骨架/模板/barrel 保留，与「骨架保留」治理用途一致；下一轮建议以 learning-scheduler 已于 v1.25.0 接线（M23），C 类余 7 件。
 
 ---
 
@@ -343,7 +343,8 @@ category: report
 | v1.21.0 | 2026-10-24 | **P6-A 家族服务进程装配（M14）**：kernel `08-系统装配/mcp-server-assembly.ts`（`assembleMcpServer`：准入裁决 + traceId 合成 + 仪表化分派一站组装）+ 部署入口 `family-agents/family-server.entry.ts`（`startFamilyServer`：装载仪表化 + MCP 装配 + /metrics 暴露 + introspection 缺省分派）+ 启动器 `scripts/start-family-server.mjs`（`pnpm start` / `start:selftest`，部署资产 stdin 注入 + 隔离编译）；新增 `tests/integration/family-server-assembly.spec.ts` 门禁入口（37 → 38，治）；门禁 263 → **270 例全绿**（38 套件，治 93 → 100）；包 2.27.0；统计 298 / 133 / 165 → **301 / 136 / 165**（新增 kernel 1 + agents 1 均已接线，门禁入口 +1） |
 | v1.22.0 | 2026-10-24 | **P6-B 技能执行引擎（M15 · 确定性臂）**：kernel `05-持续学习引擎/skill-consolidation/skill-executor.ts`（`executeManifestSkill`：io.input 契约校验 + `skillTriggersOn` 触发核验（同源 skill-eval）+ steps 计划展开（exec='llm' 待 M16 语义执行臂）+ io.output 骨架）；`family-server.entry.ts` 缺省分派由 introspection 升级（契约违反抛错走 isError，error 率可观测；selftest 按 io.input 自动构造入参）；新增 `tests/integration/skill-executor.spec.ts` 门禁入口（38 → 39，学）；门禁 270 → **276 例全绿**（39 套件，学 88 → 94）；包 2.28.0；统计 301 / 136 / 165 → **302 / 137 / 165**（kernel +1 已接线） |
 | v1.23.0 | 2026-10-24 | **P6-C LLM 语义执行臂（M16）**：`protocol.ts` tools/call thenable 自动 await（同步快速路径保持，handle 签名扩 Promise）；`shared-core/llm-adapter/skill-step-executor.ts`（逐步骤提示词 + 注入式 runner + 围栏 JSON 抽取 + io.output 填充与 violations）；`family-server.entry.ts` 接 `llmRunner`/`llm` 配置（契约先行 · 无步骤同步快速路径）；启动器三闸门控（LLM_STEP + 确认语 + Key，缺省确定性臂）；mcp-server.spec +2 例（治·愈）+ 新套件 `llm-step-executor.spec.ts` 6 例（学，假件零网络）；门禁 276 → **284 例全绿**（40 套件，学 94→100 · 治 100→102 · 愈 50→52）；包 2.29.0；统计 302 / 137 / 165 → **305 / 140 / 165**（agents +1 已接线） |
-| v1.24.0 | 2026-10-24 | **M22 运行时编排升级 + 仅编译逐文件复核**：① `family-server.entry.ts` `external` 配置（M22 · P7-c）——`shared.a2a-delegate` 工具经 `DelegateClient` 真实委托外部家人（HttpA2aTransport + 启动期 well-known card 发现 + 能力清单闸 + traceId 优先级链与 W3C 头外发）；启动器按实例契约自动装配；A9 套件 +1（注入传输 hermetic + 实活 selftest 委托 `state=completed`）；`instrumentMcpDispatcher` 异步感知修正（thenable 归一——此前异步拒绝错记 ok）；门禁 288 → **289/289**；包 2.34.0。② §2.5 新增：仅编译 167 文件逐文件归类复核（A 骨架 20 · B barrel 22 · C 功能骨架 9 · D 家人模板衍生 108 · E shared-core 部件 6 · F UAT 2）——**无一处误判已交付或应拆未拆** |
+| v1.25.0 | 2026-10-25 | **P8-a 学习调度器转实（M23）**：C 类首选 budget-allocator（剩余记账 + 分维度 min 授予预扣 + ZERO_BUDGET 等待 + release 归还）与 priority-queue（降序稳定有序插入 + peek/list）由 TODO 桩转实；新套件 `learning-scheduler.spec.ts` 5 例（学，含调度闭环与账目守恒）；门禁 289 → **294/294**（42 套件）；包 2.35.0；kernel 已接线 64 → 66（scheduler 三文件经 05 barrel 可达） |
+| v1.24.0 | 2026-10-24 | **M22 运行时编排升级 + 仅编译逐文件复核**：① `family-server.entry.ts` `external` 配置（M22 · P7-c）——`shared.a2a-delegate` 工具经 `DelegateClient` 真实委托外部家人（HttpA2aTransport + 启动期 well-known card 发现 + 能力清单闸 + traceId 优先级链与 W3C 头外发）；启动器按实例契约自动装配；A9 套件 +1（注入传输 hermetic + 实活 selftest 委托 `state=completed`）；`instrumentMcpDispatcher` 异步感知修正（thenable 归一——此前异步拒绝错记 ok）；门禁 288 → **289/289**；包 2.34.0（M22 时点）。② §2.5 新增：仅编译 167 文件逐文件归类复核（A 骨架 20 · B barrel 22 · C 功能骨架 9 · D 家人模板衍生 108 · E shared-core 部件 6 · F UAT 2）——**无一处误判已交付或应拆未拆** |
 
 ---
 
