@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-25T07:55:46.384Z",
-  "generatedAtCN": "2026/10/25 15:55:46",
+  "generatedAt": "2026-10-25T09:11:05.995Z",
+  "generatedAtCN": "2026/10/25 17:11:05",
   "gate": {
     "passed": true,
-    "totalPassed": 294,
+    "totalPassed": 299,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 41
+    "specs": 42
   },
   "capabilities": {
     "skills": 45,
@@ -34,7 +34,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 106,
+      "passed": 111,
       "failed": 0
     },
     {
@@ -48,7 +48,7 @@
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 53,
+      "passed": 58,
       "failed": 0
     }
   ],
@@ -666,6 +666,21 @@
       "phase": "P8-a",
       "pillars": [
         "学"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/learning-scheduler-assembly.spec.js",
+      "name": "学习调度装配（周期配额闸）",
+      "phase": "P8-b",
+      "pillars": [
+        "学",
+        "愈"
       ],
       "passed": 5,
       "failed": 0,

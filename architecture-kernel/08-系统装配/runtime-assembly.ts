@@ -34,6 +34,9 @@ import {
 import type { FaultEvent, HealingOutcome } from '../07-自愈中心/types.js';
 import type { FamilyMetrics } from '../09-可观测性/family-metrics.js';
 import { instrumentOutcomeLabeler } from '../09-可观测性/collaboration-instrumentation.js';
+import { BudgetAllocator, ZERO_BUDGET } from '../05-持续学习引擎/learning-scheduler/budget-allocator.js';
+import { LearningPriorityQueue } from '../05-持续学习引擎/learning-scheduler/priority-queue.js';
+import type { LearningBudget } from '../05-持续学习引擎/types.js';
 
 /** 装配选项。 */
 export interface RuntimeAssemblyOptions {
@@ -53,6 +56,16 @@ export interface RuntimeAssemblyOptions {
    * capability-instrumentation 包装后接线。
    */
   readonly metrics?: FamilyMetrics;
+  /** 学习调度（M24）：传入即启用「请求-排空」学习周期闸——优先级入队 + 配额授予
+   *  （每周期消耗一份 token 份额与 1 次调用，份额缺省 = 总量/允许调用数·均分；
+   *  耗尽跳过并回队，周期失败全额归还）。 */
+  readonly learningScheduler?: {
+    readonly total: LearningBudget;
+    /** 每周期 token 消耗（缺省 = 总量，即只按调用次数限流）。 */
+    readonly tokensPerCycle?: number;
+    /** 任务时钟（缺省 Date.now；测试可冻结）。 */
+    readonly now?: () => number;
+  };
   /** 故障侦测选项（v2.7.2 纳入装配：去抖次数 / 窗口）。 */
   readonly faultDetector?: FaultDetectorOptions;
   /** 降级/熔断选项（v2.7.2 纳入装配：失败阈值 / 冷却期）。 */
@@ -77,6 +90,27 @@ export interface RuntimeAssembly {
   handleSignal(signal: DetectionSignal): HealingOutcome | undefined;
   /** 已接入的指标集（未传则为 undefined）。 */
   readonly metrics?: FamilyMetrics;
+  /** 学习调度闸（M24，options.learningScheduler 传入时存在）。 */
+  readonly learningScheduler?: LearningSchedulerHandle;
+}
+
+/** 学习周期排空结果：执行（含周期报告）或因配额跳过（任务保留在队）。 */
+export type LearningCycleOutcome =
+  | { readonly status: 'executed'; readonly report: ReturnType<LearningLoop['runCycle']> }
+  | { readonly status: 'skipped-budget' };
+
+/** 学习调度闸句柄：请求-排空两段式（配额授予与归还对调用方零暴露）。 */
+export interface LearningSchedulerHandle {
+  /** 请求一次学习周期（priority 越大越先执行；缺省 0）。 */
+  requestCycle(priority?: number): void;
+  /** 按优先级排空队列至配额耗尽（耗尽任务保留回队；周期异常全额归还后抛出）。 */
+  drain(): readonly LearningCycleOutcome[];
+  /** 队列深度。 */
+  pending(): number;
+  /** 剩余配额快照。 */
+  available(): LearningBudget;
+  /** 配额是否耗尽（任一维度为 0）。 */
+  exhausted(): boolean;
 }
 
 /**
@@ -177,6 +211,60 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
     return outcome;
   };
 
+  // 6. 学习调度闸（M24）：请求-排空两段式——优先级入队 + 每周期配额授予
+  //    （tokensPerCycle + 1 次调用）；耗尽跳过保留回队；周期异常全额归还后透传。
+  let cycleSeq = 0;
+  const scheduler: LearningSchedulerHandle | undefined = options.learningScheduler
+    ? (() => {
+        const { total, tokensPerCycle, now } = options.learningScheduler!;
+        const allocator = new BudgetAllocator(total);
+        const queue = new LearningPriorityQueue();
+        const clock = now ?? Date.now;
+        // 每周期 token 份额：显式 tokensPerCycle 优先；缺省按允许调用数均分总量
+        //（此时调用次数成为唯一约束维度，与「只按调用次数限流」语义一致）
+        const perCycle = {
+          maxTokens: tokensPerCycle ?? Math.floor(total.maxTokens / Math.max(1, total.maxCalls)),
+          maxCalls: 1,
+        };
+        return {
+          requestCycle(priority = 0): void {
+            cycleSeq += 1;
+            queue.enqueue({
+              id: `cycle-${clock()}-${cycleSeq}`,
+              mode: 'procedural-consolidation',
+              priority,
+              budget: perCycle,
+              status: 'pending',
+              source: 'runtime-assembly',
+              requestedAt: clock(),
+            });
+          },
+          drain(): readonly LearningCycleOutcome[] {
+            const out: LearningCycleOutcome[] = [];
+            while (queue.size() > 0) {
+              const task = queue.dequeue()!;
+              const granted = allocator.allocate(task);
+              if (granted === ZERO_BUDGET) {
+                queue.enqueue(task); // 配额耗尽：保留回队，由调用方决定降级/等待
+                break;
+              }
+              try {
+                out.push({ status: 'executed', report: loop.runCycle() });
+              } catch (error) {
+                allocator.release({ maxTokens: granted.maxTokens, maxCalls: granted.maxCalls });
+                queue.enqueue({ ...task, status: 'failed' });
+                throw error;
+              }
+            }
+            return out;
+          },
+          pending: () => queue.size(),
+          available: () => allocator.available,
+          exhausted: () => allocator.exhausted,
+        };
+      })()
+    : undefined;
+
   return {
     bus,
     bridge,
@@ -187,5 +275,6 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
     degradation,
     handleSignal,
     metrics,
+    ...(scheduler ? { learningScheduler: scheduler } : {}),
   };
 }

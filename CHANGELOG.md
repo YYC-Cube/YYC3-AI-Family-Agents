@@ -69,6 +69,7 @@
 - **未接线清单逐文件复核（P7-b · v1.24.0）**：新增 §2.5「仅编译 167 文件逐文件归类」——A 九层底座骨架 20 · B 再导出 barrel 22（冷是消费方式而非未交付）· C 功能骨架 9（待装配）· D 家人同构模板衍生 108（create-member 脚手架，拆线即破坏家人目录契约）· E shared-core 部件 6 · F UAT 门控 2；结论**无一处误判已交付或应拆未拆**，learning-scheduler 为下轮接线首选
 - **学习调度器转实（P8-a · M23）**：`budget-allocator.ts` 由桩转实——剩余配额记账 + 授予预扣（token/调用分维度 min(申请,剩余)）+ `ZERO_BUDGET` 等待信号（零配额不入账）+ `release` 归还（失败/提前退出）；`priority-queue.ts` 由 FIFO 桩转实——priority 降序稳定有序插入（同分 FIFO）+ `peek`/`list` 只读面；新套件 `tests/integration/learning-scheduler.spec.ts` 5 例（学）：有序与稳定 / 分维度授予与预扣 / 耗尽归还再授予 / 非法输入 / 调度闭环（优先序 + 失败归还唤醒 + 账目守恒）；门禁 289 → **294/294**
 - **双臂合并链路实测（P8-b · M23）**：`pnpm start:selftest:llm`（实例契约自动装配 + LLM 三闸同开）一次自检走通**三链齐跑**——确定性执行（plan/骨架）+ LLM 语义臂（真实智谱 2 技能填充 4/4）+ A2A 外部委托（blueprint-13 实活 `state=completed`）——「本地语义执行 + 外部委托」混合编排端到端成立
+- **调度器接入装配（P8-b · M24）**：`runtime-assembly.ts` 新增 `learningScheduler` 选项与 `LearningSchedulerHandle`——「请求-排空」两段式学习周期闸：`requestCycle(priority)` 优先级入队 → `drain()` 按序授予配额（每周期一份 token 份额 + 1 次调用，份额缺省 = 总量/允许调用数均分——调用次数成为唯一约束维度）→ 执行 `loop.runCycle()`；耗尽 `skipped-budget` 保留回队，周期异常**全额归还**后透传（失败任务标记回队）；`available()/exhausted()/pending()` 观测面；缺省不启用零侵入；新套件 `learning-scheduler-assembly.spec.ts` 5 例（学·愈）：缺省直达 / 调用限流回队 / 优先序排空（onCycle 序）/ token 份额记账（1000−800=200，零配额不入账）/ 失败归还再执行；门禁 294 → **299/299**
 
 ### Changed
 
