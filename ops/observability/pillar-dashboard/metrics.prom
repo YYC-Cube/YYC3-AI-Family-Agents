@@ -49,6 +49,6 @@ family_regression_spec_passed{spec="tests/contracts/external-worker.contract.js"
 family_regression_spec_passed{spec="tests/integration/a2a-adapter.spec.js"} 7
 family_regression_spec_passed{spec="tests/integration/security-policy-bind.spec.js"} 5
 family_regression_spec_passed{spec="tests/integration/capability-instrumentation.spec.js"} 5
-family_regression_spec_passed{spec="tests/integration/family-server-assembly.spec.js"} 8
+family_regression_spec_passed{spec="tests/integration/family-server-assembly.spec.js"} 9
 family_regression_spec_passed{spec="tests/integration/skill-executor.spec.js"} 6
 family_regression_spec_passed{spec="tests/integration/llm-step-executor.spec.js"} 7

@@ -56,20 +56,34 @@ export function instrumentSkillRegistry<T extends SkillRegistryLike>(inner: T, m
 }
 
 /**
- * MCP 工具调用接线（mcp_tool_calls）：包装 dispatch 函数——成功记 ok、抛错记 error
- * 后原样重抛（协议层照常转 isError 工具结果）。仅在 Policy 放行后才会进入 dispatch，
- * 策略拒绝不计入本指标（准入红线由 plugin_denied 承接）。
+ * MCP 工具调用接线（mcp_tool_calls）：包装 dispatch 函数——同步路径成功记 ok、抛错记
+ * error 后原样重抛；异步路径（返回 thenable，M16 LLM 臂 / M22 a2a 委托）按 resolve 记
+ * ok、reject 记 error 后原样重抛（协议层照常转 isError）。仅在 Policy 放行后才会进入
+ * dispatch，策略拒绝不计入本指标（准入红线由 plugin_denied 承接）。
  */
 export function instrumentMcpDispatcher<F extends McpDispatchFn>(dispatch: F, metrics: FamilyMetrics): F {
   const wrapped = ((ctx: never): unknown => {
+    let output: unknown;
     try {
-      const output = dispatch(ctx);
-      metrics.recordMcpToolCall('ok');
-      return output;
+      output = dispatch(ctx);
     } catch (error) {
       metrics.recordMcpToolCall('error');
       throw error;
     }
+    if (output !== null && typeof output === 'object' && typeof (output as { then?: unknown }).then === 'function') {
+      return (output as Promise<unknown>).then(
+        (resolved) => {
+          metrics.recordMcpToolCall('ok');
+          return resolved;
+        },
+        (error: unknown) => {
+          metrics.recordMcpToolCall('error');
+          throw error;
+        },
+      );
+    }
+    metrics.recordMcpToolCall('ok');
+    return output;
   }) as F;
   return wrapped;
 }

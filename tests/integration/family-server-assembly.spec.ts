@@ -206,6 +206,67 @@ describe('家族服务装配（P6-A · M14）', () => {
     expect(server.mcp.allowlist.auditRecords[0].traceId).toBe(w3c);
     await server.stop();
   });
+
+  it('A9 外部家人 A2A 编排（M22）：a2a-delegate 工具经注入传输真实委托归一', async () => {
+    let captured = null;
+    const card = {
+      name: '蓝图13·外部Worker',
+      description: '测试注入 card',
+      url: 'http://127.0.0.1:3130',
+      version: '1.0.0',
+      skills: [{ id: 'shared.self-judge', name: '自判', description: '' }],
+    };
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: [{ name: 'shared__a2a_delegate', description: 'A2A 委托', inputSchema: {}, logicalId: 'shared.a2a-delegate' }],
+      manifestEntries: ENTRIES,
+      external: {
+        endpoint: 'http://127.0.0.1:3130',
+        transport: {
+          send: async (url, body) => {
+            captured = { url, body: JSON.parse(body) };
+            return JSON.stringify({ jsonrpc: '2.0', id: captured.body.id, result: { taskId: 'task-13', state: 'completed' } });
+          },
+        },
+        card,
+      },
+    });
+    const res = JSON.parse(
+      await server.mcp.handler.handle(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: {
+            name: 'shared__a2a_delegate',
+            arguments: { skillId: 'shared.self-judge', input: { q: '联调' } },
+            _meta: { traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01' },
+          },
+        }),
+      ),
+    );
+    expect(res.result.isError).toBe(false);
+    const delegated = JSON.parse(res.result.content[0].text);
+    expect(delegated.delegated).toBe(true);
+    expect(delegated.task.taskId).toBe('task-13');
+    expect(delegated.traceId).toBe('4bf92f3577b34da6a3ce929d0e0e4736'); // traceparent 派生贯穿
+    expect(captured.body.params.traceparent.startsWith('00-4bf92f3577b34da6a3ce929d0e0e4736-')).toBe(true); // W3C 头外发
+    // 能力清单外技能被拒（isError，error 计账可观测）
+    const denied = JSON.parse(
+      await server.mcp.handler.handle(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          id: 2,
+          method: 'tools/call',
+          params: { name: 'shared__a2a_delegate', arguments: { skillId: 'qianhang.nlq-to-api', input: {} } },
+        }),
+      ),
+    );
+    expect(denied.result.isError).toBe(true);
+    expect(denied.result.content[0].text).toContain('card 能力清单外');
+    expect(server.metrics.capabilityMcpToolCalls.value({ result: 'error' })).toBe(1);
+    await server.stop();
+  });
 });
 
 (async () => {

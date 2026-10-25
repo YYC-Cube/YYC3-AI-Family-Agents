@@ -1,10 +1,10 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-24T00:57:08.056Z",
-  "generatedAtCN": "2026/10/24 08:57:08",
+  "generatedAt": "2026-10-25T05:55:16.493Z",
+  "generatedAtCN": "2026/10/25 13:55:16",
   "gate": {
     "passed": true,
-    "totalPassed": 288,
+    "totalPassed": 289,
     "totalFailed": 0,
     "totalSkipped": 0,
     "specs": 40
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 105,
+      "passed": 106,
       "failed": 0
     },
     {
@@ -625,10 +625,10 @@
       "pillars": [
         "治"
       ],
-      "passed": 8,
+      "passed": 9,
       "failed": 0,
       "skipped": 0,
-      "total": 8,
+      "total": 9,
       "silent": false,
       "ok": true
     },

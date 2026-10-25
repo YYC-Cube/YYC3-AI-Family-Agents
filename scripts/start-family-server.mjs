@@ -46,6 +46,20 @@ const config = {
   },
 };
 
+// 外部家人 A2A 编排（M22）：存在实例契约即自动装配（端点/能力/令牌环境变量）
+try {
+  const inst = parseYaml(fs.readFileSync(path.join(ROOT, 'presets/external-worker/blueprint-13.worker.yaml'), 'utf8'));
+  if (inst?.worker?.endpoint) {
+    config.external = {
+      endpoint: inst.worker.endpoint,
+      ...(inst.worker.auth?.token_env ? { tokenEnv: inst.worker.auth.token_env } : {}),
+      ...(inst.worker.timeout_ms ? { timeoutMs: inst.worker.timeout_ms } : {}),
+      ...(Array.isArray(inst.worker.capabilities) ? { skills: inst.worker.capabilities } : {}),
+    };
+    console.log(`ⓔ 外部家人编排：${inst.worker.id ?? 'external'} @ ${inst.worker.endpoint}（实例契约自动装配）`);
+  }
+} catch { /* 无实例：外部编排保持关闭 */ }
+
 // LLM 语义执行臂（M16）三闸门控（同 uat:llm 范式）：缺一保持确定性臂。
 // --selftest:llm（M17）额外要求三闸 + 密钥齐备（env 或 .env），否则跳过 LLM 采样 exit 0。
 const llmKeyEnv = process.env.ZHIPU_API_KEY?.trim() ? 'ZHIPU_API_KEY' : process.env.OPENAI_API_KEY?.trim() ? 'OPENAI_API_KEY' : null;

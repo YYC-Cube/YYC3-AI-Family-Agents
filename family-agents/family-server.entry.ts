@@ -12,6 +12,7 @@
  */
 
 import { readFileSync, realpathSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import {
   SkillRegistry,
@@ -38,6 +39,42 @@ import {
 } from './shared-core/llm-adapter/skill-step-executor.js';
 import { ZhiPuProvider } from './shared-core/llm-adapter/zhipu-provider.js';
 import { OpenAiProvider } from './shared-core/llm-adapter/openai-provider.js';
+import {
+  CardDirectory,
+  type A2aAgentCard,
+} from '../architecture-kernel/a2a-adapter/card-discovery.js';
+import { DelegateClient, type A2aTransport } from '../architecture-kernel/a2a-adapter/task-delegate.js';
+
+/** 真实 A2A HTTP 传输（M22）：POST JSON-RPC；端点为部署侧实例契约值（非用户输入，无 SSRF 面）。 */
+class HttpA2aTransport implements A2aTransport {
+  constructor(private readonly opts: { timeoutMs: number; token?: string }) {}
+  async send(url: string, body: string): Promise<string> {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        ...(this.opts.token ? { authorization: `Bearer ${this.opts.token}` } : {}),
+      },
+      body,
+      signal: AbortSignal.timeout(this.opts.timeoutMs),
+    });
+    if (!res.ok) throw new Error(`A2A 上游 HTTP ${res.status}`);
+    return res.text();
+  }
+}
+
+/** 外部家人（A2A）编排配置（M22 · P7-c）：注入 transport/card 供 hermetic 测试。 */
+export interface ExternalFamilyOptions {
+  /** 外部端点（部署侧实例契约值，如 http://127.0.0.1:3130）。 */
+  readonly endpoint: string;
+  readonly tokenEnv?: string;
+  readonly timeoutMs?: number;
+  readonly skills?: readonly string[];
+  /** 测试注入：fake 传输（提供时不做网络发现）。 */
+  readonly transport?: A2aTransport;
+  /** 测试注入：直接提供 card（跳过网络发现）。 */
+  readonly card?: A2aAgentCard;
+}
 
 /** MCP 工具名 → 清单技能 logicalId（gen-mcp-tools 映射 `.`→`__`、`-`→`_` 的逆变换）。 */
 export function logicalIdOfTool(toolName: string): string {
@@ -52,6 +89,8 @@ export interface FamilyServerConfig {
   readonly admission?: McpAdmissionOptions;
   readonly pluginOfTool?: (toolName: string) => string;
   readonly dispatch?: McpToolDispatcher;
+  /** 外部家人 A2A 编排（M22 · P7-c）：配置后 `shared.a2a-delegate` 工具真实委托外部端点。 */
+  readonly external?: ExternalFamilyOptions;
   /** LLM 语义执行臂（M16）：注入式 runner（测试假件）——提供时优先于 provider 构造。 */
   readonly llmRunner?: LlmStepRunner;
   /** LLM 语义执行臂（M16）：真实 provider 配置（密钥经环境变量由 provider 自取；
@@ -72,16 +111,17 @@ export interface FamilyServerHandle {
   readonly mcp: McpServerAssembly;
   /** LLM 语义执行臂（未启用为 undefined；selftest:llm 采样用）。 */
   readonly llmRunner?: LlmStepRunner;
+  /** 外部家人 A2A 编排（M22；未启用为 undefined）。 */
+  readonly a2a?: { readonly directory: CardDirectory; readonly client: DelegateClient };
   readonly metricsServer?: MetricsServerHandle;
   stop(): Promise<void>;
 }
 
 /**
- * 缺省分派：确定性技能执行引擎（M15）+ 可选 LLM 语义执行臂（M16）——
- * 契约校验先行；无步骤条目回确定性结果；有步骤且提供 runner 时逐条语义执行
- * （异步分派，协议层自动 await）。LLM 臂未启用时保持同步确定性臂（缺省语义不变）。
+ * 基础分派（M15/M16）：确定性技能执行引擎 + LLM 语义执行臂——契约校验先行；
+ * 无步骤条目回确定性结果；有步骤且提供 runner 时逐条语义执行（协议层自动 await）。
  */
-function executeDispatch(
+function baseDispatch(
   registry: SkillRegistry,
   tools: readonly McpToolDescriptor[],
   entriesByLogicalId: ReadonlyMap<string, ExecutableSkillEntry>,
@@ -116,6 +156,42 @@ function executeDispatch(
   };
 }
 
+/**
+ * 编排分派（M22）：`shared.a2a-delegate` 工具路由经 DelegateClient 真实委托外部家人
+ * （traceId 优先级链：ctx 显式/头派生 > UUID 派生 32hex，使外发携带 W3C traceparent）；
+ * 其余工具语义不变（委托 baseDispatch）。
+ */
+function executeDispatch(
+  registry: SkillRegistry,
+  tools: readonly McpToolDescriptor[],
+  entriesByLogicalId: ReadonlyMap<string, ExecutableSkillEntry>,
+  llmRunner: LlmStepRunner | undefined,
+  metrics: FamilyMetrics,
+  a2a: { directory: CardDirectory; client: DelegateClient; allowedSkills: ReadonlySet<string> } | undefined,
+): McpToolDispatcher {
+  const base = baseDispatch(registry, tools, entriesByLogicalId, llmRunner, metrics);
+  if (!a2a) return base;
+  const a2aArm = async (ctx: { traceId?: string; args?: unknown }): Promise<unknown> => {
+    const args = (ctx.args ?? {}) as { skillId?: unknown; input?: unknown };
+    if (typeof args.skillId !== 'string' || args.skillId.length === 0) {
+      throw new Error('a2a-delegate 输入契约不满足：缺少 skillId');
+    }
+    if (a2a.allowedSkills.size > 0 && !a2a.allowedSkills.has(args.skillId)) {
+      throw new Error(`外部家人未声明能力 ${args.skillId}（card 能力清单外）`);
+    }
+    const traceId = ctx.traceId ?? randomUUID().replace(/-/g, '');
+    const result = await a2a.client.delegate({ skillId: args.skillId, input: args.input ?? {}, traceId });
+    if (!result.ok) throw new Error(`A2A 委托失败（${result.slug ?? '外部家人'}）：${result.reason}`);
+    return { delegated: true, traceId: result.traceId, task: result.task };
+  };
+  return (ctx) => {
+    const extra = ctx.toolName as string;
+    const logicalId = extra.includes('__') ? logicalIdOfTool(extra) : extra;
+    if (logicalId === 'shared.a2a-delegate') return a2aArm(ctx);
+    return base(ctx);
+  };
+}
+
 /** 启动家族服务（装载 → MCP 装配 → 可选 /metrics 暴露）。 */
 export async function startFamilyServer(config: FamilyServerConfig): Promise<FamilyServerHandle> {
   const metrics = new FamilyMetrics();
@@ -143,6 +219,45 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
         )
       : undefined);
 
+  // 外部家人 A2A 编排（M22 · P7-c）：card 目录 + 委托客户端（注入 card/transport 供测试）
+  let a2a: { directory: CardDirectory; client: DelegateClient; allowedSkills: ReadonlySet<string> } | undefined;
+  if (config.external) {
+    const ext = config.external;
+    const transport = ext.transport ?? new HttpA2aTransport({
+      timeoutMs: ext.timeoutMs ?? 5_000,
+      token: ext.tokenEnv ? process.env[ext.tokenEnv] : undefined,
+    });
+    let card = ext.card;
+    if (!card) {
+      // 真实模式：启动期发现外部 card（well-known）；仅 http(s)（部署配置端点，非用户输入）
+      const parsed = new URL(ext.endpoint);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        throw new Error(`外部端点仅允许 http(s)（实际 ${parsed.protocol}）`);
+      }
+      const res = await fetch(`${ext.endpoint.replace(/\/+$/, '')}/.well-known/agent-card.json`, {
+        signal: AbortSignal.timeout(ext.timeoutMs ?? 5_000),
+      });
+      if (!res.ok) throw new Error(`外部 card 发现失败：HTTP ${res.status}`);
+      const raw = (await res.json()) as { agentCard?: { name?: string; description?: string; url?: string; version?: string; skills?: { id: string; name?: string; description?: string }[] } };
+      const ac = raw.agentCard;
+      if (!ac?.name || !ac.url || !Array.isArray(ac.skills)) throw new Error('外部 card 形态非法（agentCard.name/url/skills 必需）');
+      card = {
+        name: ac.name,
+        description: ac.description ?? '',
+        url: ac.url,
+        version: ac.version ?? '1.0.0',
+        skills: ac.skills.map((s) => ({ id: s.id, name: s.name ?? s.id, description: s.description ?? '' })),
+      };
+    }
+    const directory = new CardDirectory();
+    directory.register(card);
+    a2a = {
+      directory,
+      client: new DelegateClient({ directory, transport }),
+      allowedSkills: new Set(ext.skills ?? card.skills.map((s) => s.id)),
+    };
+  }
+
   const mcp = assembleMcpServer({
     serverInfo: config.serverInfo,
     tools: config.tools,
@@ -150,7 +265,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     pluginOfTool: config.pluginOfTool,
     dispatch:
       config.dispatch ??
-      executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics),
+      executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a),
     metrics,
   });
 
@@ -164,6 +279,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     registry,
     mcp,
     llmRunner,
+    ...(a2a ? { a2a: { directory: a2a.directory, client: a2a.client } } : {}),
     metricsServer,
     async stop() {
       if (stopped) return;
@@ -249,6 +365,19 @@ async function main(): Promise<number> {
           console.log(`  LLM ${e.id} → 填充 ${got}/${e.io?.output?.length ?? 0}${extra}`);
         }
         console.log(`  LLM 自检汇总：输出字段填充 ${filled}/${fields}（${samples.length} 技能 · 真实计费调用）`);
+      }
+    }
+    // 外部家人真实委托采样（M22）：实例契约自动装配时经完整协议链路委托一次
+    if (server.a2a && config.external) {
+      const skill = (config.external.skills ?? [])[0];
+      if (skill) {
+        const res = await call('shared__a2a_delegate', { skillId: skill, input: { probe: 'selftest' } });
+        if (res.result?.isError) {
+          console.log(`  A2A 委托 ${skill} → isError（${res.result.content[0].text.slice(0, 100)}）`);
+        } else {
+          const delegated = JSON.parse(res.result.content[0].text);
+          console.log(`  A2A 委托 ${skill} → taskId=${String(delegated.task?.taskId)} state=${String(delegated.task?.state)}（真实外部端点）`);
+        }
       }
     }
     await server.stop();
