@@ -70,6 +70,7 @@ const SPECS = [
   { file: 'tests/integration/llm-step-executor.spec.js', pillars: ['学'], phase: 'P6-C', name: 'LLM 技能步骤执行（语义臂）' },
   { file: 'tests/integration/learning-scheduler.spec.js', pillars: ['学'], phase: 'P8-a', name: '学习调度器（配额+队列）' },
   { file: 'tests/integration/learning-scheduler-assembly.spec.js', pillars: ['学', '愈'], phase: 'P8-b', name: '学习调度装配（周期配额闸）' },
+  { file: 'tests/integration/skill-lifecycle.spec.js', pillars: ['学'], phase: 'P8-a', name: '技能生命周期（固化/淘汰/退化）' },
   // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
   // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];

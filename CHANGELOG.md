@@ -70,6 +70,7 @@
 - **学习调度器转实（P8-a · M23）**：`budget-allocator.ts` 由桩转实——剩余配额记账 + 授予预扣（token/调用分维度 min(申请,剩余)）+ `ZERO_BUDGET` 等待信号（零配额不入账）+ `release` 归还（失败/提前退出）；`priority-queue.ts` 由 FIFO 桩转实——priority 降序稳定有序插入（同分 FIFO）+ `peek`/`list` 只读面；新套件 `tests/integration/learning-scheduler.spec.ts` 5 例（学）：有序与稳定 / 分维度授予与预扣 / 耗尽归还再授予 / 非法输入 / 调度闭环（优先序 + 失败归还唤醒 + 账目守恒）；门禁 289 → **294/294**
 - **双臂合并链路实测（P8-b · M23）**：`pnpm start:selftest:llm`（实例契约自动装配 + LLM 三闸同开）一次自检走通**三链齐跑**——确定性执行（plan/骨架）+ LLM 语义臂（真实智谱 2 技能填充 4/4）+ A2A 外部委托（blueprint-13 实活 `state=completed`）——「本地语义执行 + 外部委托」混合编排端到端成立
 - **调度器接入装配（P8-b · M24）**：`runtime-assembly.ts` 新增 `learningScheduler` 选项与 `LearningSchedulerHandle`——「请求-排空」两段式学习周期闸：`requestCycle(priority)` 优先级入队 → `drain()` 按序授予配额（每周期一份 token 份额 + 1 次调用，份额缺省 = 总量/允许调用数均分——调用次数成为唯一约束维度）→ 执行 `loop.runCycle()`；耗尽 `skipped-budget` 保留回队，周期异常**全额归还**后透传（失败任务标记回队）；`available()/exhausted()/pending()` 观测面；缺省不启用零侵入；新套件 `learning-scheduler-assembly.spec.ts` 5 例（学·愈）：缺省直达 / 调用限流回队 / 优先序排空（onCycle 序）/ token 份额记账（1000−800=200，零配额不入账）/ 失败归还再执行；门禁 294 → **299/299**
+- **技能生命周期三件转实（P8-a · M25 · C 类第一批）**：`skill-merger.ts` 由桩转实——阈值门（support≥3 ∧ confidence≥0.7）后按模式三元组**确定性模板**固化（FNV-1a `skill-<8hex>` 主键与 P3-T3 `learned.*` 归并兼容；steps 条件/策略/结果三段式，LLM 精化归语义臂域）+ `toWriteRequest` 溯源；`skill-pruner.ts` 由桩转实——候选 = 空闲超阈 OR 频次过低（无 lastUsedAt 视为从未使用），`protectedIds` 治理豁免，hardDelete 归调用方处置；`forgetting-detector.ts` 口径确认——delta=before−after，degraded > maxDecay（**ε=1e-9 容浮点伪影**，边界值不判）；新套件 `skill-lifecycle.spec.ts` 5 例（学）：阈值/确定性哈希/写入请求/候选与豁免/退化边界；门禁 299 → **304/304**；C 类余 4 件
 
 ### Changed
 

@@ -54,3 +54,4 @@ family_regression_spec_passed{spec="tests/integration/skill-executor.spec.js"} 6
 family_regression_spec_passed{spec="tests/integration/llm-step-executor.spec.js"} 7
 family_regression_spec_passed{spec="tests/integration/learning-scheduler.spec.js"} 5
 family_regression_spec_passed{spec="tests/integration/learning-scheduler-assembly.spec.js"} 5
+family_regression_spec_passed{spec="tests/integration/skill-lifecycle.spec.js"} 5

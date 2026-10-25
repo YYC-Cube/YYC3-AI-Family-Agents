@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-25T09:11:05.995Z",
-  "generatedAtCN": "2026/10/25 17:11:05",
+  "generatedAt": "2026-10-25T09:36:52.697Z",
+  "generatedAtCN": "2026/10/25 17:36:52",
   "gate": {
     "passed": true,
-    "totalPassed": 299,
+    "totalPassed": 304,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 42
+    "specs": 43
   },
   "capabilities": {
     "skills": 45,
@@ -34,7 +34,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 111,
+      "passed": 116,
       "failed": 0
     },
     {
@@ -681,6 +681,20 @@
       "pillars": [
         "学",
         "愈"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/skill-lifecycle.spec.js",
+      "name": "技能生命周期（固化/淘汰/退化）",
+      "phase": "P8-a",
+      "pillars": [
+        "学"
       ],
       "passed": 5,
       "failed": 0,
