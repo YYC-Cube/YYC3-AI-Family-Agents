@@ -8,6 +8,10 @@ worker:
     token_env: WORKER_13_TOKEN
   timeout_ms: 5000
   fallback: rule-default
+  # 本地例行化（M34）：uat:external 加 EXT_WORKER_AUTOSTART=1 时，回环端点不可达
+  # 即自动拉起本地参照 worker（仅回环 · stdlib · 零外网 · 零计费）
+  runtime:
+    script: workers/blueprint-13/worker.py
   capabilities:
     - shared.self-judge
     - shared.memory-retrieve

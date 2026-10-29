@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-可复用性分析.md
 description: 项目作为可复用组件的形态盘点（MCP / 插件包 / 内核库 / 模板）与插拔点全景、红线、路线、发布手册
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.1.0
+version: v1.2.0
 created: 2026-10-30
 updated: 2026-10-30
 scope: M30 终极生产闭环配套分析 · M32 发布手册（R3 digest 公示）
@@ -41,7 +41,7 @@ scope: M30 终极生产闭环配套分析 · M32 发布手册（R3 digest 公示
 | 3 | **技能生态**（清单驱动） | ✅ 生产就绪 | `presets/family-manifest.yaml` + 45 SKILL.md + Agent Card | 人 / Agent / 目录服务 |
 | 4 | **内核库**（进程内嵌入） | 🟡 装配就绪 · 待发布（M32 预检通过） | `pnpm pack:npm` → `dist/ai-family-kernel` | Node/TS 项目 `import` |
 | 5 | **家人模板**（脚手架衍生） | ◐ 部分就绪 | `create-member` 模板（千行链路有门禁） | 新家族实例 |
-| 6 | **外部 Worker**（A2A 远端） | ◐ 待联调 | `a2a-adapter` + 蓝图 13 端点 | 跨机家族编排 |
+| 6 | **外部 Worker**（A2A 远端） | ✅ 模板就绪（M34 本地落地） | `pnpm worker:create/check` + `uat:external` AUTOSTART 例行化 | 跨机家族编排 |
 
 ## 二、复用形态详解
 
@@ -98,7 +98,7 @@ const rt = createRuntimeAssembly({
 ### 2.5 家人模板（◐）与外部 Worker（◐）
 
 - `create-member` 模板已衍生 8 家人 142 文件（千行链路有 e2e 门禁覆盖同构语义）；其余家人为运行时脚手架——**模板化成熟度以千行为基准**。
-- 外部 Worker：A2A 适配层（card 发现 / 委托 / DLQ）+ 蓝图 13 端点已实测 `state=completed`；蓝图仓治理后可固化为**远程家人接入模板**。
+- 外部 Worker：A2A 适配层（card 发现 / 委托 / DLQ）+ 蓝图 13 本地参照实现；**M34 起 `pnpm worker:create/check` 模板 CLI + `uat:external` AUTOSTART 例行化**（一条命令外部链路回归）；远程真实端点例行化待蓝图仓治理。
 
 ## 三、插拔点全景（端口即接口）
 
@@ -138,7 +138,7 @@ const rt = createRuntimeAssembly({
 | R2 | MCP Server 发布（npm bin + stdio 配置文档） | 任意 host 一条命令接入 | ✅ M31 装配落地 |
 | R3 | 能力包市场化（金包版本策略 + digest 公示） | `SHA256SUMS.txt` 双 tarball + 金包 | ✅ M32 公示落地 |
 | R4 | 家人模板脚手架 CLI 化（create-member 门禁基准推广至 8 家人） | 新家族实例分钟级 | ◐ 千行 e2e 基准 |
-| R5 | 外部 Worker 模板（蓝图治理后固化接入模板 + uat:external 例行化） | 跨机家族编排 | ◐ 待蓝图仓治理 |
+| R5 | 外部 Worker 模板（blueprint-13 零漂移 + 参数化生成 + uat:external AUTOSTART 例行化） | 新外部家人分钟级 · 一条命令外部链路回归 | ✅ M34 本地落地（远程真实端点例行化待蓝图仓治理） |
 
 ## 六、发布手册（M32 · npm 双包）
 
@@ -160,7 +160,7 @@ cd ../ai-family-agent  && npm publish --access public
 
 - **可复用性总评：高**。架构决定因素是「端口注入 + 单一装配点 + 双清零骨架」（清单 v1.31：A/C 类全接线，311 文件 175 已接线），复用不需要重构，只需要**打包与发布**（R1/R2 纯机械动作）。
 - **最小复用闭环已实证**：MCP 形态（A2–A13 门禁 325 例）+ 插件形态（pack 契约 6 例）+ 内核形态（45 套件全部经进程内装配实证）。
-- **未决项**：npm 发布（R1/R2）为唯一缺口；外部 Worker 模板待蓝图仓治理。
+- **未决项**：npm publish 执行（R1/R2 装配与预检已就绪，属用户操作）；远程真实端点例行化待蓝图仓治理（本地模板已就绪）。
 
 ---
 
