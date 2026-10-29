@@ -94,8 +94,10 @@ export interface RuntimeAssemblyOptions {
    * 九层底座接线（M29 · P9-a）：传入即装配 L1–L9 注册中心——probes 按 id 注入
    * 真实健康探针（缺省恒 ok）；statusCenter 提供时 reportLayerHealth() 把各层
    * 健康上报为服务态（`layer-L1..L9`），供全局态势图最坏态推导。
+   * registry 提供时直接使用（部署侧预构建注册表——如懒探针闭包），probes 忽略。
    */
   readonly nineLayer?: {
+    readonly registry?: NineLayerRegistry;
     readonly probes?: Readonly<Partial<Record<CapabilityLayerId, LayerProbe>>>;
     readonly statusCenter?: StatusCenter;
   };
@@ -377,7 +379,8 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
   //    （healthAll 并行探测、单层异常隔离；reportService 同名去重可重复上报）
   const nineLayer = options.nineLayer
     ? (() => {
-        const registry = NineLayerRegistry.withDefaults(options.nineLayer.probes ?? {});
+        const registry =
+          options.nineLayer.registry ?? NineLayerRegistry.withDefaults(options.nineLayer.probes ?? {});
         const statusCenter = options.nineLayer.statusCenter;
         const reportLayerHealth = statusCenter
           ? async (): Promise<readonly LayerHealthReport[]> => {

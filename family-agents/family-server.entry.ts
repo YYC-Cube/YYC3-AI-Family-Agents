@@ -34,6 +34,14 @@ import {
 } from '../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-executor.js';
 import type { LearningBudget, PatternTriplet } from '../architecture-kernel/05-持续学习引擎/types.js';
 import type { SkillStorePort } from '../architecture-kernel/05-持续学习引擎/learning-loop.js';
+import { NineLayerRegistry } from '../architecture-kernel/01-九层架构分层底座/layer-registry.js';
+import {
+  LAYER_DESCRIPTORS,
+  type CapabilityLayerId,
+  type LayerProbe,
+} from '../architecture-kernel/01-九层架构分层底座/types.js';
+import { StatusCenter } from '../architecture-kernel/02-云枢核心引擎/global-status-center/status-center.js';
+import type { GlobalSituation } from '../architecture-kernel/02-云枢核心引擎/types.js';
 import {
   createRuntimeAssembly,
   type RuntimeAssembly,
@@ -131,6 +139,16 @@ export interface FamilyServerConfig {
     readonly logicalIdResolver?: (pattern: PatternTriplet) => string | undefined;
     /** 每周期最多固化技能数（缺省 5）。 */
     readonly maxPromotionsPerCycle?: number;
+    /**
+     * 九层态势环（M30 · 终极生产闭环）：缺省即启用内置自动探针——L1 技能库可达 /
+     * L5 分派近失败（连续 ≥1 degraded · ≥3 down）/ L8 降级熔断态（half-open
+     * degraded · open down）/ L9 学习调度积压（配额耗尽或积压 ≥10 degraded）；
+     * 其余层缺省恒 ok。reportLayerHealth() 上报后由句柄 situation() 出全局态势。
+     */
+    readonly nineLayer?: {
+      /** 额外/覆盖探针（按层 id；同层覆盖内置探针）。 */
+      readonly probes?: Readonly<Partial<Record<CapabilityLayerId, LayerProbe>>>;
+    };
   };
 }
 
@@ -145,6 +163,8 @@ export interface FamilyServerHandle {
   readonly llmUsage?: LlmUsageCounter;
   /** 学习闭环装配（M28 · config.learning 配置即存在——bus / bridge / loop / scheduler 观测面）。 */
   readonly learning?: RuntimeAssembly;
+  /** 全局态势快照（M30 · 学习装配启用即存在——statusCenter.snapshot()，九层健康 + 最坏态 overall）。 */
+  readonly situation?: () => GlobalSituation;
   /** 外部家人 A2A 编排（M22；未启用为 undefined）。 */
   readonly a2a?: { readonly directory: CardDirectory; readonly client: DelegateClient };
   readonly metricsServer?: MetricsServerHandle;
@@ -235,9 +255,24 @@ function learningDispatch(
   base: McpToolDispatcher,
   learning: RuntimeAssembly,
   serverName: string,
+  dispatchHealth?: { consecutiveFailures: number; lastError: string },
 ): McpToolDispatcher {
   let seq = 0;
-  const report = (ctx: { toolName: string; traceId?: string }, ok: boolean, startedAt: number): void => {
+  const report = (
+    ctx: { toolName: string; traceId?: string },
+    ok: boolean,
+    startedAt: number,
+    error?: unknown,
+  ): void => {
+    if (dispatchHealth) {
+      if (ok) {
+        dispatchHealth.consecutiveFailures = 0;
+        dispatchHealth.lastError = '';
+      } else {
+        dispatchHealth.consecutiveFailures += 1;
+        dispatchHealth.lastError = error instanceof Error ? error.message : String(error ?? '分派失败');
+      }
+    }
     const traceId = ctx.traceId ?? randomUUID().replace(/-/g, '');
     void learning.bus.publish({
       key: { traceId, agentId: serverName, seq: (seq += 1) },
@@ -260,7 +295,7 @@ function learningDispatch(
     try {
       out = base(ctx);
     } catch (error) {
-      report(ctx, false, startedAt);
+      report(ctx, false, startedAt, error);
       throw error;
     }
     if (out && typeof (out as Promise<unknown>).then === 'function') {
@@ -270,7 +305,7 @@ function learningDispatch(
           return value;
         },
         (error) => {
-          report(ctx, false, startedAt);
+          report(ctx, false, startedAt, error);
           throw error;
         },
       );
@@ -350,35 +385,85 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     };
   }
 
-  // 学习闭环装配（M28 · 部署侧合流）：嵌入内核运行时——总线 ← 分派轨迹（learningDispatch），
-  // 调度闸 usageMeter ← llmUsage 真实计量（provider 臂启用时），固化落位 ← 服务注册表
-  const learning = config.learning
-    ? createRuntimeAssembly({
-        ...(config.learning.store
-          ? { store: config.learning.store }
-          : { skillStoreDir: config.learning.storeDir ?? './data/skills' }),
-        metrics,
-        skillRegistry: registry,
-        learning: {
-          logicalIdResolver: config.learning.logicalIdResolver,
-          ...(config.learning.maxPromotionsPerCycle !== undefined
-            ? { maxPromotionsPerCycle: config.learning.maxPromotionsPerCycle }
-            : {}),
-        },
-        ...(config.learning.scheduler
-          ? {
-              learningScheduler: {
-                total: config.learning.scheduler.total,
-                ...(config.learning.scheduler.tokensPerCycle !== undefined
-                  ? { tokensPerCycle: config.learning.scheduler.tokensPerCycle }
-                  : {}),
-                ...(config.learning.scheduler.now ? { now: config.learning.scheduler.now } : {}),
-                ...(llmUsage ? { usageMeter: () => llmUsage.totalTokens } : {}),
-              },
-            }
+  // 学习闭环装配（M28）+ 九层态势环（M30 · 终极生产闭环）：嵌入内核运行时——
+  // 总线 ← 分派轨迹（learningDispatch）；调度闸 usageMeter ← llmUsage 真实计量；
+  // 固化落位 ← 服务注册表；九层内置自动探针（L1/L5/L8/L9）→ reportLayerHealth
+  // → statusCenter 全局态势（句柄 situation() 出快照）。
+  const learningOptions = config.learning;
+  let learning: RuntimeAssembly | undefined;
+  let situation: (() => GlobalSituation) | undefined;
+  const dispatchHealth = { consecutiveFailures: 0, lastError: '' };
+  if (learningOptions) {
+    const statusCenter = new StatusCenter();
+    // 内置自动探针：进程内真实信号（其余层缺省恒 ok，真实探针归部署侧 batch 3）
+    const autoProbe = (id: CapabilityLayerId): LayerProbe | undefined => {
+      switch (id) {
+        case 'L1': // 技能库可达
+          return async () => {
+            if (!learning) return { status: 'down', detail: '学习装配未就绪' };
+            learning.store.activeSkills();
+            return { status: 'ok' };
+          };
+        case 'L5': // 入口分派近失败（连续 ≥1 degraded · ≥3 down）
+          return () => {
+            const n = dispatchHealth.consecutiveFailures;
+            if (n >= 3) return { status: 'down', detail: `连续分派失败 ${n} 次（${dispatchHealth.lastError}）` };
+            if (n >= 1) return { status: 'degraded', detail: `最近一次分派失败（${dispatchHealth.lastError}）` };
+            return { status: 'ok' };
+          };
+        case 'L8': // 降级/熔断态
+          return () => {
+            const state = learning?.degradation.circuitState;
+            if (state === 'open') return { status: 'down', detail: '熔断 open' };
+            if (state === 'half-open') return { status: 'degraded', detail: '熔断 half-open 观察期' };
+            return { status: 'ok' };
+          };
+        case 'L9': // 学习调度积压
+          return () => {
+            const scheduler = learning?.learningScheduler;
+            if (!scheduler) return { status: 'ok' };
+            if (scheduler.exhausted()) return { status: 'degraded', detail: '学习配额耗尽（任务积压回队）' };
+            if (scheduler.pending() >= 10) return { status: 'degraded', detail: `学习任务积压 ${scheduler.pending()}` };
+            return { status: 'ok' };
+          };
+        default:
+          return learningOptions.nineLayer?.probes?.[id];
+      }
+    };
+    const probes: Partial<Record<CapabilityLayerId, LayerProbe>> = {};
+    for (const id of Object.keys(LAYER_DESCRIPTORS) as CapabilityLayerId[]) {
+      const probe = learningOptions.nineLayer?.probes?.[id] ?? autoProbe(id);
+      if (probe) probes[id] = probe;
+    }
+    const layerRegistry = NineLayerRegistry.withDefaults(probes);
+    learning = createRuntimeAssembly({
+      ...(learningOptions.store
+        ? { store: learningOptions.store }
+        : { skillStoreDir: learningOptions.storeDir ?? './data/skills' }),
+      metrics,
+      skillRegistry: registry,
+      learning: {
+        logicalIdResolver: learningOptions.logicalIdResolver,
+        ...(learningOptions.maxPromotionsPerCycle !== undefined
+          ? { maxPromotionsPerCycle: learningOptions.maxPromotionsPerCycle }
           : {}),
-      })
-    : undefined;
+      },
+      ...(learningOptions.scheduler
+        ? {
+            learningScheduler: {
+              total: learningOptions.scheduler.total,
+              ...(learningOptions.scheduler.tokensPerCycle !== undefined
+                ? { tokensPerCycle: learningOptions.scheduler.tokensPerCycle }
+                : {}),
+              ...(learningOptions.scheduler.now ? { now: learningOptions.scheduler.now } : {}),
+              ...(llmUsage ? { usageMeter: () => llmUsage.totalTokens } : {}),
+            },
+          }
+        : {}),
+      nineLayer: { registry: layerRegistry, statusCenter },
+    });
+    situation = () => statusCenter.snapshot();
+  }
   const dispatcher: McpToolDispatcher =
     config.dispatch ??
     executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a);
@@ -388,7 +473,9 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     tools: config.tools,
     admission: config.admission,
     pluginOfTool: config.pluginOfTool,
-    dispatch: learning ? learningDispatch(dispatcher, learning, config.serverInfo.name) : dispatcher,
+    dispatch: learning
+      ? learningDispatch(dispatcher, learning, config.serverInfo.name, dispatchHealth)
+      : dispatcher,
     metrics,
   });
 
@@ -404,6 +491,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     llmRunner,
     ...(llmUsage ? { llmUsage } : {}),
     ...(learning ? { learning } : {}),
+    ...(situation ? { situation } : {}),
     ...(a2a ? { a2a: { directory: a2a.directory, client: a2a.client } } : {}),
     metricsServer,
     async stop() {
@@ -507,6 +595,10 @@ async function main(): Promise<number> {
     }
     if (server.learning) {
       console.log(`  学习闭环：bus 桥接受理 ${server.learning.bridge.stats.accepted} 条轨迹（M28 部署侧合流）`);
+    }
+    if (server.situation) {
+      const snap = server.situation();
+      console.log(`  全局态势：overall=${snap.overall}（services ${snap.services.length} 条 · M30 生产态势环）`);
     }
     await server.stop();
     await server.stop(); // 幂等验证
