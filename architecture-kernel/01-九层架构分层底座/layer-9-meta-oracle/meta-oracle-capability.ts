@@ -6,19 +6,32 @@
  * TODO(infra): 抽取全局调度公共契约（工作流编排 / 家人调度 / 最终裁决入口）。
  */
 
-import type { CapabilityLayerId, LayerCapability, LayerDescriptor, LayerHealth } from '../types.js';
+import type {
+  CapabilityLayerId,
+  LayerCapability,
+  LayerDescriptor,
+  LayerHealth,
+  LayerProbe,
+} from '../types.js';
 import { LAYER_DESCRIPTORS } from '../types.js';
 
 /** 全局调度能力底座（L9）。 */
 export class MetaOracleCapability implements LayerCapability {
   readonly id: CapabilityLayerId = 'L9';
 
+  /** 注入式健康探针（M29）：缺省恒 ok；部署侧接真实依赖探针（调度成功率 / 态势可用性）。 */
+  constructor(private readonly probe?: LayerProbe) {}
+
   describe(): LayerDescriptor {
     return { id: this.id, ...LAYER_DESCRIPTORS[this.id] };
   }
 
   async health(): Promise<LayerHealth> {
-    // TODO(infra): 调度成功率与全局态势可用性探针（对接 global-status-center）
-    return { status: 'ok' };
+    if (!this.probe) return { status: 'ok' };
+    try {
+      return await this.probe();
+    } catch (error) {
+      return { status: 'down', detail: error instanceof Error ? error.message : String(error) };
+    }
   }
 }

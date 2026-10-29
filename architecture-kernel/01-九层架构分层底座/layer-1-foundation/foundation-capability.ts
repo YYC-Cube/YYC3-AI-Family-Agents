@@ -5,19 +5,32 @@
  * TODO(infra): 接入公共基础设施（配置 / 日志 / 观测 / 存储连接池）健康探针。
  */
 
-import type { CapabilityLayerId, LayerCapability, LayerDescriptor, LayerHealth } from '../types.js';
+import type {
+  CapabilityLayerId,
+  LayerCapability,
+  LayerDescriptor,
+  LayerHealth,
+  LayerProbe,
+} from '../types.js';
 import { LAYER_DESCRIPTORS } from '../types.js';
 
 /** 基础底座能力（L1）。 */
 export class FoundationCapability implements LayerCapability {
   readonly id: CapabilityLayerId = 'L1';
 
+  /** 注入式健康探针（M29）：缺省恒 ok；部署侧接真实依赖探针（配置/日志/观测/存储）。 */
+  constructor(private readonly probe?: LayerProbe) {}
+
   describe(): LayerDescriptor {
     return { id: this.id, ...LAYER_DESCRIPTORS[this.id] };
   }
 
   async health(): Promise<LayerHealth> {
-    // TODO(infra): 聚合基础设施依赖（DB / Redis / 观测后端）探针结果
-    return { status: 'ok' };
+    if (!this.probe) return { status: 'ok' };
+    try {
+      return await this.probe();
+    } catch (error) {
+      return { status: 'down', detail: error instanceof Error ? error.message : String(error) };
+    }
   }
 }

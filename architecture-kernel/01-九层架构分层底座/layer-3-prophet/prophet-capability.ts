@@ -5,19 +5,32 @@
  * TODO(infra): 抽取预测能力公共契约（趋势 / 风险前置识别）。
  */
 
-import type { CapabilityLayerId, LayerCapability, LayerDescriptor, LayerHealth } from '../types.js';
+import type {
+  CapabilityLayerId,
+  LayerCapability,
+  LayerDescriptor,
+  LayerHealth,
+  LayerProbe,
+} from '../types.js';
 import { LAYER_DESCRIPTORS } from '../types.js';
 
 /** 预测能力底座（L3）。 */
 export class ProphetCapability implements LayerCapability {
   readonly id: CapabilityLayerId = 'L3';
 
+  /** 注入式健康探针（M29）：缺省恒 ok；部署侧接真实依赖探针（命中率 / 预测延迟）。 */
+  constructor(private readonly probe?: LayerProbe) {}
+
   describe(): LayerDescriptor {
     return { id: this.id, ...LAYER_DESCRIPTORS[this.id] };
   }
 
   async health(): Promise<LayerHealth> {
-    // TODO(infra): 预测命中率与预测延迟探针
-    return { status: 'ok' };
+    if (!this.probe) return { status: 'ok' };
+    try {
+      return await this.probe();
+    } catch (error) {
+      return { status: 'down', detail: error instanceof Error ? error.message : String(error) };
+    }
   }
 }

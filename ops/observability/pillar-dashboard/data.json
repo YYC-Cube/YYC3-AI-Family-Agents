@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-29T18:29:45.756Z",
-  "generatedAtCN": "2026/10/30 02:29:45",
+  "generatedAt": "2026-10-29T19:03:14.202Z",
+  "generatedAtCN": "2026/10/30 03:03:14",
   "gate": {
     "passed": true,
-    "totalPassed": 318,
+    "totalPassed": 323,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 44
+    "specs": 45
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 114,
+      "passed": 119,
       "failed": 0
     },
     {
@@ -707,6 +707,20 @@
       "file": "tests/integration/family-ops.spec.js",
       "name": "家族编排套件（编排/态势/通讯/基建自愈）",
       "phase": "P8-a",
+      "pillars": [
+        "治"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/nine-layer.spec.js",
+      "name": "九层底座（注册中心 + 态势对接）",
+      "phase": "P9-a",
       "pillars": [
         "治"
       ],

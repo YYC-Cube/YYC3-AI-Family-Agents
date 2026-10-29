@@ -13,6 +13,7 @@
  */
 
 export * from './types.js';
+export * from './layer-registry.js';
 export * from './layer-1-foundation/index.js';
 export * from './layer-2-bole/index.js';
 export * from './layer-3-prophet/index.js';

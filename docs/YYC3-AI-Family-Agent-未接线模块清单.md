@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.30.0
+  Version : v1.31.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.30.0
+version: v1.31.0
 created: 2026-10-23
 updated: 2026-10-30
 status: active
@@ -71,12 +71,12 @@ category: report
 
 | 范围 | 编译文件 | 已接线 | 仅编译 | 说明 |
 | ---- | -------- | ------ | ------ | ---- |
-| `architecture-kernel` | 115 | **73** | **42** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派 + P2 a2a-adapter 与安全策略映射 + §6.3 能力供给接线仪表 + M23–M26 学习调度/生命周期/编排四件转实 + P8 收尾装配位（学习落位 / usage 回填））；九层底座为骨架 |
+| `architecture-kernel` | 116 | **94** | **22** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派 + P2 a2a-adapter 与安全策略映射 + §6.3 能力供给接线仪表 + M23–M26 学习调度/生命周期/编排四件转实 + P8 收尾装配位（学习落位 / usage 回填）+ M29 九层底座全接线）；**A 类骨架清零** |
 | `family-agents` | 150 | **36** | **114** | `shared-core` 记忆 / 学习 / LLM 主链路全接线；家人意图链路 4 文件 + 伯乐成就面板已接线；8 位家人薄转发 provider 与 llm-adapter barrel 属部署侧消费（纯可达口径计仅编译） |
-| `tests` | 44 | 44 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线 / P6 家族服务装配·执行引擎·语义臂·学习调度·生命周期·家族编排） |
-| **合计** | **309** | **149** | **156** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
+| `tests` | 45 | 45 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线 / P6 家族服务装配·执行引擎·语义臂·学习调度·生命周期·家族编排 / P9-a 九层底座） |
+| **合计** | **311** | **175** | **136** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
 
-> 已接线 149 = kernel 73 + agents 36 + tests 44（门禁入口 44，UAT 门控 2 不计入）。v1.20.0 起「已接线」统一为**纯静态可达**口径（可复现 BFS：相对导入 + `@shared` 别名 + barrel 透传，以门禁入口为根）：与 v1.19.0 手工盘点相比，agents 41 → 34 全部来自口径统一（家人薄转发 provider 等部署侧消费文件移入仅编译，**无实际拆线**——family-agents 文件数与内容在 P5 零变更）；kernel 45 → 69 含 P5 新增 5 文件 + P6 新增（mcp-server-assembly / skill-executor）与别名解析补全。**v1.24.0 已完成仅编译文件逐文件归类复核（见 §2.5，v1.25.0 起随接线滚动更新）**；§三 / §四 的逐行 ✅/◐ 明细以 §2.5 归类结论为准（本表为权威口径）。
+> 已接线 175 = kernel 94 + agents 36 + tests 45（门禁入口 45，UAT 门控 2 不计入）。v1.20.0 起「已接线」统一为**纯静态可达**口径（可复现 BFS：相对导入 + `@shared` 别名 + barrel 透传，以门禁入口为根）：与 v1.19.0 手工盘点相比，agents 41 → 34 全部来自口径统一（家人薄转发 provider 等部署侧消费文件移入仅编译，**无实际拆线**——family-agents 文件数与内容在 P5 零变更）；kernel 45 → 69 含 P5 新增 5 文件 + P6 新增（mcp-server-assembly / skill-executor）与别名解析补全。**v1.24.0 已完成仅编译文件逐文件归类复核（见 §2.5，v1.25.0 起随接线滚动更新）**；§三 / §四 的逐行 ✅/◐ 明细以 §2.5 归类结论为准（本表为权威口径）。
 
 ### 2.5 仅编译文件逐文件归类（v1.24.0 复核 167；v1.25.0 时点 165 = 在册 163 + UAT 2）
 
@@ -84,7 +84,7 @@ category: report
 
 | 类 | 数量 | 文件构成 | 处置结论 |
 | -- | ---- | -------- | -------- |
-| A. 九层底座契约骨架 | 20 | `01-九层架构分层底座/`（index + types + layer-1..9 ×2） | 路线图载体，保留（§三 3.1 原判维持） |
+| A. 九层底座契约骨架 | 0（**v1.31.0 全接线** ✅） | `01-九层架构分层底座/` 20 文件 + `layer-registry.ts` 新增——探针注入端口 + NineLayerRegistry 注册中心 + reportLayerHealth 态势对接（M29 · A 类清零） | 原判解除 |
 | B. 内核再导出 barrel | 22 | 02/05/07/08/09 各模块 `index.ts`（含 mcp-adapter、verification-gateway、scheduler、stability-guard、rollback 等子 barrel） | 深路径消费的再导出聚合，无功能缺失——冷是**消费方式**（消费方 import 深路径）而非未交付；保留 |
 | C. 内核功能骨架 | 0（**v1.28.0 清零** ✅） | budget/priority（M23）· merger/pruner/forgetting（M25）· orchestrator/status-center/phone-system/self-healing-controller（M26）九件全部转实接线 | 多数有实现体、待装配接线（§三原「计划」列维持；learning-scheduler 与 stability-guard 为 M 系列候选） |
 | D. 家人同构模板衍生 | 108 | 千行 ×10（core 三件已接线）+ 其余 7 家人 ×14（core 3 · emotion 3 · nlq 2 · prompts 2 · providers 2 · self-judge 1 · tests 1） | `create-member` 模板衍生的部署侧消费文件；意图链路语义已由千行套件 + e2e 门禁覆盖同构实现，其余为八家人运行时脚手架——**保留不拆**（拆线即破坏家人目录契约） |
@@ -95,24 +95,24 @@ category: report
 
 ---
 
-## 三、architecture-kernel · 未接线明细（58）
+## 三、architecture-kernel · 未接线明细（38）
 
-### 3.1 `01-九层架构分层底座` — 0/20 接线
+### 3.1 `01-九层架构分层底座` — 21/21 接线 ✅（M29 · A 类清零）
 
-**结论**：整体为**契约骨架**，无任何 import 入边，也没有测试。
+**结论**：**全接线**（原「契约骨架」判解除）。探针注入端口（`LayerProbe`）+ `NineLayerRegistry` 注册中心（并行探测 · 单层异常隔离）+ 装配层 `reportLayerHealth` 态势对接（`layer-L1..L9` 服务态 → global-status-center 最坏态推导）；新套件 `nine-layer.spec.ts` 5 例（治）。
 
 | 层 | 文件 | 职责 | 状态 | 计划 |
 | -- | ---- | ---- | ---- | ---- |
-| — | `index.ts`、`types.ts` | 统一入口 / 核心类型 | ◐ | 随各层接线逐步启用 |
-| 1 | `layer-1-foundation/*` | 公共基础设施能力底座（配置/日志/观测/存储探针） | ⬜ | P2 |
-| 2 | `layer-2-bole/*` | 推荐能力底座 | ⬜ | P2 |
-| 3 | `layer-3-prophet/*` | 预测能力底座 | ⬜ | P2 |
-| 4 | `layer-4-thinker/*` | 分析能力底座（数据分析标准化工作流） | ⬜ | P2 |
-| 5 | `layer-5-navigator/*` | 入口网关能力底座（意图/NLU + self-judge） | ⬜ | P1（与千行意图链路同步） |
-| 6 | `layer-6-creative/*` | 创意能力底座 | ⬜ | P2 |
-| 7 | `layer-7-master/*` | 质量能力底座 | ⬜ | P2 |
-| 8 | `layer-8-guardian/*` | 安全能力底座 | ⬜ | P2 |
-| 9 | `layer-9-meta-oracle/*` | 全局调度能力底座 | ⬜ | P2 |
+| — | `index.ts`、`types.ts`、`layer-registry.ts` | 统一入口 / 核心类型 / 注册中心 | ✅ | M29 接线 |
+| 1 | `layer-1-foundation/*` | 公共基础设施能力底座（配置/日志/观测/存储探针） | ✅ | M29 接线（真实探针归部署侧） |
+| 2 | `layer-2-bole/*` | 推荐能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 3 | `layer-3-prophet/*` | 预测能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 4 | `layer-4-thinker/*` | 分析能力底座（数据分析标准化工作流） | ✅ | M29 接线（真实探针归部署侧） |
+| 5 | `layer-5-navigator/*` | 入口网关能力底座（意图/NLU + self-judge） | ✅ | M29 接线（真实探针归部署侧） |
+| 6 | `layer-6-creative/*` | 创意能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 7 | `layer-7-master/*` | 质量能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 8 | `layer-8-guardian/*` | 安全能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 9 | `layer-9-meta-oracle/*` | 全局调度能力底座 | ✅ | M29 接线（真实探针归部署侧） |
 
 > 每层均为 `*-capability.ts` + `index.ts` 两件套，共 9×2 + 2 = 20 个文件。
 
@@ -349,6 +349,7 @@ category: report
 | v1.28.0 | 2026-10-29 | **P8-a 家族编排四件转实（M26 · C 类清零）**：orchestrator（StepDispatcher 分发 + DispatchVerifier 仲裁）· status-center（overall 推导 + 压力阈值）· phone-system（通话/热线/私信全链）· self-healing-controller（InfraActuator + RTO 契约，失败如实 failed）；新套件 `family-ops.spec.ts` 5 例（治）；门禁 304 → **309/309**（44 套件 · 入口 44）；包 2.38.0；统计 308/148/160 → **309/149/156**（kernel 已接线 69 → 73，**C 类清零**）；工作区迁 `personal/` 真身区（AGENTS.md 总规约对齐，此后变更走分支 + PR） |
 | v1.29.0 | 2026-10-30 | **P8 收尾双件转实（M27 · 弧线收口）**：merger→registry 装配位（learning-loop `onPromoted` 出口 + runtime-assembly `skillRegistry` 端口 + `consolidatedSkillForRegistry` 适配——steps 序号化 / logicalId 归并 / 内核专有字段不外带，与 procedural-memory SkillRegistry 结构兼容，内核零反向依赖）· 调度闸真实 usage 回填（`usageMeter` 累计计量端口差值冲抵 + `LlmUsageCounter` 生产端 + usage 三元组，无计量器维持 M24 语义）；套件 +6（skill-lifecycle F6–F8 / learning-scheduler-assembly L6–L8）；门禁 309 → **315/315**（44 套件 · 入口 44 · 学 122 · 愈 61）；包 2.39.0；统计 309/149/156 **维持**（端口化零新增文件） |
 | v1.30.0 | 2026-10-30 | **部署侧装配合流（M28 · 学习闭环进服务进程）**：`family-server.entry.ts` 新增 `learning` 配置——嵌入内核 `createRuntimeAssembly`：`learningDispatch` 每次分派发布 `task.executed`（异步感知，失败轨迹 completed=false → failure 负样本）· 调度闸 `usageMeter` 自动接 `llmUsage` 计数器 · `skillRegistry` 接服务注册表（promoted 技能 `learned.*` 归并 id 可查；instrumentSkillRegistry 只包 loadFromManifest，落位不污染 skills_loaded 口径）；缺省零侵入；新例 A9–A11；门禁 315 → **318/318**（44 套件 · 入口 44 · 治 114）；包 2.40.0；统计 309/149/156 **维持**（零新增文件） |
+| v1.31.0 | 2026-10-30 | **九层底座全接线（M29 · P9-a · A 类清零）**：`LayerProbe` 注入式探针端口（9 层能力类构造器注入，缺省恒 ok / 抛错判 down）+ `layer-registry.ts` 新增 `NineLayerRegistry`（L1–L9 注册 / 自描述 / healthAll 并行聚合 · 单层异常隔离）+ 装配层 `nineLayer` 选项（probes 注入 + `reportLayerHealth` 态势对接——`layer-L1..L9` 服务态 → global-status-center 最坏态推导）；新套件 `nine-layer.spec.ts` 5 例（治）；门禁 318 → **323/323**（**45 套件 · 入口 45** · 治 119）；包 2.41.0；统计 309/149/156 → **311/175/136**（kernel 已接线 73 → 94，**A 类 20 → 0 清零**；§三未接线 58 → 38） |
 | v1.24.0 | 2026-10-24 | **M22 运行时编排升级 + 仅编译逐文件复核**：① `family-server.entry.ts` `external` 配置（M22 · P7-c）——`shared.a2a-delegate` 工具经 `DelegateClient` 真实委托外部家人（HttpA2aTransport + 启动期 well-known card 发现 + 能力清单闸 + traceId 优先级链与 W3C 头外发）；启动器按实例契约自动装配；A9 套件 +1（注入传输 hermetic + 实活 selftest 委托 `state=completed`）；`instrumentMcpDispatcher` 异步感知修正（thenable 归一——此前异步拒绝错记 ok）；门禁 288 → **289/289**；包 2.34.0（M22 时点）。② §2.5 新增：仅编译 167 文件逐文件归类复核（A 骨架 20 · B barrel 22 · C 功能骨架 9 · D 家人模板衍生 108 · E shared-core 部件 6 · F UAT 2）——**无一处误判已交付或应拆未拆** |
 
 ---
