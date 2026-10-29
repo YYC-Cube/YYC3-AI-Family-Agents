@@ -1,10 +1,10 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-29T09:21:24.729Z",
-  "generatedAtCN": "2026/10/29 17:21:24",
+  "generatedAt": "2026-10-29T18:16:50.297Z",
+  "generatedAtCN": "2026/10/30 02:16:50",
   "gate": {
     "passed": true,
-    "totalPassed": 309,
+    "totalPassed": 315,
     "totalFailed": 0,
     "totalSkipped": 0,
     "specs": 44
@@ -34,7 +34,7 @@
       "id": "学",
       "label": "学 · 持续学习",
       "green": true,
-      "passed": 116,
+      "passed": 122,
       "failed": 0
     },
     {
@@ -48,7 +48,7 @@
       "id": "愈",
       "label": "愈 · 自愈",
       "green": true,
-      "passed": 58,
+      "passed": 61,
       "failed": 0
     }
   ],
@@ -676,30 +676,30 @@
     },
     {
       "file": "tests/integration/learning-scheduler-assembly.spec.js",
-      "name": "学习调度装配（周期配额闸）",
+      "name": "学习调度装配（周期配额闸 · usage 回填）",
       "phase": "P8-b",
       "pillars": [
         "学",
         "愈"
       ],
-      "passed": 5,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "total": 5,
+      "total": 8,
       "silent": false,
       "ok": true
     },
     {
       "file": "tests/integration/skill-lifecycle.spec.js",
-      "name": "技能生命周期（固化/淘汰/退化）",
+      "name": "技能生命周期（固化/淘汰/退化 · 落位）",
       "phase": "P8-a",
       "pillars": [
         "学"
       ],
-      "passed": 5,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "total": 5,
+      "total": 8,
       "silent": false,
       "ok": true
     },

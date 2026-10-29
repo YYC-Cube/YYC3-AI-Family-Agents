@@ -36,7 +36,8 @@ import type { FamilyMetrics } from '../09-可观测性/family-metrics.js';
 import { instrumentOutcomeLabeler } from '../09-可观测性/collaboration-instrumentation.js';
 import { BudgetAllocator, ZERO_BUDGET } from '../05-持续学习引擎/learning-scheduler/budget-allocator.js';
 import { LearningPriorityQueue } from '../05-持续学习引擎/learning-scheduler/priority-queue.js';
-import type { LearningBudget } from '../05-持续学习引擎/types.js';
+import { logicalIdOfStored } from '../05-持续学习引擎/skill-consolidation/skill-id.js';
+import type { LearningBudget, SkillDefinition } from '../05-持续学习引擎/types.js';
 
 /** 装配选项。 */
 export interface RuntimeAssemblyOptions {
@@ -65,7 +66,20 @@ export interface RuntimeAssemblyOptions {
     readonly tokensPerCycle?: number;
     /** 任务时钟（缺省 Date.now；测试可冻结）。 */
     readonly now?: () => number;
+    /**
+     * 累计 LLM token 计量器（P8 收尾 b · usage 回填）：注入真实用量生产端
+     * （如 LlmUsageCounter.totalTokens）即按周期前后差值冲抵授予份额，
+     * 未消耗部分归还剩余（超支按授予额封顶）；缺省按整份授予消耗（M24 语义不变）。
+     */
+    readonly usageMeter?: () => number;
   };
+  /**
+   * 固化落位（P8 收尾 a · merger→registry 装配位）：传入即把每周期晋升技能经
+   * consolidatedSkillForRegistry 适配注册（同 id 同版本幂等覆盖；logicalId 按
+   * skill-id.ts 归并约定——与 procedural-memory SkillRegistry 结构兼容，
+   * 内核零反向依赖 family-agents）。
+   */
+  readonly skillRegistry?: SkillRegistrySink;
   /** 故障侦测选项（v2.7.2 纳入装配：去抖次数 / 窗口）。 */
   readonly faultDetector?: FaultDetectorOptions;
   /** 降级/熔断选项（v2.7.2 纳入装配：失败阈值 / 冷却期）。 */
@@ -94,9 +108,16 @@ export interface RuntimeAssembly {
   readonly learningScheduler?: LearningSchedulerHandle;
 }
 
-/** 学习周期排空结果：执行（含周期报告）或因配额跳过（任务保留在队）。 */
+/** 周期用量三元组（P8 收尾 b）：授予份额 · 计量差值实耗 · 归还未消耗。 */
+export interface CycleUsage {
+  readonly grantedTokens: number;
+  readonly actualTokens: number;
+  readonly releasedTokens: number;
+}
+
+/** 学习周期排空结果：执行（含周期报告与用量回填）或因配额跳过（任务保留在队）。 */
 export type LearningCycleOutcome =
-  | { readonly status: 'executed'; readonly report: ReturnType<LearningLoop['runCycle']> }
+  | { readonly status: 'executed'; readonly report: ReturnType<LearningLoop['runCycle']>; readonly usage: CycleUsage }
   | { readonly status: 'skipped-budget' };
 
 /** 学习调度闸句柄：请求-排空两段式（配额授予与归还对调用方零暴露）。 */
@@ -111,6 +132,51 @@ export interface LearningSchedulerHandle {
   available(): LearningBudget;
   /** 配额是否耗尽（任一维度为 0）。 */
   exhausted(): boolean;
+}
+
+/** 注册中心步骤草稿（procedural-memory SkillStep 结构子集）。 */
+export interface RegistryStepDraft {
+  readonly order: number;
+  readonly action: string;
+}
+
+/**
+ * 注册中心落位形态（P8 收尾 a）：与 procedural-memory SkillDefinition 结构兼容
+ * （字段形态即接口——内核零反向依赖 family-agents；steps 序号化，内核专有字段
+ * sourcePattern/createdAt/useCount 不外带）。
+ */
+export interface RegistrySkillDraft {
+  readonly id: string;
+  readonly logicalId?: string;
+  readonly name: string;
+  readonly version: string;
+  readonly description: string;
+  readonly when: readonly string[];
+  readonly steps: readonly RegistryStepDraft[];
+  readonly status: 'active' | 'deprecated' | 'rolled-back';
+}
+
+/** 固化落位端口（register 同 id 同版本幂等覆盖——SkillRegistry 语义）。 */
+export interface SkillRegistrySink {
+  register(skill: RegistrySkillDraft): unknown;
+}
+
+/**
+ * 内核固化 SkillDefinition → 注册中心落位形态（P8 收尾 a）：
+ * logicalId 按 skill-id.ts 归并约定（显式声明优先，FNV 主键归并 `learned.*`），
+ * steps 字符串序列转 order/action 两元组。
+ */
+export function consolidatedSkillForRegistry(skill: SkillDefinition): RegistrySkillDraft {
+  return {
+    id: skill.id,
+    logicalId: logicalIdOfStored(skill),
+    name: skill.name,
+    version: skill.version,
+    description: skill.description,
+    when: skill.when,
+    steps: skill.steps.map((action, i) => ({ order: i + 1, action })),
+    status: skill.status,
+  };
 }
 
 /**
@@ -166,6 +232,15 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
         userOnCycle?.(report);
       }
       : undefined;
+  //    固化落位（P8 收尾 a）：晋升技能适配注册 skillRegistry，再透传部署侧 onPromoted
+  const userOnPromoted = options.learning?.onPromoted;
+  const onPromoted: LearningLoopOptions['onPromoted'] =
+    options.skillRegistry || userOnPromoted
+      ? (skills) => {
+        for (const skill of skills) options.skillRegistry?.register(consolidatedSkillForRegistry(skill));
+        userOnPromoted?.(skills);
+      }
+      : undefined;
   const loop = new LearningLoop(store, {
     ...options.learning,
     // 协同度 · 复盘回流接线（P1-T4b）：标注臂命中（分子）；分母在下方桥接观察者记账
@@ -173,6 +248,7 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
       ? instrumentOutcomeLabeler(options.learning?.labeler ?? new OutcomeLabeler(), metrics)
       : options.learning?.labeler,
     healingRollback,
+    onPromoted,
     onCycle,
   });
 
@@ -213,10 +289,12 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
 
   // 6. 学习调度闸（M24）：请求-排空两段式——优先级入队 + 每周期配额授予
   //    （tokensPerCycle + 1 次调用）；耗尽跳过保留回队；周期异常全额归还后透传。
+  //    P8 收尾 b：usageMeter 注入即按周期前后差值回填真实用量——未消耗份额归还
+  //    （超支按授予额封顶）；无计量器维持整份授予消耗（M24 语义不变）。
   let cycleSeq = 0;
   const scheduler: LearningSchedulerHandle | undefined = options.learningScheduler
     ? (() => {
-        const { total, tokensPerCycle, now } = options.learningScheduler!;
+        const { total, tokensPerCycle, now, usageMeter } = options.learningScheduler!;
         const allocator = new BudgetAllocator(total);
         const queue = new LearningPriorityQueue();
         const clock = now ?? Date.now;
@@ -248,8 +326,19 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
                 queue.enqueue(task); // 配额耗尽：保留回队，由调用方决定降级/等待
                 break;
               }
+              const beforeTokens = usageMeter ? usageMeter() : 0;
               try {
-                out.push({ status: 'executed', report: loop.runCycle() });
+                const report = loop.runCycle();
+                const actualTokens = usageMeter
+                  ? Math.max(0, usageMeter() - beforeTokens)
+                  : granted.maxTokens;
+                const releasedTokens = Math.max(0, Math.min(granted.maxTokens, granted.maxTokens - actualTokens));
+                if (releasedTokens > 0) allocator.release({ maxTokens: releasedTokens, maxCalls: 0 });
+                out.push({
+                  status: 'executed',
+                  report,
+                  usage: { grantedTokens: granted.maxTokens, actualTokens, releasedTokens },
+                });
               } catch (error) {
                 allocator.release({ maxTokens: granted.maxTokens, maxCalls: granted.maxCalls });
                 queue.enqueue({ ...task, status: 'failed' });

@@ -23,19 +23,59 @@ export type LlmStepRunner = (
   step: { readonly order: number; readonly text: string },
 ) => Promise<string>;
 
-/** provider 最小结构（ZhiPu / OpenAI provider 结构兼容）。 */
+/** provider 最小结构（ZhiPu / OpenAI provider 结构兼容；usage 缺省视为不可计量）。 */
 interface ProviderLike {
-  complete(req: CompletionRequest): Promise<{ text: string }>;
+  complete(req: CompletionRequest): Promise<{
+    text: string;
+    usage?: { readonly promptTokens: number; readonly completionTokens: number };
+  }>;
 }
 
-/** 由 provider 构造 runner（真实调用方；密钥经环境变量由 provider 自取）。 */
+/**
+ * 累计 LLM 用量计数器（P8 收尾 b · usage 回填生产端）：真实 provider usage 逐调用
+ * 累计；totalTokens 即运行时装配调度闸 usageMeter 端口值（份额记账冲抵）。
+ */
+export class LlmUsageCounter {
+  private promptTokens = 0;
+  private completionTokens = 0;
+  private calls = 0;
+
+  /** 记一次调用的真实用量（负值按 0 计，防脏数据透支）。 */
+  record(usage: { readonly promptTokens: number; readonly completionTokens: number }): void {
+    this.promptTokens += Math.max(0, usage.promptTokens);
+    this.completionTokens += Math.max(0, usage.completionTokens);
+    this.calls += 1;
+  }
+
+  /** 累计总 token（prompt + completion）。 */
+  get totalTokens(): number {
+    return this.promptTokens + this.completionTokens;
+  }
+
+  /** 快照（观测/自检输出）。 */
+  snapshot(): { promptTokens: number; completionTokens: number; calls: number; totalTokens: number } {
+    return {
+      promptTokens: this.promptTokens,
+      completionTokens: this.completionTokens,
+      calls: this.calls,
+      totalTokens: this.totalTokens,
+    };
+  }
+}
+
+/** 由 provider 构造 runner（真实调用方；密钥经环境变量由 provider 自取；
+ *  meter 注入即逐调用累计真实 usage——调度闸 usage 回填的数据源）。 */
 export function createLlmStepRunner(
   provider: ProviderLike,
   model: string,
   maxTokens = 1024,
+  meter?: LlmUsageCounter,
 ): LlmStepRunner {
   return (messages) =>
-    provider.complete({ model, messages, temperature: 0, maxTokens }).then((r) => r.text);
+    provider.complete({ model, messages, temperature: 0, maxTokens }).then((r) => {
+      if (r.usage) meter?.record(r.usage);
+      return r.text;
+    });
 }
 
 /** 剥离围栏并抽取首个 JSON 对象；无法解析时回退 {raw}。 */
