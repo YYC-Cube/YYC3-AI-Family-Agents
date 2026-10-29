@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-29T22:30:12.855Z",
-  "generatedAtCN": "2026/10/30 06:30:12",
+  "generatedAt": "2026-10-29T23:00:23.820Z",
+  "generatedAtCN": "2026/10/30 07:00:23",
   "gate": {
     "passed": true,
-    "totalPassed": 330,
+    "totalPassed": 334,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 46
+    "specs": 47
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 126,
+      "passed": 130,
       "failed": 0
     },
     {
@@ -742,6 +742,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/member-template.contract.js",
+      "name": "家人模板脚手架契约（create/check 零漂移）",
+      "phase": "R4",
+      "pillars": [
+        "治"
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "total": 4,
       "silent": false,
       "ok": true
     }
