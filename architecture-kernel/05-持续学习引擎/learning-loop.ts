@@ -12,8 +12,8 @@
  * 红线（「稳定性—可塑性」约束，§5.3）：
  *   未经回归门禁的技能不得 active；回归失败必须回滚至上一版本。
  *
- * TODO(infra): 接入 learning-scheduler（优先级/配额）与 knowledge-update（语义更新）；
- *              技能落盘对接 shared-core/memory-framework/procedural-memory。
+ * TODO(infra): 接入 knowledge-update（语义更新）；固化落位钩子（onPromoted，P8 收尾 a）
+ *              已开——procedural-memory SkillRegistry 注册由装配层适配完成。
  */
 
 import { OutcomeLabeler, type LabelSignal, type LabeledTrajectory } from './experience-reflow/outcome-labeler.js';
@@ -68,6 +68,12 @@ export interface LearningLoopOptions {
    * 由装配层上报指标（promoted / rolledBack / 回归失败用例数）。只读观测，不影响学习决策。
    */
   readonly onCycle?: (report: CycleReport) => void;
+  /**
+   * 固化落位钩子（P8 收尾 a）：本周期实际晋升（过回归门禁、已写库）的技能回调——
+   * 由装配层适配注入 procedural-memory SkillRegistry（merger→registry 装配位）。
+   * 只在 store 写入成功后触发；回滚技能不在列。
+   */
+  readonly onPromoted?: (promoted: readonly SkillDefinition[]) => void;
   /**
    * 统一 id 解析钩子（P3-T3）：把固化模式映射到统一命名空间 logicalId
    * （如 `learned.qianhang.intent-detection`，见 skill-consolidation/skill-id.ts）。
@@ -129,6 +135,7 @@ export class LearningLoop {
   private readonly maxPromotions: number;
   private readonly healingRollback?: HealingRollbackHook;
   private readonly onCycle?: (report: CycleReport) => void;
+  private readonly onPromoted?: (promoted: readonly SkillDefinition[]) => void;
   private readonly store: SkillStorePort;
   private readonly logicalIdResolver?: (pattern: PatternTriplet) => string | undefined;
   /** traceId → 标签信号（ingest 时登记，runCycle 时消费）。 */
@@ -145,6 +152,7 @@ export class LearningLoop {
     this.maxPromotions = options.maxPromotionsPerCycle ?? 5;
     this.healingRollback = options.healingRollback;
     this.onCycle = options.onCycle;
+    this.onPromoted = options.onPromoted;
     this.store = store ?? new InMemorySkillStore();
     this.logicalIdResolver = options.logicalIdResolver;
   }
@@ -249,6 +257,7 @@ export class LearningLoop {
     }
 
     const report: CycleReport = { labeled, patterns, promoted, rolledBack, regressions };
+    if (promoted.length > 0) this.onPromoted?.(promoted);
     this.onCycle?.(report);
     return report;
   }

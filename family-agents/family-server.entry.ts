@@ -35,6 +35,7 @@ import {
 import {
   executeSkillWithLlm,
   createLlmStepRunner,
+  LlmUsageCounter,
   type LlmStepRunner,
 } from './shared-core/llm-adapter/skill-step-executor.js';
 import { ZhiPuProvider } from './shared-core/llm-adapter/zhipu-provider.js';
@@ -111,6 +112,8 @@ export interface FamilyServerHandle {
   readonly mcp: McpServerAssembly;
   /** LLM 语义执行臂（未启用为 undefined；selftest:llm 采样用）。 */
   readonly llmRunner?: LlmStepRunner;
+  /** 累计 LLM 用量计数器（P8 收尾 b；provider 构造臂启用即存在——调度闸 usageMeter 端口值）。 */
+  readonly llmUsage?: LlmUsageCounter;
   /** 外部家人 A2A 编排（M22；未启用为 undefined）。 */
   readonly a2a?: { readonly directory: CardDirectory; readonly client: DelegateClient };
   readonly metricsServer?: MetricsServerHandle;
@@ -201,7 +204,9 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
   const entriesByLogicalId = new Map(
     (config.manifestEntries as readonly ExecutableSkillEntry[]).map((entry) => [entry.id, entry]),
   );
-  // LLM 语义执行臂（M16）：注入 runner 优先；provider 由部署配置构造（真实调用受启动器三闸门控）
+  // LLM 语义执行臂（M16）：注入 runner 优先；provider 由部署配置构造（真实调用受启动器三闸门控）；
+  // P8 收尾 b：provider 构造臂自动挂 LlmUsageCounter（真实 usage 计量，句柄 llmUsage 暴露）
+  let llmUsage: LlmUsageCounter | undefined;
   const llmRunner: LlmStepRunner | undefined =
     config.llmRunner ??
     (config.llm
@@ -216,6 +221,8 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
                 config.llm.baseUrl ?? 'https://open.bigmodel.cn/api/paas/v4',
               ),
           config.llm.model ?? (config.llm.provider === 'openai' ? 'gpt-4o-mini' : 'glm-4-flash'),
+          1024,
+          (llmUsage = new LlmUsageCounter()),
         )
       : undefined);
 
@@ -279,6 +286,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     registry,
     mcp,
     llmRunner,
+    ...(llmUsage ? { llmUsage } : {}),
     ...(a2a ? { a2a: { directory: a2a.directory, client: a2a.client } } : {}),
     metricsServer,
     async stop() {
@@ -364,7 +372,7 @@ async function main(): Promise<number> {
           const extra = got === 0 && executed.outputViolations?.length ? `（末步产物字段：${executed.outputViolations.join('；').slice(0, 120)}）` : '';
           console.log(`  LLM ${e.id} → 填充 ${got}/${e.io?.output?.length ?? 0}${extra}`);
         }
-        console.log(`  LLM 自检汇总：输出字段填充 ${filled}/${fields}（${samples.length} 技能 · 真实计费调用）`);
+        console.log(`  LLM 自检汇总：输出字段填充 ${filled}/${fields}（${samples.length} 技能 · 真实计费调用 · 累计 ${server.llmUsage?.snapshot().totalTokens ?? 0} tokens）`);
       }
     }
     // 外部家人真实委托采样（M22）：实例契约自动装配时经完整协议链路委托一次

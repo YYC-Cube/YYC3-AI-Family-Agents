@@ -1,6 +1,6 @@
 // @ts-nocheck
 /**
- * 技能生命周期测试（skill-lifecycle）—— P8-a（M25）· C 类第一批三件转实。
+ * 技能生命周期测试（skill-lifecycle）—— P8-a（M25）· C 类第一批三件转实 + P8 收尾 a 装配位。
  *
  * 验收：
  *   F1 固化阈值：support/confidence 任一不达 → undefined；达标 → 确定性定义
@@ -9,6 +9,10 @@
  *   F3 写入请求：layer=procedural · payload 原样 · provenance 溯源
  *   F4 淘汰候选：空闲超阈 OR 频次过低；protectedIds 豁免；活跃技能不出候选
  *   F5 退化检测：delta > maxDecay 判退化；报告字段完整；边界（= maxDecay）不判
+ *   F6 固化落位适配（P8 收尾 a）：steps 序号化 · logicalId 归并（FNV → learned.*）
+ *      · 显式声明优先 · 内核专有字段不外带
+ *   F7 merger→registry 装配位：周期晋升技能经适配注册进 SkillRegistry（可查）
+ *   F8 落位幂等与升级：同 logicalId 二次晋升注册表多版本共存，latest 取最新
  *
  * 运行：tsc 编译 + node（零依赖 harness，范式同 learning-scheduler）。
  */
@@ -45,6 +49,12 @@ if (__localShim) {
 import { SkillMerger } from '../../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-merger.js';
 import { SkillPruner, DEFAULT_PRUNE_POLICY } from '../../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-pruner.js';
 import { ForgettingDetector } from '../../architecture-kernel/05-持续学习引擎/stability-guard/forgetting-detector.js';
+import { InMemorySkillStore } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
+import {
+  createRuntimeAssembly,
+  consolidatedSkillForRegistry,
+} from '../../architecture-kernel/08-系统装配/runtime-assembly.js';
+import { SkillRegistry } from '../../family-agents/shared-core/memory-framework/procedural-memory/skill-registry.js';
 
 const PATTERN = {
   condition: '月度经营分析请求',
@@ -137,6 +147,88 @@ describe('技能生命周期（P8-a · M25 · 固化/淘汰/退化）', () => {
     const ok = detector.detect(base, 0.95); // 提升
     expect(ok.degraded).toBeFalsy();
     expect(ok.delta < 0).toBeTruthy();
+  });
+
+  it('F6 固化落位适配：steps 序号化 · logicalId 归并 · 内核专有字段不外带', () => {
+    const merger = new SkillMerger();
+    const def = merger.merge(PATTERN, 1); // FNV 主键 · 无显式 logicalId
+    const draft = consolidatedSkillForRegistry(def);
+    expect(draft.logicalId).toBe(`learned.${def.id}`); // FNV 遗留归并约定（skill-id.ts）
+    expect(draft.id).toBe(def.id);
+    expect(draft.name).toBe(def.name);
+    expect(draft.version).toBe(def.version);
+    expect(draft.status).toBe('active');
+    expect(draft.steps).toHaveLength(3);
+    expect(draft.steps[0].order).toBe(1);
+    expect(draft.steps[0].action).toBe(def.steps[0]);
+    expect(draft.steps[2].order).toBe(3);
+    expect('sourcePattern' in draft).toBeFalsy(); // 内核专有字段不外带
+    expect('useCount' in draft).toBeFalsy();
+    expect('createdAt' in draft).toBeFalsy();
+    const explicit = consolidatedSkillForRegistry({ ...def, logicalId: 'learned.qianhang.demo' });
+    expect(explicit.logicalId).toBe('learned.qianhang.demo'); // 显式声明优先
+  });
+
+  it('F7 merger→registry 装配位：周期晋升技能经适配注册进 SkillRegistry 可查', () => {
+    const registry = new SkillRegistry();
+    const a = createRuntimeAssembly({ store: new InMemorySkillStore(), skillRegistry: registry });
+    const traj = (i) => ({
+      traceId: `t-${i}`,
+      agent: 'qianhang',
+      taskType: '经营分析',
+      steps: [{ order: 1, action: '取数', ok: true }],
+      startedAt: i,
+      finishedAt: i + 1,
+      completed: true,
+    });
+    a.loop.ingest([1, 2, 3, 4].map((i) => ({ event: traj(i), goldenPass: true })));
+    const report = a.loop.runCycle({ minSamples: 2, minSuccessRate: 0.5 });
+    expect(report.promoted).toHaveLength(1);
+    const promoted = report.promoted[0];
+    const found = registry.findByLogicalId(`learned.${promoted.id}`); // 归并 id 可查
+    expect(found).toBeTruthy();
+    expect(found.id).toBe(promoted.id);
+    expect(found.steps[0].order).toBe(1);
+    expect(found.steps[0].action).toBe(promoted.steps[0]);
+    expect(found.version).toBe(promoted.version);
+    expect(registry.get(promoted.id).status).toBe('active');
+  });
+
+  it('F8 落位幂等与升级：同 logicalId 二次晋升注册表多版本共存，latest 取最新', () => {
+    const registry = new SkillRegistry();
+    let seq = 0;
+    const a = createRuntimeAssembly({
+      store: new InMemorySkillStore(),
+      skillRegistry: registry,
+      learning: { logicalIdResolver: () => 'learned.qianhang.demo' },
+    });
+    const feed = () => {
+      seq += 1;
+      a.loop.ingest(
+        [1, 2, 3].map((i) => ({
+          event: {
+            traceId: `x-${seq}-${i}`,
+            agent: 'qianhang',
+            taskType: '经营分析',
+            steps: [{ order: 1, action: '取数', ok: true }],
+            startedAt: i,
+            finishedAt: i + 1,
+            completed: true,
+          },
+          goldenPass: true,
+        })),
+      );
+    };
+    feed();
+    a.loop.runCycle({ minSamples: 2, minSuccessRate: 0.5 });
+    feed();
+    const report2 = a.loop.runCycle({ minSamples: 2, minSuccessRate: 0.5 });
+    expect(report2.promoted).toHaveLength(1);
+    expect(report2.promoted[0].version).toBe('1.1.0'); // versioner minor 递增
+    const found = registry.findByLogicalId('learned.qianhang.demo'); // latest 归最新
+    expect(found.version).toBe('1.1.0');
+    expect(registry.get(found.id, '1.0.0')).toBeTruthy(); // 注册表多版本共存
+    expect(registry.get(found.id, '1.1.0')).toBeTruthy();
   });
 });
 
