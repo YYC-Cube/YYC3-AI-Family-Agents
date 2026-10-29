@@ -73,7 +73,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 - **零运行时依赖**：指标、HTTP 端点、编译/回归脚本全部基于 Node 标准库
 - **端到端装配**：`createRuntimeAssembly()` 一次接线「总线 → 轨迹 → 学习 → 落盘 → 回滚」
 - **可观测闭环**：23 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 13 条告警 → 五支柱面板
-- **门禁可复现**：`pnpm regression` 单命令完成编译、325 例测试、面板生成与退出码判定
+- **门禁可复现**：`pnpm regression` 单命令完成编译、329 例测试、面板生成与退出码判定
 
 ---
 
@@ -155,8 +155,11 @@ sequenceDiagram
 # 1. 类型检查（仓库根）
 pnpm typecheck          # 等价 tsc --noEmit
 
-# 2. 全量门禁：隔离编译 → 45 个套件 → 五支柱聚合 → 面板 → 退出码
-pnpm regression         # 325 例全绿；0 例跳过
+# 2. 全量门禁：隔离编译 → 46 个套件 → 五支柱聚合 → 面板 → 退出码
+pnpm regression         # 329 例全绿；0 例跳过
+
+# 2b. npm 双包装配（R1/R2）：内核库 + MCP Server 可发布包 → dist/
+pnpm pack:npm           # @yyc3/ai-family-kernel · @yyc3/ai-family-agent（零运行时依赖 · 确定性装配）
 
 # 3. 家族服务雏形（P6-A）：装载 45 技能 + MCP 处理器 + /metrics 能力供给真值
 pnpm start              # 常驻（Ctrl+C 停止）；--selftest 自检（含 A2A 真实委托采样）；--selftest:llm 三闸 LLM 采样
@@ -264,18 +267,18 @@ UAT_LLM=1 UAT_LLM_CONFIRM='我知晓真实计费' ZHIPU_API_KEY=<你的Key> pnpm
 
 ## 🔌 模块接线状态
 
-> 口径：从 45 个门禁入口做静态 import 可达性分析（相对导入 + `@shared` 别名 BFS，P5 后统一刷新为纯可达口径）；**「仅编译」不代表已交付能力**。
+> 口径：从 46 个门禁入口做静态 import 可达性分析（相对导入 + `@shared` 别名 BFS，P5 后统一刷新为纯可达口径）；**「仅编译」不代表已交付能力**。
 
 | 范围 | 编译文件 | 已接线 | 仅编译 |
 | ---- | -------- | ------ | ------ |
 | `architecture-kernel` | 116 | 94 | 22 |
 | `family-agents` | 150 | 36 | 114 |
-| `tests`（门禁入口） | 45 | 45 | 0 |
-| **合计** | **311** | **175** | **136** |
+| `tests`（门禁入口） | 46 | 46 | 0 |
+| **合计** | **312** | **176** | **136** |
 
 - `shared-core` 记忆 / 学习 / LLM 主链路全接线（llm-adapter barrel 与 8 位家人薄转发 provider 属部署侧消费，计仅编译）；家人意图链路 4 文件 + 伯乐成就面板已接线
 - `01-九层架构分层底座` 已全接线（M29 · `LayerProbe` 探针注入 + `NineLayerRegistry` 注册中心 + 态势对接，**A 类清零**）
-- **可复用性**：MCP Server / 能力包插件 / 技能生态三形态生产就绪，内核库结构就绪——详见 [可复用性分析](docs/YYC3-AI-Family-Agent-可复用性分析.md)（六形态矩阵 + 15 插拔点全景 + R1–R5 复用路线）
+- **可复用性**：MCP Server / 能力包插件 / 技能生态三形态生产就绪，内核库结构就绪——详见 [可复用性分析](docs/YYC3-AI-Family-Agent-可复用性分析.md)（六形态矩阵 + 15 插拔点全景 + R1–R5 复用路线）；**R1/R2 已落地**——`pnpm pack:npm` 确定性装配双可发布包（`@yyc3/ai-family-kernel` 内核库 · `@yyc3/ai-family-agent` MCP Server bin，零运行时依赖 · 版本同步）
 - 8 个家人自测 spec 被 `tsconfig` 排除且不在回归清单；另有 2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表
 
 完整明细（含每个文件职责、状态、计划阶段、标准与规范五维矩阵）见 **[未接线模块清单](docs/YYC3-AI-Family-Agent-未接线模块清单.md)**。
