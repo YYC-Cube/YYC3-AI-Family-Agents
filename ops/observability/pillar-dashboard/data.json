@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-29T20:42:36.695Z",
-  "generatedAtCN": "2026/10/30 04:42:36",
+  "generatedAt": "2026-10-29T22:13:44.290Z",
+  "generatedAtCN": "2026/10/30 06:13:44",
   "gate": {
     "passed": true,
-    "totalPassed": 325,
+    "totalPassed": 329,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 45
+    "specs": 46
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 121,
+      "passed": 125,
       "failed": 0
     },
     {
@@ -728,6 +728,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/npm-pack.contract.js",
+      "name": "npm 双包打包契约（内核库 + MCP Server）",
+      "phase": "R1/R2",
+      "pillars": [
+        "治"
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "total": 4,
       "silent": false,
       "ok": true
     }

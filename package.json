@@ -1,6 +1,6 @@
 {
   "name": "@yyc3/ai-family-agent",
-  "version": "2.42.0",
+  "version": "2.43.0",
   "private": true,
   "description": "YYC³ AI Family Agent 编程体系 — 自·知·学·治·愈 五支柱融合内核（TypeScript，零运行时依赖）",
   "license": "MIT",
@@ -44,6 +44,7 @@
     "test": "vitest",
     "regression": "node scripts/run-regression.mjs",
     "uat:llm": "node scripts/run-uat-llm.mjs",
+    "pack:npm": "node scripts/pack-npm.mjs",
     "uat:external": "node scripts/run-external-uats.mjs",
     "external:check": "node scripts/check-external-worker.mjs",
     "manifest:check": "node scripts/check-manifest.mjs",
