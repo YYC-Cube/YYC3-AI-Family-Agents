@@ -75,6 +75,7 @@ const SPECS = [
   { file: 'tests/integration/nine-layer.spec.js', pillars: ['治'], phase: 'P9-a', name: '九层底座（注册中心 + 态势对接）' },
   { file: 'tests/contracts/npm-pack.contract.js', pillars: ['治'], phase: 'R1/R2', name: 'npm 双包打包契约（内核库 + MCP Server）' },
   { file: 'tests/contracts/member-template.contract.js', pillars: ['治'], phase: 'R4', name: '家人模板脚手架契约（create/check 零漂移）' },
+  { file: 'tests/contracts/worker-template.contract.js', pillars: ['治'], phase: 'R5', name: '外部 Worker 模板契约（零漂移 + 例行化 e2e）' },
   // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
   // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];

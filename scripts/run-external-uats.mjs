@@ -18,7 +18,7 @@
  * 安全：本脚本不读取、不回显令牌（token 只引用环境变量名，值由 worker 端校验）。
  */
 
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -60,6 +60,63 @@ console.log(`   端点：${endpoint || '（缺失）'}（来源：${endpointSour
 if (process.env.EXT_WORKER !== '1' || process.env.EXT_WORKER_CONFIRM !== '我知晓外部端点调用' || !endpoint) {
   console.log('⏭ 三闸未放行（默认跳过，exit 0）——真实外部端点调用须：EXT_WORKER=1 + 确认语 + 端点存在');
   process.exit(0);
+}
+
+// ---------- 例行化自动拉起（M34 · R5 本地）：EXT_WORKER_AUTOSTART=1 ----------
+// 仅回环端点 + 实例契约声明 runtime.script（本地参照实现）时，端点不可达即
+// 自动拉起 python3 worker（stdlib 零依赖 · 仅回环 · 零外网 · 零计费），结束回收。
+let workerChild = null;
+process.on('exit', () => {
+  try {
+    workerChild?.kill();
+  } catch {
+    /* 已退出 */
+  }
+});
+if (process.env.EXT_WORKER_AUTOSTART === '1') {
+  const loopback = /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/.test(endpoint);
+  const instName = endpointSource.startsWith('实例:') ? endpointSource.slice('实例:'.length) : undefined;
+  const instText = instName ? fs.readFileSync(path.join(WORKERS_DIR, instName), 'utf8') : '';
+  const scriptRel = instText.match(/^\s*script:\s*(\S+)\s*$/m)?.[1];
+  const port = endpoint.match(/:(\d+)\/?$/)?.[1];
+  const probeAlive = () => {
+    const probe = spawnSync(
+      process.execPath,
+      [
+        '-e',
+        `fetch(${JSON.stringify(`${endpoint}/.well-known/agent-card.json`)}, { signal: AbortSignal.timeout(600) }).then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1));`,
+      ],
+      { timeout: 2000 },
+    );
+    return probe.status === 0;
+  };
+  if (!loopback) {
+    console.log('ⓔ AUTOSTART 跳过：端点非回环（安全边界）');
+  } else if (!scriptRel || !port) {
+    console.log('ⓔ AUTOSTART 跳过：实例未声明 runtime.script 或端点无端口');
+  } else if (probeAlive()) {
+    console.log('ⓔ AUTOSTART：端点已存活，复用现有 worker');
+  } else {
+    const scriptPath = path.join(ROOT, scriptRel);
+    if (!fs.existsSync(scriptPath)) {
+      console.error(`❌ AUTOSTART：本地 worker 脚本缺失 —— ${scriptRel}`);
+      cleanup(1);
+    }
+    workerChild = spawn('python3', [scriptPath], {
+      env: { ...process.env, WORKER_PORT: port },
+      stdio: ['ignore', 'inherit', 'inherit'],
+    });
+    console.log(`ⓔ AUTOSTART：已拉起本地 worker（python3 ${scriptRel} · :${port} · pid ${workerChild.pid}）`);
+    const deadline = Date.now() + 8000;
+    while (!probeAlive()) {
+      if (Date.now() > deadline) {
+        console.error('❌ AUTOSTART：worker 8s 未就绪');
+        cleanup(1);
+      }
+      spawnSync(process.execPath, ['-e', 'setTimeout(() => {}, 200)']); // 同步等待 200ms
+    }
+    console.log('ⓔ AUTOSTART：worker 就绪');
+  }
 }
 
 // ---------- 隔离编译环境（与 run-uat-llm.mjs 约定一致） ----------
