@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.29.0
+  Version : v1.30.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.29.0
+version: v1.30.0
 created: 2026-10-23
 updated: 2026-10-30
 status: active
@@ -348,6 +348,7 @@ category: report
 | v1.27.0 | 2026-10-25 | **P8-a 技能生命周期三件转实（M25 · C 类第一批）**：skill-merger（阈值门 + FNV `skill-<8hex>` 确定性固化模板 + toWriteRequest 溯源）· skill-pruner（空闲/频次候选 + protectedIds 治理豁免 + 无 lastUsedAt 视为从未使用）· forgetting-detector（delta 口径确认 + ε=1e-9 容浮点伪影）；新套件 `skill-lifecycle.spec.ts` 5 例（学）；门禁 299 → **304/304**（43 套件 · 入口 43）；包 2.37.0；统计 307/144/163 → **308/148/160**（kernel 已接线 66 → 69，C 类 7 → 4） |
 | v1.28.0 | 2026-10-29 | **P8-a 家族编排四件转实（M26 · C 类清零）**：orchestrator（StepDispatcher 分发 + DispatchVerifier 仲裁）· status-center（overall 推导 + 压力阈值）· phone-system（通话/热线/私信全链）· self-healing-controller（InfraActuator + RTO 契约，失败如实 failed）；新套件 `family-ops.spec.ts` 5 例（治）；门禁 304 → **309/309**（44 套件 · 入口 44）；包 2.38.0；统计 308/148/160 → **309/149/156**（kernel 已接线 69 → 73，**C 类清零**）；工作区迁 `personal/` 真身区（AGENTS.md 总规约对齐，此后变更走分支 + PR） |
 | v1.29.0 | 2026-10-30 | **P8 收尾双件转实（M27 · 弧线收口）**：merger→registry 装配位（learning-loop `onPromoted` 出口 + runtime-assembly `skillRegistry` 端口 + `consolidatedSkillForRegistry` 适配——steps 序号化 / logicalId 归并 / 内核专有字段不外带，与 procedural-memory SkillRegistry 结构兼容，内核零反向依赖）· 调度闸真实 usage 回填（`usageMeter` 累计计量端口差值冲抵 + `LlmUsageCounter` 生产端 + usage 三元组，无计量器维持 M24 语义）；套件 +6（skill-lifecycle F6–F8 / learning-scheduler-assembly L6–L8）；门禁 309 → **315/315**（44 套件 · 入口 44 · 学 122 · 愈 61）；包 2.39.0；统计 309/149/156 **维持**（端口化零新增文件） |
+| v1.30.0 | 2026-10-30 | **部署侧装配合流（M28 · 学习闭环进服务进程）**：`family-server.entry.ts` 新增 `learning` 配置——嵌入内核 `createRuntimeAssembly`：`learningDispatch` 每次分派发布 `task.executed`（异步感知，失败轨迹 completed=false → failure 负样本）· 调度闸 `usageMeter` 自动接 `llmUsage` 计数器 · `skillRegistry` 接服务注册表（promoted 技能 `learned.*` 归并 id 可查；instrumentSkillRegistry 只包 loadFromManifest，落位不污染 skills_loaded 口径）；缺省零侵入；新例 A9–A11；门禁 315 → **318/318**（44 套件 · 入口 44 · 治 114）；包 2.40.0；统计 309/149/156 **维持**（零新增文件） |
 | v1.24.0 | 2026-10-24 | **M22 运行时编排升级 + 仅编译逐文件复核**：① `family-server.entry.ts` `external` 配置（M22 · P7-c）——`shared.a2a-delegate` 工具经 `DelegateClient` 真实委托外部家人（HttpA2aTransport + 启动期 well-known card 发现 + 能力清单闸 + traceId 优先级链与 W3C 头外发）；启动器按实例契约自动装配；A9 套件 +1（注入传输 hermetic + 实活 selftest 委托 `state=completed`）；`instrumentMcpDispatcher` 异步感知修正（thenable 归一——此前异步拒绝错记 ok）；门禁 288 → **289/289**；包 2.34.0（M22 时点）。② §2.5 新增：仅编译 167 文件逐文件归类复核（A 骨架 20 · B barrel 22 · C 功能骨架 9 · D 家人模板衍生 108 · E shared-core 部件 6 · F UAT 2）——**无一处误判已交付或应拆未拆** |
 
 ---

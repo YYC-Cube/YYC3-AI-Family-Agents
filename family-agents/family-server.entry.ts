@@ -32,6 +32,12 @@ import {
   type ExecutableSkillEntry,
   type SkillExecutionResult,
 } from '../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-executor.js';
+import type { LearningBudget, PatternTriplet } from '../architecture-kernel/05-持续学习引擎/types.js';
+import type { SkillStorePort } from '../architecture-kernel/05-持续学习引擎/learning-loop.js';
+import {
+  createRuntimeAssembly,
+  type RuntimeAssembly,
+} from '../architecture-kernel/08-系统装配/runtime-assembly.js';
 import {
   executeSkillWithLlm,
   createLlmStepRunner,
@@ -103,6 +109,29 @@ export interface FamilyServerConfig {
     readonly baseUrl?: string;
   };
   readonly metricsServer?: { readonly port?: number; readonly host?: string; readonly authToken?: string };
+  /**
+   * 学习闭环装配（M28 · 部署侧合流）：配置即嵌入内核 createRuntimeAssembly——
+   * 每次分派完成发布一条 `task.executed` 总线事件馈入学习管道（失败轨迹 completed=false）；
+   * 调度闸 usageMeter 自动接 llmUsage 计数器（provider 臂启用时真实计量，零实耗全额归还）；
+   * 固化落位接服务注册表（promoted 技能经 learned.* 归并 id 可 registry.findByLogicalId 查得）。
+   */
+  readonly learning?: {
+    /** 技能库落盘目录（缺省 ./data/skills；测试注入 store 优先）。 */
+    readonly storeDir?: string;
+    /** 测试注入：技能库端口（如 InMemorySkillStore）。 */
+    readonly store?: SkillStorePort;
+    /** 学习调度闸（透传 createRuntimeAssembly.learningScheduler；usageMeter 自动接线）。 */
+    readonly scheduler?: {
+      readonly total: LearningBudget;
+      readonly tokensPerCycle?: number;
+      /** 任务时钟（缺省 Date.now；测试可冻结）。 */
+      readonly now?: () => number;
+    };
+    /** 学习管道透传：统一 logicalId 解析（缺省 FNV → learned.* 归并）。 */
+    readonly logicalIdResolver?: (pattern: PatternTriplet) => string | undefined;
+    /** 每周期最多固化技能数（缺省 5）。 */
+    readonly maxPromotionsPerCycle?: number;
+  };
 }
 
 /** 服务句柄（最小观测面；stop 幂等）。 */
@@ -114,6 +143,8 @@ export interface FamilyServerHandle {
   readonly llmRunner?: LlmStepRunner;
   /** 累计 LLM 用量计数器（P8 收尾 b；provider 构造臂启用即存在——调度闸 usageMeter 端口值）。 */
   readonly llmUsage?: LlmUsageCounter;
+  /** 学习闭环装配（M28 · config.learning 配置即存在——bus / bridge / loop / scheduler 观测面）。 */
+  readonly learning?: RuntimeAssembly;
   /** 外部家人 A2A 编排（M22；未启用为 undefined）。 */
   readonly a2a?: { readonly directory: CardDirectory; readonly client: DelegateClient };
   readonly metricsServer?: MetricsServerHandle;
@@ -195,6 +226,60 @@ function executeDispatch(
   };
 }
 
+/**
+ * 学习轨迹仪表（M28 · 部署侧合流）：每次分派完成发布一条 `task.executed` 总线事件——
+ * 同步结果即发；异步 thenable 结算后发（拒绝也记轨迹，completed=false → failure 负样本）。
+ * traceId 优先取调用链上下文，缺省 UUID 派生；幂等键 seq 递增防同刻去重误伤。
+ */
+function learningDispatch(
+  base: McpToolDispatcher,
+  learning: RuntimeAssembly,
+  serverName: string,
+): McpToolDispatcher {
+  let seq = 0;
+  const report = (ctx: { toolName: string; traceId?: string }, ok: boolean, startedAt: number): void => {
+    const traceId = ctx.traceId ?? randomUUID().replace(/-/g, '');
+    void learning.bus.publish({
+      key: { traceId, agentId: serverName, seq: (seq += 1) },
+      topic: 'task.executed',
+      mode: 'broadcast',
+      payload: {
+        agent: serverName,
+        taskType: ctx.toolName,
+        steps: [{ order: 1, action: `mcp:${ctx.toolName}`, tool: ctx.toolName, ok }],
+        startedAt,
+        finishedAt: Date.now(),
+        completed: ok,
+      },
+      at: Date.now(),
+    });
+  };
+  return (ctx) => {
+    const startedAt = Date.now();
+    let out: unknown;
+    try {
+      out = base(ctx);
+    } catch (error) {
+      report(ctx, false, startedAt);
+      throw error;
+    }
+    if (out && typeof (out as Promise<unknown>).then === 'function') {
+      return (out as Promise<unknown>).then(
+        (value) => {
+          report(ctx, true, startedAt);
+          return value;
+        },
+        (error) => {
+          report(ctx, false, startedAt);
+          throw error;
+        },
+      );
+    }
+    report(ctx, true, startedAt);
+    return out;
+  };
+}
+
 /** 启动家族服务（装载 → MCP 装配 → 可选 /metrics 暴露）。 */
 export async function startFamilyServer(config: FamilyServerConfig): Promise<FamilyServerHandle> {
   const metrics = new FamilyMetrics();
@@ -265,14 +350,45 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     };
   }
 
+  // 学习闭环装配（M28 · 部署侧合流）：嵌入内核运行时——总线 ← 分派轨迹（learningDispatch），
+  // 调度闸 usageMeter ← llmUsage 真实计量（provider 臂启用时），固化落位 ← 服务注册表
+  const learning = config.learning
+    ? createRuntimeAssembly({
+        ...(config.learning.store
+          ? { store: config.learning.store }
+          : { skillStoreDir: config.learning.storeDir ?? './data/skills' }),
+        metrics,
+        skillRegistry: registry,
+        learning: {
+          logicalIdResolver: config.learning.logicalIdResolver,
+          ...(config.learning.maxPromotionsPerCycle !== undefined
+            ? { maxPromotionsPerCycle: config.learning.maxPromotionsPerCycle }
+            : {}),
+        },
+        ...(config.learning.scheduler
+          ? {
+              learningScheduler: {
+                total: config.learning.scheduler.total,
+                ...(config.learning.scheduler.tokensPerCycle !== undefined
+                  ? { tokensPerCycle: config.learning.scheduler.tokensPerCycle }
+                  : {}),
+                ...(config.learning.scheduler.now ? { now: config.learning.scheduler.now } : {}),
+                ...(llmUsage ? { usageMeter: () => llmUsage.totalTokens } : {}),
+              },
+            }
+          : {}),
+      })
+    : undefined;
+  const dispatcher: McpToolDispatcher =
+    config.dispatch ??
+    executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a);
+
   const mcp = assembleMcpServer({
     serverInfo: config.serverInfo,
     tools: config.tools,
     admission: config.admission,
     pluginOfTool: config.pluginOfTool,
-    dispatch:
-      config.dispatch ??
-      executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a),
+    dispatch: learning ? learningDispatch(dispatcher, learning, config.serverInfo.name) : dispatcher,
     metrics,
   });
 
@@ -287,6 +403,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     mcp,
     llmRunner,
     ...(llmUsage ? { llmUsage } : {}),
+    ...(learning ? { learning } : {}),
     ...(a2a ? { a2a: { directory: a2a.directory, client: a2a.client } } : {}),
     metricsServer,
     async stop() {
@@ -387,6 +504,9 @@ async function main(): Promise<number> {
           console.log(`  A2A 委托 ${skill} → taskId=${String(delegated.task?.taskId)} state=${String(delegated.task?.state)}（真实外部端点）`);
         }
       }
+    }
+    if (server.learning) {
+      console.log(`  学习闭环：bus 桥接受理 ${server.learning.bridge.stats.accepted} 条轨迹（M28 部署侧合流）`);
     }
     await server.stop();
     await server.stop(); // 幂等验证

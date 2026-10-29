@@ -1,10 +1,10 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-29T18:16:50.297Z",
-  "generatedAtCN": "2026/10/30 02:16:50",
+  "generatedAt": "2026-10-29T18:29:45.756Z",
+  "generatedAtCN": "2026/10/30 02:29:45",
   "gate": {
     "passed": true,
-    "totalPassed": 315,
+    "totalPassed": 318,
     "totalFailed": 0,
     "totalSkipped": 0,
     "specs": 44
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 111,
+      "passed": 114,
       "failed": 0
     },
     {
@@ -620,15 +620,15 @@
     },
     {
       "file": "tests/integration/family-server-assembly.spec.js",
-      "name": "家族服务装配（MCP+准入+仪表）",
+      "name": "家族服务装配（MCP+准入+仪表+学习闭环）",
       "phase": "P6-A",
       "pillars": [
         "治"
       ],
-      "passed": 9,
+      "passed": 12,
       "failed": 0,
       "skipped": 0,
-      "total": 9,
+      "total": 12,
       "silent": false,
       "ok": true
     },
