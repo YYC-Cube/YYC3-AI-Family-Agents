@@ -36,6 +36,9 @@ export interface LayerHealth {
   readonly detail?: string;
 }
 
+/** 层级健康探针（M29 · 注入式端口）：同步/异步返回健康态；抛错判 down。 */
+export type LayerProbe = () => LayerHealth | Promise<LayerHealth>;
+
 /**
  * 层级能力通用契约。
  * 每个层级底座实现此接口：暴露唯一 id、自描述、健康探针。

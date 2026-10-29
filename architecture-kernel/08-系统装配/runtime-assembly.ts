@@ -17,6 +17,12 @@
 
 import { EventBus } from '../02-云枢核心引擎/family-communication-bus/event-bus.js';
 import { TrajectoryBridge } from '../02-云枢核心引擎/family-communication-bus/trajectory-bridge.js';
+import { StatusCenter } from '../02-云枢核心引擎/global-status-center/status-center.js';
+import {
+  NineLayerRegistry,
+  type LayerHealthReport,
+} from '../01-九层架构分层底座/layer-registry.js';
+import type { CapabilityLayerId, LayerProbe } from '../01-九层架构分层底座/types.js';
 import { LearningLoop, type HealingRollbackEvent, type LearningLoopOptions, type SkillStorePort } from '../05-持续学习引擎/learning-loop.js';
 import { OutcomeLabeler } from '../05-持续学习引擎/experience-reflow/outcome-labeler.js';
 import { FileSkillStore } from '../05-持续学习引擎/skill-consolidation/skill-store-file.js';
@@ -84,6 +90,15 @@ export interface RuntimeAssemblyOptions {
   readonly faultDetector?: FaultDetectorOptions;
   /** 降级/熔断选项（v2.7.2 纳入装配：失败阈值 / 冷却期）。 */
   readonly degradation?: DegradationOptions;
+  /**
+   * 九层底座接线（M29 · P9-a）：传入即装配 L1–L9 注册中心——probes 按 id 注入
+   * 真实健康探针（缺省恒 ok）；statusCenter 提供时 reportLayerHealth() 把各层
+   * 健康上报为服务态（`layer-L1..L9`），供全局态势图最坏态推导。
+   */
+  readonly nineLayer?: {
+    readonly probes?: Readonly<Partial<Record<CapabilityLayerId, LayerProbe>>>;
+    readonly statusCenter?: StatusCenter;
+  };
 }
 
 /** 运行时装配句柄（端到端闭环的最小观测面）。 */
@@ -106,6 +121,10 @@ export interface RuntimeAssembly {
   readonly metrics?: FamilyMetrics;
   /** 学习调度闸（M24，options.learningScheduler 传入时存在）。 */
   readonly learningScheduler?: LearningSchedulerHandle;
+  /** 九层底座注册中心（M29，options.nineLayer 传入时存在）。 */
+  readonly layers?: NineLayerRegistry;
+  /** 九层健康上报：healthAll() → statusCenter.reportService（statusCenter 提供时存在）。 */
+  reportLayerHealth?(): Promise<readonly LayerHealthReport[]>;
 }
 
 /** 周期用量三元组（P8 收尾 b）：授予份额 · 计量差值实耗 · 归还未消耗。 */
@@ -354,6 +373,25 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
       })()
     : undefined;
 
+  // 7. 九层底座（M29 · P9-a）：L1–L9 注册中心 + 探针注入 + 态势上报
+  //    （healthAll 并行探测、单层异常隔离；reportService 同名去重可重复上报）
+  const nineLayer = options.nineLayer
+    ? (() => {
+        const registry = NineLayerRegistry.withDefaults(options.nineLayer.probes ?? {});
+        const statusCenter = options.nineLayer.statusCenter;
+        const reportLayerHealth = statusCenter
+          ? async (): Promise<readonly LayerHealthReport[]> => {
+              const report = await registry.healthAll();
+              for (const layer of report) {
+                statusCenter.reportService({ name: `layer-${layer.id}`, status: layer.status });
+              }
+              return report;
+            }
+          : undefined;
+        return { registry, reportLayerHealth };
+      })()
+    : undefined;
+
   return {
     bus,
     bridge,
@@ -365,5 +403,11 @@ export function createRuntimeAssembly(options: RuntimeAssemblyOptions = {}): Run
     handleSignal,
     metrics,
     ...(scheduler ? { learningScheduler: scheduler } : {}),
+    ...(nineLayer
+      ? {
+          layers: nineLayer.registry,
+          ...(nineLayer.reportLayerHealth ? { reportLayerHealth: nineLayer.reportLayerHealth } : {}),
+        }
+      : {}),
   };
 }

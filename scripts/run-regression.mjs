@@ -72,6 +72,7 @@ const SPECS = [
   { file: 'tests/integration/learning-scheduler-assembly.spec.js', pillars: ['学', '愈'], phase: 'P8-b', name: '学习调度装配（周期配额闸 · usage 回填）' },
   { file: 'tests/integration/skill-lifecycle.spec.js', pillars: ['学'], phase: 'P8-a', name: '技能生命周期（固化/淘汰/退化 · 落位）' },
   { file: 'tests/integration/family-ops.spec.js', pillars: ['治'], phase: 'P8-a', name: '家族编排套件（编排/态势/通讯/基建自愈）' },
+  { file: 'tests/integration/nine-layer.spec.js', pillars: ['治'], phase: 'P9-a', name: '九层底座（注册中心 + 态势对接）' },
   // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
   // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];

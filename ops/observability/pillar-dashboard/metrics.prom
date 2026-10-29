@@ -56,3 +56,4 @@ family_regression_spec_passed{spec="tests/integration/learning-scheduler.spec.js
 family_regression_spec_passed{spec="tests/integration/learning-scheduler-assembly.spec.js"} 8
 family_regression_spec_passed{spec="tests/integration/skill-lifecycle.spec.js"} 8
 family_regression_spec_passed{spec="tests/integration/family-ops.spec.js"} 5
+family_regression_spec_passed{spec="tests/integration/nine-layer.spec.js"} 5
