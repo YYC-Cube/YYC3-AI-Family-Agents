@@ -13,6 +13,8 @@
  *   A9 学习闭环贯通（M28）：MCP 调用 → bus → bridge → loop → 固化落位进服务注册表
  *   A10 调度闸接线（M28）：usageMeter 自动接 llmUsage——零实耗全额归还
  *   A11 失败轨迹馈入（M28）：分派失败 → completed=false → failure 负样本
+ *   A12 九层自动探针（M30）：L5 分派近失败 → degraded · L8 熔断 open → down → overall 推导
+ *   A13 生产闭环贯通（M30）：分派 → 学习固化落位 → 九层健康 → 全局态势全链 ok
  *
  * 运行：tsc 编译 + node（零依赖 harness，范式同 capability-instrumentation）。
  */
@@ -340,6 +342,92 @@ describe('家族服务装配（P6-A · M14）', () => {
     const report = server.learning.loop.runCycle({});
     expect(report.labeled).toHaveLength(1);
     expect(report.labeled[0].label).toBe('failure');
+    await server.stop();
+  });
+
+  it('A12 九层自动探针（M30）：L5 分派近失败 degraded · L8 熔断 open down → overall 推导', async () => {
+    // ① L5：分派失败 → 连续失败计数 → 探针 degraded
+    const failing = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES,
+      dispatch: () => {
+        throw new Error('分派内部失败');
+      },
+      learning: { store: new InMemorySkillStore(), nineLayer: {} },
+    });
+    expect(failing.situation).toBeTruthy();
+    call(failing, 'qianhang__intent_detection');
+    await new Promise((resolve) => setImmediate(resolve));
+    let report = await failing.learning.reportLayerHealth();
+    let byId = new Map(report.map((r) => [r.id, r]));
+    expect(byId.get('L5').status).toBe('degraded');
+    expect(byId.get('L5').detail).toContain('分派内部失败');
+    await failing.learning.reportLayerHealth();
+    expect(failing.situation().overall).toBe('degraded');
+    await failing.stop();
+
+    // ② L8：熔断 trip（recordFailure × 默认阈值 3）→ 探针 down → overall down
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES,
+      learning: { store: new InMemorySkillStore(), nineLayer: {} },
+    });
+    await server.learning.reportLayerHealth();
+    expect(server.situation().overall).toBe('ok'); // 全绿基线
+    for (let i = 0; i < 5 && server.learning.degradation.circuitState !== 'open'; i += 1) {
+      server.learning.degradation.recordFailure(); // 上游失败反馈：closed 累计至跳闸
+    }
+    expect(server.learning.degradation.circuitState).toBe('open');
+    report = await server.learning.reportLayerHealth();
+    byId = new Map(report.map((r) => [r.id, r]));
+    expect(byId.get('L8').status).toBe('down');
+    expect(byId.get('L8').detail).toContain('熔断 open');
+    await server.learning.reportLayerHealth();
+    expect(server.situation().overall).toBe('down'); // 任一层 down → overall down
+    const layerServices = server.situation().services.filter((s) => s.name.startsWith('layer-'));
+    expect(layerServices).toHaveLength(9); // 同名去重，仍 9 条
+    await server.stop();
+  });
+
+  it('A13 生产闭环贯通（M30）：分派 → 学习固化落位 → 九层健康 → 全局态势全链 ok', async () => {
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES,
+      learning: {
+        store: new InMemorySkillStore(),
+        scheduler: { total: { maxTokens: 10_000, maxCalls: 5 } },
+        nineLayer: {},
+      },
+    });
+    // ① 分派：4 次成功（轨迹入总线）
+    for (let i = 0; i < 4; i += 1) {
+      const res = call(server, 'qianhang__intent_detection');
+      expect(res.result.isError).toBeFalsy();
+    }
+    await new Promise((resolve) => setImmediate(resolve));
+    // ② 学习：调度闸排空（usageMeter 零实耗回填）+ 周期固化
+    server.learning.learningScheduler.requestCycle();
+    const out = server.learning.learningScheduler.drain();
+    expect(out).toHaveLength(1);
+    expect(out[0].status).toBe('executed');
+    expect(out[0].report.promoted).toHaveLength(1);
+    // ③ 固化落位（M28）：注册表 learned.* 归并 id 可查
+    const promoted = out[0].report.promoted[0];
+    expect(server.registry.findByLogicalId(`learned.${promoted.id}`)).toBeTruthy();
+    // ④⑤ 九层健康 → 全局态势：全链 ok
+    const health = await server.learning.reportLayerHealth();
+    expect(health).toHaveLength(9);
+    const byId = new Map(health.map((r) => [r.id, r]));
+    expect(byId.get('L1').status).toBe('ok'); // 技能库可达
+    expect(byId.get('L5').status).toBe('ok'); // 无分派失败
+    expect(byId.get('L8').status).toBe('ok'); // 熔断 closed
+    expect(byId.get('L9').status).toBe('ok'); // 调度未积压
+    const sit = server.situation();
+    expect(sit.overall).toBe('ok');
+    expect(sit.services.filter((s) => s.name.startsWith('layer-'))).toHaveLength(9);
     await server.stop();
   });
 });
