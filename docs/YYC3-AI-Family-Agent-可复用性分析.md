@@ -21,12 +21,12 @@
 ```yaml
 ---
 file: YYC3-AI-Family-Agent-可复用性分析.md
-description: 项目作为可复用组件的形态盘点（MCP / 插件包 / 内核库 / 模板）与插拔点全景、红线、路线
+description: 项目作为可复用组件的形态盘点（MCP / 插件包 / 内核库 / 模板）与插拔点全景、红线、路线、发布手册
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.0.0
+version: v1.1.0
 created: 2026-10-30
 updated: 2026-10-30
-scope: M30 终极生产闭环配套分析
+scope: M30 终极生产闭环配套分析 · M32 发布手册（R3 digest 公示）
 ---
 ```
 
@@ -39,7 +39,7 @@ scope: M30 终极生产闭环配套分析
 | 1 | **MCP Server**（标准协议接入） | ✅ 生产就绪 | `family-server.entry.ts` + `08/mcp-server-assembly` | 任意 MCP host（Claude / ZCode / cline 等） |
 | 2 | **能力包插件**（.skill 分发） | ✅ 生产就绪 | P4-T6 打包器 + `assets/packs/` 金包 | 任意装载器（确定性 ZIP · 零漂移可校验） |
 | 3 | **技能生态**（清单驱动） | ✅ 生产就绪 | `presets/family-manifest.yaml` + 45 SKILL.md + Agent Card | 人 / Agent / 目录服务 |
-| 4 | **内核库**（进程内嵌入） | 🟡 结构就绪 · 未发包 | `architecture-kernel/`（零运行时依赖） | Node/TS 项目 `import` |
+| 4 | **内核库**（进程内嵌入） | 🟡 装配就绪 · 待发布（M32 预检通过） | `pnpm pack:npm` → `dist/ai-family-kernel` | Node/TS 项目 `import` |
 | 5 | **家人模板**（脚手架衍生） | ◐ 部分就绪 | `create-member` 模板（千行链路有门禁） | 新家族实例 |
 | 6 | **外部 Worker**（A2A 远端） | ◐ 待联调 | `a2a-adapter` + 蓝图 13 端点 | 跨机家族编排 |
 
@@ -132,15 +132,31 @@ const rt = createRuntimeAssembly({
 
 ## 五、复用路线（按投入产出排序）
 
-| 步骤 | 动作 | 产出 | 依赖 |
+| 步骤 | 动作 | 产出 | 状态 |
 | ---- | ---- | ---- | ---- |
-| R1 | 内核 npm 打包（`architecture-kernel` 子包 exports 映射 + `files` 白名单） | `@yyc3/ai-family-kernel` 可 install | 无（结构已就绪） |
-| R2 | MCP Server 发布（npm bin + stdio 配置文档） | 任意 host 一条命令接入 | R1 |
-| R3 | 能力包市场化（金包版本策略 + digest 公示） | 插件分发通道 | 已就绪 |
-| R4 | 家人模板脚手架 CLI 化（create-member 门禁基准推广至 8 家人） | 新家族实例分钟级 | 千行 e2e 基准 |
-| R5 | 外部 Worker 模板（蓝图治理后固化接入模板 + uat:external 例行化） | 跨机家族编排 | 蓝图仓治理 |
+| R1 | 内核 npm 打包（exports 映射 + vendor 化 + 预编译） | `@yyc3/ai-family-kernel` 可 install | ✅ M31 装配落地 |
+| R2 | MCP Server 发布（npm bin + stdio 配置文档） | 任意 host 一条命令接入 | ✅ M31 装配落地 |
+| R3 | 能力包市场化（金包版本策略 + digest 公示） | `SHA256SUMS.txt` 双 tarball + 金包 | ✅ M32 公示落地 |
+| R4 | 家人模板脚手架 CLI 化（create-member 门禁基准推广至 8 家人） | 新家族实例分钟级 | ◐ 千行 e2e 基准 |
+| R5 | 外部 Worker 模板（蓝图治理后固化接入模板 + uat:external 例行化） | 跨机家族编排 | ◐ 待蓝图仓治理 |
 
-## 六、评估结论
+## 六、发布手册（M32 · npm 双包）
+
+前置：npm 账号 + `@yyc3` scope organization（或改用个人 scope）。**发布属用户操作**，装配与预检已全部自动化：
+
+```bash
+pnpm pack:npm                        # 1. 确定性装配 → dist/ai-family-kernel · dist/ai-family-agent
+npm publish --dry-run                # 2. 预检（M32 已过：kernel 211.3 kB · agent 270.4 kB，元数据齐备）
+cat dist/SHA256SUMS.txt              # 3. digest 公示（双 tarball + 金包 .skill · 随发布记录归档）
+cd dist/ai-family-kernel && npm publish --access public   # 4. 发布（首次需 --access public）
+cd ../ai-family-agent  && npm publish --access public
+```
+
+- **digest 公示（R3）**：`dist/SHA256SUMS.txt` 每次 `pack:npm` 重算——双 tarball + 金包 `.skill` 的 SHA256；发布 commit/Release Notes 引用该文件即完成「可复算校验」公示闭环。
+- **版本策略**：双包版本恒与根仓同步（`pack-npm.mjs` 红线断言）；根仓 MINOR 递增即随包递增，无独立版本漂移。
+- **金包版本**：`assets/packs/family-core-1.0.0.skill`（T6 确定性 ZIP）；技能/契约变更时按语义化版本重打包并重算 digest。
+
+## 七、评估结论
 
 - **可复用性总评：高**。架构决定因素是「端口注入 + 单一装配点 + 双清零骨架」（清单 v1.31：A/C 类全接线，311 文件 175 已接线），复用不需要重构，只需要**打包与发布**（R1/R2 纯机械动作）。
 - **最小复用闭环已实证**：MCP 形态（A2–A13 门禁 325 例）+ 插件形态（pack 契约 6 例）+ 内核形态（45 套件全部经进程内装配实证）。

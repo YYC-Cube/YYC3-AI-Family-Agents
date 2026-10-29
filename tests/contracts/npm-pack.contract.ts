@@ -45,6 +45,7 @@ if (__localShim) {
 }
 
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -144,6 +145,24 @@ describe('npm 双包打包契约（M31 · R1/R2）', () => {
     expect(countAliasImports(path.join(agentDir, 'dist'), /from\s+['"]@shared\//)).toBe(0);
     expect(countAliasImports(path.join(agentDir, 'dist'), /from\s+['"]@members\//)).toBe(0);
     expect(countAliasImports(path.join(kernelDir, 'src'), /from\s+['"]@shared\//)).toBe(0);
+  });
+
+  it('P5 R3 digest 公示：SHA256SUMS 双 tarball + 金包 .skill，首行可复算', () => {
+    // 发布元数据完整（npm publish 面）：repository/homepage/keywords 随包
+    for (const dir of [kernelDir, agentDir]) {
+      const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+      expect(pkg.repository.url).toContain('YYC3-AI-Family-Agents');
+      expect(Array.isArray(pkg.keywords)).toBeTruthy();
+    }
+    const sumsPath = path.join(outDir, 'SHA256SUMS.txt');
+    expect(fs.existsSync(sumsPath)).toBeTruthy();
+    const lines = fs.readFileSync(sumsPath, 'utf8').trim().split('\n');
+    expect(lines.length >= 3).toBeTruthy(); // 2 tarball + ≥1 金包 .skill
+    const [hash, relFile] = lines[0].split(/\s{2}/);
+    expect(hash).toHaveLength(64);
+    const actual = createHash('sha256').update(fs.readFileSync(safeJoin(outDir, relFile))).digest('hex');
+    expect(actual).toBe(hash); // 首行复算一致
+    expect(fs.readFileSync(sumsPath, 'utf8')).toContain('.skill'); // 金包入公示
   });
 });
 
