@@ -155,7 +155,7 @@ sequenceDiagram
 # 1. 类型检查（仓库根）
 pnpm typecheck          # 等价 tsc --noEmit
 
-# 2. 全量门禁：隔离编译 → 45 个套件 → 五支柱聚合 → 面板 → 退出码
+# 2. 全量门禁：隔离编译 → 44 个套件 → 五支柱聚合 → 面板 → 退出码
 pnpm regression         # 309 例全绿；0 例跳过
 
 # 3. 家族服务雏形（P6-A）：装载 45 技能 + MCP 处理器 + /metrics 能力供给真值

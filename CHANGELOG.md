@@ -128,6 +128,10 @@
 - **能力供给指标基线**：指标 18 → **21 项运行期**（§6.3 能力供给 3 项）；告警 11 → **12 条**（新增 `CapabilityPluginDenied`，组 `yyc3-family-capability-supply`）；五维映射「17 项运行时 + 2 项 CI + 协同 4 单列 + 能力供给 3 单列」
 - `package.json` 版本 2.24.0 → **2.25.0**（P2 生态外挂五任务 + P3-T1② steps 契约 + §6.3 供给指标；指导内已规划任务**全部清零**）
 
+### Fixed
+
+- **M26 合并闭环与门禁口径勘误（步骤 38）**：PR #2（M26 · squash **`3799dcc`**）为总规约「main 禁直推」下首个走分支 + PR 流程的合并——暴露 solo 仓治理死锁（保护策略要求 1 个批准审查，PR 作者不可自批且协作者仅作者一人，dependabot PR #1 同因未合并即关闭）；处置：快照保护规则后**仅将必需批准数 1 → 0**，必需检查「全量回归 + 五支柱面板」（strict）与会话解决要求原样保留（回滚：`gh api -X PATCH repos/YYC-Cube/YYC3-AI-Family-Agents/branches/main/protection/required_pull_request_reviews -F required_approving_review_count=1 -F dismiss_stale_reviews=true`）；README 门禁口径「45 个套件」→ **44**（`run-regression.mjs` 44 条目 · 面板 gate.specs=44）；02/03 补记与状态刷新
+
 ## [2.13.0] - 2026-10-23
 
 ### Added
