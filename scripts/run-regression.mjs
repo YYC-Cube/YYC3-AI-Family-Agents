@@ -65,7 +65,7 @@ const SPECS = [
   { file: 'tests/integration/a2a-adapter.spec.js', pillars: ['治'], phase: 'P2-T2', name: 'A2A 适配层（发现+委托+DLQ）' },
   { file: 'tests/integration/security-policy-bind.spec.js', pillars: ['治'], phase: 'P2-T4', name: '安全策略映射（observe/enforce）' },
   { file: 'tests/integration/capability-instrumentation.spec.js', pillars: ['治'], phase: '§6.3 接线', name: '能力供给生产接线' },
-  { file: 'tests/integration/family-server-assembly.spec.js', pillars: ['治'], phase: 'P6-A', name: '家族服务装配（MCP+准入+仪表）' },
+  { file: 'tests/integration/family-server-assembly.spec.js', pillars: ['治'], phase: 'P6-A', name: '家族服务装配（MCP+准入+仪表+学习闭环）' },
   { file: 'tests/integration/skill-executor.spec.js', pillars: ['学'], phase: 'P6-B', name: '技能执行引擎（确定性臂）' },
   { file: 'tests/integration/llm-step-executor.spec.js', pillars: ['学'], phase: 'P6-C', name: 'LLM 技能步骤执行（语义臂）' },
   { file: 'tests/integration/learning-scheduler.spec.js', pillars: ['学'], phase: 'P8-a', name: '学习调度器（配额+队列）' },

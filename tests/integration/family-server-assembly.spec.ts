@@ -1,6 +1,6 @@
 // @ts-nocheck
 /**
- * 家族服务装配测试（family-server-assembly）—— P6-A（M14）。
+ * 家族服务装配测试（family-server-assembly）—— P6-A（M14）+ M28 部署侧装配合流。
  *
  * 验收：
  *   A1 工具名 ↔ logicalId 逆映射（gen-mcp-tools `.`→`__`、`-`→`_` 的逆变换锚点）
@@ -10,6 +10,9 @@
  *   A5 未注册技能：introspection 分派抛错 → isError + error 计账
  *   A6 /metrics 真值：HTTP 暴露含能力供给三族样本行；stop 幂等
  *   A7 零指标装配：metrics 未注入时治理链照常（enforce 拒绝），不抛不记
+ *   A9 学习闭环贯通（M28）：MCP 调用 → bus → bridge → loop → 固化落位进服务注册表
+ *   A10 调度闸接线（M28）：usageMeter 自动接 llmUsage——零实耗全额归还
+ *   A11 失败轨迹馈入（M28）：分派失败 → completed=false → failure 负样本
  *
  * 运行：tsc 编译 + node（零依赖 harness，范式同 capability-instrumentation）。
  */
@@ -45,6 +48,7 @@ if (__localShim) {
 
 import { assembleMcpServer } from '../../architecture-kernel/08-系统装配/mcp-server-assembly.js';
 import { ComplianceAudit } from '../../architecture-kernel/06-治理中心/compliance-audit/compliance-audit.js';
+import { InMemorySkillStore } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
 import { startFamilyServer, logicalIdOfTool } from '../../family-agents/family-server.entry.js';
 
 /** 内联清单（hermetic）：2 active + 1 planned；id 与工具名按 gen-mcp-tools 映射对齐。 */
@@ -265,6 +269,77 @@ describe('家族服务装配（P6-A · M14）', () => {
     expect(denied.result.isError).toBe(true);
     expect(denied.result.content[0].text).toContain('card 能力清单外');
     expect(server.metrics.capabilityMcpToolCalls.value({ result: 'error' })).toBe(1);
+    await server.stop();
+  });
+
+  it('A9 学习闭环贯通（M28）：MCP 调用 → bus → bridge → loop → 固化落位进服务注册表', async () => {
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES,
+      learning: { store: new InMemorySkillStore() },
+    });
+    expect(server.learning).toBeTruthy();
+    for (let i = 0; i < 4; i += 1) {
+      const res = call(server, 'qianhang__intent_detection');
+      expect(res.result.isError).toBeFalsy();
+    }
+    await new Promise((resolve) => setImmediate(resolve)); // 异步 publish 微任务排空
+    expect(server.learning.bridge.stats.accepted).toBe(4); // 轨迹全部受理
+    const report = server.learning.loop.runCycle({ minSamples: 2, minSuccessRate: 0.5 });
+    expect(report.promoted).toHaveLength(1);
+    const promoted = report.promoted[0];
+    const found = server.registry.findByLogicalId(`learned.${promoted.id}`); // 归并 id 落位可查
+    expect(found).toBeTruthy();
+    expect(found.id).toBe(promoted.id);
+    expect(found.steps[0].order).toBe(1);
+    expect(found.steps[0].action).toBe(promoted.steps[0]);
+    await server.stop();
+  });
+
+  it('A10 调度闸接线（M28）：usageMeter 自动接 llmUsage——零实耗全额归还', async () => {
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES,
+      // provider 构造惰性读 env（无密钥不调用）——llmUsage 计数器就位；
+      // 清单条目无 steps 走确定性臂，全程零真实 LLM 调用
+      llm: { provider: 'zhipu' },
+      learning: {
+        store: new InMemorySkillStore(),
+        scheduler: { total: { maxTokens: 1_000, maxCalls: 3 }, tokensPerCycle: 400 },
+      },
+    });
+    expect(server.llmUsage).toBeTruthy();
+    expect(server.learning.learningScheduler).toBeTruthy();
+    server.learning.learningScheduler.requestCycle();
+    const out = server.learning.learningScheduler.drain();
+    expect(out).toHaveLength(1);
+    expect(out[0].status).toBe('executed');
+    expect(out[0].usage.actualTokens).toBe(0); // 确定性臂零 LLM 实耗
+    expect(out[0].usage.releasedTokens).toBe(400); // 授予份额全额归还（usageMeter 已接线）
+    expect(server.learning.learningScheduler.available().maxTokens).toBe(1000);
+    expect(server.learning.learningScheduler.available().maxCalls).toBe(2);
+    await server.stop();
+  });
+
+  it('A11 失败轨迹馈入（M28）：分派失败 → completed=false → failure 负样本', async () => {
+    const server = await startFamilyServer({
+      serverInfo: SERVER_INFO,
+      tools: TOOLS,
+      manifestEntries: ENTRIES,
+      dispatch: () => {
+        throw new Error('分派内部失败');
+      },
+      learning: { store: new InMemorySkillStore() },
+    });
+    const res = call(server, 'qianhang__intent_detection');
+    expect(res.result.isError).toBe(true);
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(server.learning.bridge.stats.accepted).toBe(1); // 失败也记轨迹
+    const report = server.learning.loop.runCycle({});
+    expect(report.labeled).toHaveLength(1);
+    expect(report.labeled[0].label).toBe('failure');
     await server.stop();
   });
 });
