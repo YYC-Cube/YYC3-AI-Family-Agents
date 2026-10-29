@@ -20,6 +20,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -30,6 +31,34 @@ const VERSION = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf
 const TSC = fs.existsSync(path.join(ROOT, 'node_modules', '.bin', 'tsc'))
   ? path.join(ROOT, 'node_modules', '.bin', 'tsc')
   : 'tsc';
+
+/** 两包共享元数据（与根 package.json 对齐——npm 发布面完整）。 */
+const SHARED_META = {
+  repository: {
+    type: 'git',
+    url: 'https://github.com/YYC-Cube/YYC3-AI-Family-Agents.git',
+  },
+  homepage: 'https://matrix.yyc3.top',
+  bugs: {
+    url: 'https://github.com/YYC-Cube/YYC3-AI-Family-Agents/issues',
+  },
+  keywords: ['ai-agents', 'multi-agent-systems', 'ai-family', 'yyc3', 'typescript', 'five-pillars', 'observability', 'mcp', 'skill-pack'],
+};
+
+function sha256(file) {
+  return createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+}
+
+/** 递归收集文件绝对路径。 */
+function walk(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const abs = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(abs, out);
+    else out.push(abs);
+  }
+  return out;
+}
 
 const SHARED_VENDOR = {
   'self-judge-kit': 'family-agents/shared-core/self-judge-kit',
@@ -223,6 +252,7 @@ function buildKernel(stageDir) {
     license: 'MIT',
     type: 'module',
     engines: { node: '>=20' },
+    ...SHARED_META,
     exports: {
       '.': './dist/src/index.js',
       './runtime-assembly': './dist/src/08-系统装配/runtime-assembly.js',
@@ -360,6 +390,7 @@ function buildAgent(stageDir) {
     license: 'MIT',
     type: 'module',
     engines: { node: '>=20' },
+    ...SHARED_META,
     bin: { 'yyc3-family-server': 'bin/yyc3-family-server.mjs' },
     exports: {
       './family-server.entry': './dist/family-agents/family-server.entry.js',
@@ -425,21 +456,6 @@ child.on('exit', (code) => process.exit(code ?? 0));
   );
   fs.chmodSync(path.join(binDir, 'yyc3-family-server.mjs'), 0o755);
 
-  writeJson(path.join(stageDir, 'package.json'), {
-    name: '@yyc3/ai-family-agent',
-    version: VERSION,
-    description: 'YYC³ AI Family Agent 家族服务 MCP Server（45 技能 · 准入治理 · 确定性+LLM 双臂 · A2A 编排）',
-    license: 'MIT',
-    type: 'module',
-    engines: { node: '>=20' },
-    bin: { 'yyc3-family-server': 'bin/yyc3-family-server.mjs' },
-    exports: {
-      './family-server.entry': './dist/family-agents/family-server.entry.js',
-      './package.json': './package.json',
-    },
-    files: ['dist', 'presets', 'assets', 'bin'],
-    dependencies: {},
-  });
   fs.writeFileSync(
     path.join(stageDir, 'README.md'),
     generateReadme(
@@ -472,12 +488,36 @@ function verifyPackage(stageDir, kind) {
   if (pkg.version !== VERSION) throw new Error(`${kind} 版本不同步：${pkg.version} ≠ ${VERSION}`);
   if (Object.keys(pkg.dependencies ?? {}).length > 0) throw new Error(`${kind} 存在运行时依赖（红线）`);
   if (pkg.private) throw new Error(`${kind} 不可标记 private`);
+  for (const key of ['repository', 'homepage', 'keywords']) {
+    if (!pkg[key]) throw new Error(`${kind} 缺发布元数据：${key}`);
+  }
   for (const [key, target] of Object.entries(pkg.exports ?? {})) {
     if (key === './package.json') continue;
     const abs = path.join(stageDir, target);
     if (!fs.existsSync(abs)) throw new Error(`${kind} exports ${key} → ${target} 不存在`);
   }
   return pkg;
+}
+
+/**
+ * R3 digest 公示：双 npm tarball + 金包 .skill 全量 SHA256，
+ * 生成 outRoot/SHA256SUMS.txt（发布时随包公示，可复算校验）。
+ */
+function emitDigests(outRoot, kernelDir, agentDir) {
+  for (const dir of [kernelDir, agentDir]) {
+    execFileSync('npm', ['pack', '--pack-destination', dir], { cwd: dir, stdio: 'ignore' });
+  }
+  const lines = [];
+  for (const dir of [kernelDir, agentDir]) {
+    for (const file of walk(dir)) {
+      if (file.endsWith('.tgz')) lines.push(`${sha256(file)}  ${toPosix(path.relative(outRoot, file))}`);
+    }
+  }
+  for (const file of walk(path.join(agentDir, 'assets', 'packs'))) {
+    if (file.endsWith('.skill')) lines.push(`${sha256(file)}  ${toPosix(path.relative(outRoot, file))}`);
+  }
+  fs.writeFileSync(path.join(outRoot, 'SHA256SUMS.txt'), `${lines.join('\n')}\n`);
+  return lines.length;
 }
 
 function main() {
@@ -491,11 +531,13 @@ function main() {
   console.log(`ⓔ npm 双包打包（R1/R2 · v${VERSION}）→ ${outRoot}${check ? '（临时 · --check）' : ''}`);
   const kernelStat = buildKernel(kernelDir);
   const agentStat = buildAgent(agentDir);
-  const kernelPkg = verifyPackage(kernelDir, 'kernel');
-  const agentPkg = verifyPackage(agentDir, 'agent');
+  verifyPackage(kernelDir, 'kernel');
+  verifyPackage(agentDir, 'agent');
+  const digestCount = emitDigests(outRoot, kernelDir, agentDir);
 
-  console.log(`   kernel：源 ${kernelStat.kernelFiles} · vendor ${kernelStat.vendorFiles} · 重写 ${kernelStat.kernelRewrites} · dist ${kernelStat.distFiles}（exports ${Object.keys(kernelPkg.exports).length}）`);
+  console.log(`   kernel：源 ${kernelStat.kernelFiles} · vendor ${kernelStat.vendorFiles} · 重写 ${kernelStat.kernelRewrites} · dist ${kernelStat.distFiles}`);
   console.log(`   agent ：重写 ${agentStat.agentRewrites} · dist ${agentStat.distFiles} · presets ${agentStat.presets ? '✓' : '✗'} · bin ✓`);
+  console.log(`   digests：SHA256SUMS.txt ${digestCount} 条（双 tarball + 金包 .skill · R3 公示）`);
   console.log('✅ 双包装配完成（@yyc3/ai-family-kernel · @yyc3/ai-family-agent · 零运行时依赖 · 版本同步）');
 
   if (check) {
