@@ -32,7 +32,7 @@ export interface OpenAiCompatibleOptions {
 /** 兼容响应（仅声明使用到的字段）。 */
 interface CompatResponse {
   readonly choices?: readonly {
-    readonly message?: { readonly content?: string };
+    readonly message?: { readonly content?: string; readonly reasoning_content?: string };
     readonly finish_reason?: string;
     readonly logprobs?: { readonly content?: readonly { readonly logprob?: number }[] };
   }[];
@@ -142,6 +142,7 @@ export class OpenAiCompatibleClient {
       ...(req.temperature !== undefined ? { temperature: req.temperature } : {}),
       ...(req.maxTokens !== undefined ? { max_tokens: req.maxTokens } : {}),
       ...(req.logprobs ? { logprobs: true } : {}),
+      ...(req.reasoning ? { reasoning: req.reasoning } : {}),
     };
   }
 
@@ -204,8 +205,11 @@ export class OpenAiCompatibleClient {
       throw new ProviderError('响应不是合法 JSON', status, false);
     }
     const choice = json.choices?.[0];
-    const text = choice?.message?.content;
-    if (typeof text !== 'string') {
+    // E0c 模型亲和：思考型模型可能 content 空、reasoning_content 非空——不崩、透传、可计量
+    const reasoningContent =
+      typeof choice?.message?.reasoning_content === 'string' ? choice.message.reasoning_content : undefined;
+    const text = typeof choice?.message?.content === 'string' ? choice.message.content : '';
+    if (typeof choice?.message?.content !== 'string' && !reasoningContent) {
       throw new ProviderError('响应缺少 choices[0].message.content', status, false);
     }
     const logprobs = choice?.logprobs?.content
@@ -214,6 +218,7 @@ export class OpenAiCompatibleClient {
     return {
       text,
       ...(logprobs && logprobs.length > 0 ? { logprobs } : {}),
+      ...(reasoningContent !== undefined ? { reasoningContent } : {}),
       finishReason: choice?.finish_reason ?? 'unknown',
       usage: {
         promptTokens: json.usage?.prompt_tokens ?? 0,

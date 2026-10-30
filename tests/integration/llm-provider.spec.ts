@@ -11,6 +11,10 @@
  *   L6 isAvailable（环境变量存在性）
  *   O1 OpenAI 补全（Bearer / 组织头 / 响应整形）
  *   O2 OpenAI isAvailable 不受 ZHIPU_API_KEY 影响
+ *   E0c-1 思考型响应 reasoning_content 透传（content 空不崩 · 可计量）
+ *   E0c-2 reasoning 请求字段透传（enabled + budgetTokens）
+ *   E0c-3 LlmUsageCounter 三维分桶（tags 聚合 · 快照导出 · 无 tags 归总量）
+ *   E0c-4 runner maxTokens 配置注入（createLlmStepRunner 第三参）
  *
  * 安全：全程使用假密钥 `test-key`，不读取、不打印真实密钥。
  */
@@ -35,12 +39,24 @@ if (__localShim) {
     toContain: (exp) => {
       if (!String(actual).includes(exp)) throw new Error(`期望包含 ${JSON.stringify(exp)}，实际 ${String(actual).slice(0, 300)}`);
     },
+    toHaveLength: (n) => {
+      if (actual.length !== n) throw new Error(`期望长度 ${n}，实际 ${actual.length}`);
+    },
+    not: {
+      toContain: (exp) => {
+        if (String(actual).includes(exp)) throw new Error(`期望不含 ${JSON.stringify(exp)}，实际 ${String(actual).slice(0, 200)}`);
+      },
+    },
   });
 }
 
 import http from 'node:http';
 import { ZhiPuProvider } from '@shared/llm-adapter/zhipu-provider.js';
 import { OpenAiProvider } from '@shared/llm-adapter/openai-provider.js';
+import {
+  LlmUsageCounter,
+  createLlmStepRunner,
+} from '@shared/llm-adapter/skill-step-executor.js';
 
 /** 启动本地桩服务，返回 baseUrl、请求记录与关闭函数。 */
 async function listen(handler) {
@@ -265,6 +281,80 @@ describe('LLM Provider（zhipu）', () => {
       if (prevZhipu === undefined) delete process.env.ZHIPU_API_KEY;
       else process.env.ZHIPU_API_KEY = prevZhipu;
     }
+  });
+
+  it('E0c-1: 思考型响应 reasoning_content 透传（content 空不崩 · 可计量）', async () => {
+    const stub = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        choices: [{
+          message: { reasoning_content: '思考过程——先取口径再对比环比' },
+          finish_reason: 'stop',
+        }],
+        usage: { prompt_tokens: 12, completion_tokens: 40 },
+      }));
+    });
+    try {
+      const provider = new ZhiPuProvider('ZHIPU_API_KEY', stub.baseUrl);
+      const out = await withKey('test-key', () => provider.complete({ ...REQ, maxTokens: 3072 }));
+      expect(out.text).toBe(''); // content 空：不崩、text 置空
+      expect(out.reasoningContent).toBe('思考过程——先取口径再对比环比'); // 透传供观测/审计
+      expect(out.usage.completionTokens).toBe(40); // usage 照常计量
+      const body = JSON.parse(stub.requests[0].body);
+      expect(body.max_tokens).toBe(3072); // maxTokens 配置注入生效（E0c）
+    } finally {
+      await stub.close();
+    }
+  });
+
+  it('E0c-2: reasoning 请求字段透传（enabled + budgetTokens）', async () => {
+    const stub = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        choices: [{ message: { content: 'ok' }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 5, completion_tokens: 2 },
+      }));
+    });
+    try {
+      const provider = new ZhiPuProvider('ZHIPU_API_KEY', stub.baseUrl);
+      await withKey('test-key', () =>
+        provider.complete({ ...REQ, reasoning: { enabled: true, budgetTokens: 3072 } }));
+      const body = JSON.parse(stub.requests[0].body);
+      expect(body.reasoning.enabled).toBe(true);
+      expect(body.reasoning.budgetTokens).toBe(3072);
+    } finally {
+      await stub.close();
+    }
+  });
+
+  it('E0c-3: LlmUsageCounter 三维分桶（tags 聚合 · 快照导出 · 无 tags 归总量）', () => {
+    const counter = new LlmUsageCounter();
+    counter.record({ promptTokens: 10, completionTokens: 5 }, { skillId: 'skill-a', scenario: 'llm-assisted' });
+    counter.record({ promptTokens: 20, completionTokens: 8 }, { skillId: 'skill-b', scenario: 'llm-assisted' });
+    counter.record({ promptTokens: 1, completionTokens: 1 }); // 无 tags：仅总量（向后兼容）
+    const snap = counter.snapshot();
+    expect(snap.totalTokens).toBe(45);
+    expect(snap.buckets).toHaveLength(2);
+    const bySkill = new Map(snap.buckets.map((b) => [b.skillId, b]));
+    expect(bySkill.get('skill-a').totalTokens).toBe(15);
+    expect(bySkill.get('skill-b').totalTokens).toBe(28);
+    expect(bySkill.get('skill-a').scenario).toBe('llm-assisted');
+  });
+
+  it('E0c-4: runner maxTokens 配置注入（createLlmStepRunner 第三参）', async () => {
+    let captured;
+    const fakeProvider = {
+      complete: async (req) => {
+        captured = req;
+        return { text: 'x', finishReason: 'stop', usage: { promptTokens: 1, completionTokens: 1 } };
+      },
+    };
+    const runner = createLlmStepRunner(fakeProvider, 'glm-4-flash', 3072);
+    await runner([{ role: 'user', content: 'hi' }]);
+    expect(captured.maxTokens).toBe(3072);
+    const runnerDefault = createLlmStepRunner(fakeProvider, 'glm-4-flash');
+    await runnerDefault([]);
+    expect(captured.maxTokens).toBe(1024); // 缺省向后兼容
   });
 });
 

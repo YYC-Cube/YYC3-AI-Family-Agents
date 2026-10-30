@@ -5,9 +5,24 @@ family:
 llm:
   default_provider: zhipu
   providers:
-    openai: { model: gpt-4o, timeout_ms: 30000 }
-    zhipu: { model: glm-4-plus, timeout_ms: 30000 }
-    ollama: { base_url: http://localhost:11434, model: qwen2.5:14b }  # 降级兜底（§6.2）
+    openai:
+      model: gpt-4o
+      timeout_ms: 30000
+      max_tokens: 1024
+    zhipu:
+      model: glm-4-plus
+      timeout_ms: 30000
+      max_tokens: 1024
+    # E0a 本地网关档（消费端接线 · M34）：base_url/model 由部署侧经
+    # LLM_STEP_BASE_URL / LLM_STEP_MODEL 注入；思考型模型档位建议 max_tokens: 3072
+    local:
+      base_url: ${LLM_STEP_BASE_URL}
+      model: ${LLM_STEP_MODEL}
+      timeout_ms: 30000
+      max_tokens: 1024
+    ollama:
+      base_url: http://localhost:11434
+      model: qwen2.5:14b  # 降级兜底（§6.2）
 memory:
   working_context: { max_turns: 20 }
   episodic_store: { retention_days: 365 }

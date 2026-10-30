@@ -111,10 +111,14 @@ export interface FamilyServerConfig {
   /** LLM 语义执行臂（M16）：真实 provider 配置（密钥经环境变量由 provider 自取；
    *  启动器侧受三闸门控 LLM_STEP=1 + LLM_STEP_CONFIRM + API Key，缺省不启用）。 */
   readonly llm?: {
-    readonly provider: 'zhipu' | 'openai';
+    readonly provider: 'zhipu' | 'openai' | 'local';
     readonly model?: string;
     readonly apiKeyEnv?: string;
     readonly baseUrl?: string;
+    /** 每次补全的最大 token（E0c：base.yaml llm.providers.*.max_tokens 注入；缺省 1024）。 */
+    readonly maxTokens?: number;
+    /** 请求超时毫秒（E0c：base.yaml llm.providers.*.timeout_ms 注入；缺省 30000）。 */
+    readonly timeoutMs?: number;
   };
   readonly metricsServer?: { readonly port?: number; readonly host?: string; readonly authToken?: string };
   /**
@@ -181,6 +185,7 @@ function baseDispatch(
   entriesByLogicalId: ReadonlyMap<string, ExecutableSkillEntry>,
   llmRunner?: LlmStepRunner,
   metrics?: FamilyMetrics,
+  llmUsage?: LlmUsageCounter,
 ): McpToolDispatcher {
   const logicalByTool = new Map(
     tools.map((tool) => {
@@ -206,7 +211,21 @@ function baseDispatch(
     const base = executeManifestSkill(entry, (ctx.args ?? {}) as Record<string, unknown>);
     if (!base.inputOk) throw new Error(`输入契约不满足（${entry.id}）：${base.inputViolations.join('；')}`);
     if (!base.llmRequired) return base; // 无步骤条目：确定性结果（同步快速路径）
-    return executeSkillWithLlm(entry, (ctx.args ?? {}) as Record<string, unknown>, { runner: llmRunner, metrics });
+    // E0b 分口径：本次技能执行的 usage 增量按 skillId/scenario 上报（agentId 由部署侧补）
+    const usageBefore = llmUsage?.totalTokens ?? 0;
+    return executeSkillWithLlm(entry, (ctx.args ?? {}) as Record<string, unknown>, {
+      runner: llmRunner,
+      metrics,
+    }).then((result) => {
+      if (llmUsage && metrics) {
+        metrics.recordLlmUsage(
+          { skillId: entry.id, scenario: 'llm-assisted' },
+          Math.max(0, llmUsage.totalTokens - usageBefore),
+          1,
+        );
+      }
+      return result;
+    });
   };
 }
 
@@ -222,8 +241,9 @@ function executeDispatch(
   llmRunner: LlmStepRunner | undefined,
   metrics: FamilyMetrics,
   a2a: { directory: CardDirectory; client: DelegateClient; allowedSkills: ReadonlySet<string> } | undefined,
+  llmUsage?: LlmUsageCounter,
 ): McpToolDispatcher {
-  const base = baseDispatch(registry, tools, entriesByLogicalId, llmRunner, metrics);
+  const base = baseDispatch(registry, tools, entriesByLogicalId, llmRunner, metrics, llmUsage);
   if (!a2a) return base;
   const a2aArm = async (ctx: { traceId?: string; args?: unknown }): Promise<unknown> => {
     const args = (ctx.args ?? {}) as { skillId?: unknown; input?: unknown };
@@ -325,7 +345,9 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     (config.manifestEntries as readonly ExecutableSkillEntry[]).map((entry) => [entry.id, entry]),
   );
   // LLM 语义执行臂（M16）：注入 runner 优先；provider 由部署配置构造（真实调用受启动器三闸门控）；
-  // P8 收尾 b：provider 构造臂自动挂 LlmUsageCounter（真实 usage 计量，句柄 llmUsage 暴露）
+  // P8 收尾 b：provider 构造臂自动挂 LlmUsageCounter（真实 usage 计量，句柄 llmUsage 暴露）；
+  // E0c：maxTokens / timeoutMs 由 base.yaml llm.providers.* 档位注入（思考型档位建议 maxTokens 3072）
+  const llmTimeout = config.llm?.timeoutMs !== undefined ? { timeoutMs: config.llm.timeoutMs } : {};
   let llmUsage: LlmUsageCounter | undefined;
   const llmRunner: LlmStepRunner | undefined =
     config.llmRunner ??
@@ -335,13 +357,22 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
             ? new OpenAiProvider(
                 config.llm.apiKeyEnv ?? 'OPENAI_API_KEY',
                 config.llm.baseUrl ?? 'https://api.openai.com/v1',
+                llmTimeout,
               )
-            : new ZhiPuProvider(
-                config.llm.apiKeyEnv ?? 'ZHIPU_API_KEY',
-                config.llm.baseUrl ?? 'https://open.bigmodel.cn/api/paas/v4',
-              ),
+            : config.llm.provider === 'local'
+              ? // E0a 本地网关（OpenAI 兼容 /v1；key 环境变量由启动器三闸保证存在）
+                new OpenAiProvider(
+                  config.llm.apiKeyEnv ?? 'LOCAL_GATEWAY_API_KEY',
+                  config.llm.baseUrl ?? 'http://127.0.0.1:8000/v1',
+                  llmTimeout,
+                )
+              : new ZhiPuProvider(
+                  config.llm.apiKeyEnv ?? 'ZHIPU_API_KEY',
+                  config.llm.baseUrl ?? 'https://open.bigmodel.cn/api/paas/v4',
+                  llmTimeout,
+                ),
           config.llm.model ?? (config.llm.provider === 'openai' ? 'gpt-4o-mini' : 'glm-4-flash'),
-          1024,
+          config.llm.maxTokens ?? 1024,
           (llmUsage = new LlmUsageCounter()),
         )
       : undefined);
@@ -466,7 +497,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
   }
   const dispatcher: McpToolDispatcher =
     config.dispatch ??
-    executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a);
+    executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a, llmUsage);
 
   const mcp = assembleMcpServer({
     serverInfo: config.serverInfo,
