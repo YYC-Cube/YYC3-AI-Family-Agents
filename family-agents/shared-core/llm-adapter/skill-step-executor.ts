@@ -31,20 +31,43 @@ interface ProviderLike {
   }>;
 }
 
+/** 用量分桶标签（E0b 计量分口径：三维可聚合，缺省归 others）。 */
+export interface LlmUsageTags {
+  readonly agentId?: string;
+  readonly skillId?: string;
+  readonly scenario?: string;
+}
+
 /**
  * 累计 LLM 用量计数器（P8 收尾 b · usage 回填生产端）：真实 provider usage 逐调用
  * 累计；totalTokens 即运行时装配调度闸 usageMeter 端口值（份额记账冲抵）。
+ * E0b 分口径：record 可附三维 tags（agentId/skillId/scenario），分桶快照供
+ * /metrics 聚合导出（家族用量报表口径地基）。
  */
 export class LlmUsageCounter {
   private promptTokens = 0;
   private completionTokens = 0;
   private calls = 0;
+  private readonly buckets = new Map<string, { promptTokens: number; completionTokens: number; calls: number }>();
 
-  /** 记一次调用的真实用量（负值按 0 计，防脏数据透支）。 */
-  record(usage: { readonly promptTokens: number; readonly completionTokens: number }): void {
-    this.promptTokens += Math.max(0, usage.promptTokens);
-    this.completionTokens += Math.max(0, usage.completionTokens);
+  /** 记一次调用的真实用量（负值按 0 计，防脏数据透支；tags 缺省归 others 桶）。 */
+  record(
+    usage: { readonly promptTokens: number; readonly completionTokens: number },
+    tags?: LlmUsageTags,
+  ): void {
+    const prompt = Math.max(0, usage.promptTokens);
+    const completion = Math.max(0, usage.completionTokens);
+    this.promptTokens += prompt;
+    this.completionTokens += completion;
     this.calls += 1;
+    if (tags) {
+      const key = [tags.agentId ?? '', tags.skillId ?? '', tags.scenario ?? ''].join('|');
+      const bucket = this.buckets.get(key) ?? { promptTokens: 0, completionTokens: 0, calls: 0 };
+      bucket.promptTokens += prompt;
+      bucket.completionTokens += completion;
+      bucket.calls += 1;
+      this.buckets.set(key, bucket);
+    }
   }
 
   /** 累计总 token（prompt + completion）。 */
@@ -52,19 +75,48 @@ export class LlmUsageCounter {
     return this.promptTokens + this.completionTokens;
   }
 
-  /** 快照（观测/自检输出）。 */
-  snapshot(): { promptTokens: number; completionTokens: number; calls: number; totalTokens: number } {
+  /** 快照（观测/自检输出；buckets 为三维分桶聚合）。 */
+  snapshot(): {
+    promptTokens: number;
+    completionTokens: number;
+    calls: number;
+    totalTokens: number;
+    buckets: readonly {
+      agentId: string;
+      skillId: string;
+      scenario: string;
+      promptTokens: number;
+      completionTokens: number;
+      calls: number;
+      totalTokens: number;
+    }[];
+  } {
+    const buckets = [...this.buckets.entries()].map(([key, b]) => {
+      const [agentId, skillId, scenario] = key.split('|');
+      return {
+        agentId,
+        skillId,
+        scenario,
+        promptTokens: b.promptTokens,
+        completionTokens: b.completionTokens,
+        calls: b.calls,
+        totalTokens: b.promptTokens + b.completionTokens,
+      };
+    });
     return {
       promptTokens: this.promptTokens,
       completionTokens: this.completionTokens,
       calls: this.calls,
       totalTokens: this.totalTokens,
+      buckets,
     };
   }
 }
 
 /** 由 provider 构造 runner（真实调用方；密钥经环境变量由 provider 自取；
- *  meter 注入即逐调用累计真实 usage——调度闸 usage 回填的数据源）。 */
+ *  meter 注入即逐调用累计真实 usage——调度闸 usage 回填的数据源；
+ *  maxTokens 由配置注入（E0c：base.yaml llm.providers.*.max_tokens 档位，
+ *  思考型档位建议 3072；超时走 provider 构造 timeoutMs）；缺省维持 1024 向后兼容。 */
 export function createLlmStepRunner(
   provider: ProviderLike,
   model: string,

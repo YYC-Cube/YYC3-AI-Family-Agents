@@ -18,6 +18,11 @@ export interface CompletionRequest {
   readonly maxTokens?: number;
   /** 是否要求返回 logprob（用于 confidence-scorer）。 */
   readonly logprobs?: boolean;
+  /**
+   * 思考型模型推理开关（E0c · 模型亲和）：网关不支持时忽略；
+   * budgetTokens 为推理预算（思考型档位建议 3072）。
+   */
+  readonly reasoning?: { readonly enabled: boolean; readonly budgetTokens?: number };
 }
 
 /** 补全响应。 */
@@ -27,6 +32,11 @@ export interface CompletionResponse {
   readonly logprobs?: readonly number[];
   readonly finishReason: string;
   readonly usage: { promptTokens: number; completionTokens: number };
+  /**
+   * 思考型模型推理文本（E0c：choices[0].message.reasoning_content 透传——
+   * 不参与 extractStepJson 抽取与输出填充，仅供观测/审计）。
+   */
+  readonly reasoningContent?: string;
 }
 
 /** Provider 统一错误（status 为 HTTP 状态；retryable 表示是否可重试）。 */

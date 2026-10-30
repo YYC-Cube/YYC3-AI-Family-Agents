@@ -104,6 +104,10 @@ export class FamilyMetrics {
   readonly llmSteps: Counter;
   /** 语义执行 · LLM 输出字段填充率（0..1，M19）。 */
   readonly llmFillRatio: Gauge;
+  /** 语义执行 · LLM token 用量（agent_id/skill_id/scenario 三维分组，E0b 计量分口径）。 */
+  readonly llmUsageTokens: Counter;
+  /** 语义执行 · LLM 调用次数（三维分组，E0b）。 */
+  readonly llmUsageCalls: Counter;
   /** 协同度累计（kind → total/hit）。 */
   private readonly collaboration = new Map<CollaborationKind, { total: number; hit: number }>();
   /** Exemplar 丢弃计数（仅在启用 exemplar 时注册）。 */
@@ -194,6 +198,14 @@ export class FamilyMetrics {
     this.llmFillRatio = registry.gauge(
       'family_llm_output_fill_ratio',
       'LLM 语义执行输出字段填充率（0..1，M19 观测增强；告警基线 0.8）',
+    );
+    this.llmUsageTokens = registry.counter(
+      'family_llm_usage_tokens_total',
+      'LLM token 用量（agent_id/skill_id/scenario 三维分组 · E0b 计量分口径）',
+    );
+    this.llmUsageCalls = registry.counter(
+      'family_llm_usage_calls_total',
+      'LLM 调用次数（agent_id/skill_id/scenario 三维分组 · E0b 计量分口径）',
     );
   }
 
@@ -316,6 +328,24 @@ export class FamilyMetrics {
   recordLlmExecution(skillId: string, steps: number, filled: number, fields: number): void {
     this.llmSteps.inc({ skill: skillId }, steps);
     this.llmFillRatio.set(fields > 0 ? filled / fields : 1);
+  }
+
+  /**
+   * LLM 用量分口径埋点（E0b）：agent_id / skill_id / scenario 三维分组计数——
+   * 家族用量报表口径地基（入住率报表按维度聚合导出；缺省维度归 unknown）。
+   */
+  recordLlmUsage(
+    tags: { readonly agentId?: string; readonly skillId?: string; readonly scenario?: string },
+    totalTokens: number,
+    calls = 1,
+  ): void {
+    const labels = {
+      agent_id: tags.agentId ?? 'unknown',
+      skill_id: tags.skillId ?? 'unknown',
+      scenario: tags.scenario ?? 'unknown',
+    };
+    if (totalTokens > 0) this.llmUsageTokens.inc(labels, totalTokens);
+    this.llmUsageCalls.inc(labels, calls);
   }
 
   /** 一致性指标埋点（ConsistencyTracker.snapshot 直连；无样本时保留上次值）。 */

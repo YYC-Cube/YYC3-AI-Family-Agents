@@ -73,7 +73,7 @@ _万象归元于云枢 · 深栈智启新纪元_
 - **零运行时依赖**：指标、HTTP 端点、编译/回归脚本全部基于 Node 标准库
 - **端到端装配**：`createRuntimeAssembly()` 一次接线「总线 → 轨迹 → 学习 → 落盘 → 回滚」
 - **可观测闭环**：23 项 `family_*` 指标 → `/metrics`（Bearer 鉴权）→ 13 条告警 → 五支柱面板
-- **门禁可复现**：`pnpm regression` 单命令完成编译、338 例测试、面板生成与退出码判定
+- **门禁可复现**：`pnpm regression` 单命令完成编译、343 例测试、面板生成与退出码判定
 
 ---
 
@@ -156,7 +156,7 @@ sequenceDiagram
 pnpm typecheck          # 等价 tsc --noEmit
 
 # 2. 全量门禁：隔离编译 → 48 个套件 → 五支柱聚合 → 面板 → 退出码
-pnpm regression         # 338 例全绿；0 例跳过
+pnpm regression         # 343 例全绿；0 例跳过
 
 # 2b. npm 双包装配（R1/R2）：内核库 + MCP Server 可发布包 → dist/
 pnpm pack:npm           # @yyc3/ai-family-kernel · @yyc3/ai-family-agent（零运行时依赖 · 确定性装配）

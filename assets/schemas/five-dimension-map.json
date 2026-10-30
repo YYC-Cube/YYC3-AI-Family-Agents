@@ -1,7 +1,7 @@
 {
   "schema": "yyc3.five-dimension-map/v1",
-  "description": "五维评估 ↔ family_* 指标映射（P1-T4）。17 项运行时指标 + 2 项 CI 指标各归属唯一主维；4 项协同度指标单列；3 项能力供给指标单列（P2 生态外挂 §6.3）。",
-  "updated": "2026-10-24",
+  "description": "五维评估 ↔ family_* 指标映射（P1-T4）。21 项运行时指标（E0b 增 LLM 用量双计数） + 2 项 CI 指标各归属唯一主维；4 项协同度指标单列；3 项能力供给指标单列（P2 生态外挂 §6.3）。",
+  "updated": "2026-10-30",
   "dimensions": [
     {
       "id": "time",
@@ -81,7 +81,7 @@
     ]
   },
   "capability": {
-    "description": "能力供给与语义执行（§6.3 三项 + M19 语义执行两项；由 FamilyMetrics record* 方法上报）",
+    "description": "能力供给与语义执行（§6.3 三项 + M19 语义执行两项 + E0b LLM 用量双计数；由 FamilyMetrics record* 方法上报）",
     "metrics": [
       {
         "name": "family_capability_skills_loaded_total",
@@ -107,6 +107,16 @@
         "name": "family_llm_output_fill_ratio",
         "dimension": "attribute",
         "meaning": "LLM 输出字段填充率（0..1，告警基线 0.8）"
+      },
+      {
+        "name": "family_llm_usage_tokens_total",
+        "dimension": "space",
+        "meaning": "LLM token 用量（agent_id/skill_id/scenario 三维分组 · E0b 计量分口径）"
+      },
+      {
+        "name": "family_llm_usage_calls_total",
+        "dimension": "event",
+        "meaning": "LLM 调用次数（三维分组 · E0b）"
       }
     ]
   }

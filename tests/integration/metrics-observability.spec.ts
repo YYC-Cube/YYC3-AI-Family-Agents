@@ -365,6 +365,21 @@ describe('可观测性数据面（P0 指标采集）', () => {
     expect(text).toContain('family_capability_plugin_denied_total{plugin="family-core"} 1');
     // 五维映射声明由 five-dimension-metrics 套件（D 系列）验证（回归 build 目录无 assets）
   });
+
+  it('M11: LLM 用量分口径（E0b · 三维分组 tokens/calls + /metrics 渲染）', () => {
+    const metrics = new FamilyMetrics();
+    metrics.recordLlmUsage({ skillId: 'skill-a', scenario: 'llm-assisted' }, 120);
+    metrics.recordLlmUsage({ skillId: 'skill-a', scenario: 'llm-assisted' }, 80);
+    metrics.recordLlmUsage({ skillId: 'skill-b', scenario: 'llm-assisted' }, 30);
+    metrics.recordLlmUsage({ scenario: 'uat' }, 10); // 缺省维度归 unknown
+
+    const text = metrics.render();
+    expect(text).toContain('family_llm_usage_tokens_total{agent_id="unknown",scenario="llm-assisted",skill_id="skill-a"} 200');
+    expect(text).toContain('family_llm_usage_tokens_total{agent_id="unknown",scenario="llm-assisted",skill_id="skill-b"} 30');
+    expect(text).toContain('family_llm_usage_tokens_total{agent_id="unknown",scenario="uat",skill_id="unknown"} 10');
+    expect(text).toContain('family_llm_usage_calls_total{agent_id="unknown",scenario="llm-assisted",skill_id="skill-a"} 2');
+    expect(text).toContain('# TYPE family_llm_usage_tokens_total counter');
+  });
 });
 
 (async () => {

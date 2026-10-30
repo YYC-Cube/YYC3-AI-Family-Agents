@@ -62,11 +62,34 @@ try {
 
 // LLM 语义执行臂（M16）三闸门控（同 uat:llm 范式）：缺一保持确定性臂。
 // --selftest:llm（M17）额外要求三闸 + 密钥齐备（env 或 .env），否则跳过 LLM 采样 exit 0。
-const llmKeyEnv = process.env.ZHIPU_API_KEY?.trim() ? 'ZHIPU_API_KEY' : process.env.OPENAI_API_KEY?.trim() ? 'OPENAI_API_KEY' : null;
+// E0a：provider 档支持 zhipu | openai | local（LLM_STEP_PROVIDER，缺省按 key 判定）；
+//      密钥兜底顺序：env → ~/.yyc3-keybackup/zhipu.env（600 · 真值唯一存放地）→ 仓内 .env（兼容旧布置）。
+// E0c：max_tokens / timeout_ms 自 configs/base.yaml llm.providers.<档> 注入（思考型档位建议 max_tokens 3072）。
+let baseLlmProviders = {};
+try {
+  baseLlmProviders = parseYaml(fs.readFileSync(path.join(ROOT, 'configs', 'base.yaml'), 'utf8'))?.llm?.providers ?? {};
+} catch { /* 无 base.yaml */ }
 const llmEnvInject = {};
+const keyBackupEnv = path.join(os.homedir(), '.yyc3-keybackup', 'zhipu.env');
+const llmKeyEnv =
+  process.env.ZHIPU_API_KEY?.trim() ? 'ZHIPU_API_KEY'
+  : process.env.OPENAI_API_KEY?.trim() ? 'OPENAI_API_KEY'
+  : process.env.LOCAL_GATEWAY_API_KEY?.trim() ? 'LOCAL_GATEWAY_API_KEY'
+  : null;
 let llmKeyed = Boolean(llmKeyEnv);
 if (!llmKeyed) {
-  // .env 兜底解析（只透传给子进程，不打印值）
+  // keybackup 兜底（密钥服务读取；只透传给子进程，不打印值）
+  try {
+    const kb = fs.readFileSync(keyBackupEnv, 'utf8');
+    const m = kb.match(/^(ZHIPU_API_KEY|OPENAI_API_KEY|LOCAL_GATEWAY_API_KEY)=(.+)$/m);
+    if (m && m[2].trim()) {
+      llmKeyed = true;
+      llmEnvInject[m[1]] = m[2].trim();
+    }
+  } catch { /* 无 keybackup */ }
+}
+if (!llmKeyed) {
+  // .env 兜底（兼容旧布置；E0a 后真值应只在 keybackup）
   try {
     const dotenv = fs.readFileSync(path.join(ROOT, '.env'), 'utf8');
     const m = dotenv.match(/^(ZHIPU_API_KEY|OPENAI_API_KEY)=(.+)$/m);
@@ -79,13 +102,36 @@ if (!llmKeyed) {
 const selftestLlm = process.argv.includes('--selftest:llm');
 const llmGated = process.env.LLM_STEP === '1' && process.env.LLM_STEP_CONFIRM === '我知晓真实计费' && llmKeyed;
 if (llmGated) {
-  const provider = llmKeyEnv === 'OPENAI_API_KEY' || (!llmKeyEnv && Object.keys(llmEnvInject)[0] === 'OPENAI_API_KEY') ? 'openai' : 'zhipu';
-  config.llm = {
-    provider,
-    ...(process.env.LLM_STEP_MODEL ? { model: process.env.LLM_STEP_MODEL } : {}),
-    ...(process.env.LLM_STEP_BASE_URL ? { baseUrl: process.env.LLM_STEP_BASE_URL } : {}),
-  };
-  console.log('ⓔ LLM 语义执行臂：三闸放行，已启用（真实计费调用）');
+  const requested = process.env.LLM_STEP_PROVIDER ?? '';
+  let provider;
+  let apiKeyEnv = llmKeyEnv ?? 'ZHIPU_API_KEY';
+  if (requested === 'local') {
+    // E0a 本地网关档：第三闸 = 网关 key 环境变量存在（本地推理也计自家 GPU 折旧）
+    provider = 'local';
+    apiKeyEnv = process.env.LLM_LOCAL_KEY_ENV ?? 'LOCAL_GATEWAY_API_KEY';
+    if (!process.env[apiKeyEnv]?.trim() && !llmEnvInject[apiKeyEnv]?.trim()) {
+      console.log(`ⓔ local 档缺网关 key（${apiKeyEnv}），保持确定性臂`);
+      provider = '';
+    }
+  } else if (requested === 'openai' || requested === 'zhipu') {
+    provider = requested;
+  } else {
+    provider = llmKeyEnv === 'OPENAI_API_KEY' || (!llmKeyEnv && Object.keys(llmEnvInject)[0] === 'OPENAI_API_KEY') ? 'openai' : 'zhipu';
+  }
+  if (provider) {
+    const profile = baseLlmProviders[provider] ?? {};
+    config.llm = {
+      provider,
+      ...(process.env.LLM_STEP_MODEL || profile.model ? { model: process.env.LLM_STEP_MODEL ?? profile.model } : {}),
+      ...(process.env.LLM_STEP_BASE_URL || profile.base_url
+        ? { baseUrl: process.env.LLM_STEP_BASE_URL ?? profile.base_url }
+        : {}),
+      ...(profile.max_tokens !== undefined ? { maxTokens: profile.max_tokens } : {}),
+      ...(profile.timeout_ms !== undefined ? { timeoutMs: profile.timeout_ms } : {}),
+      ...(provider === 'local' ? { apiKeyEnv } : {}),
+    };
+    console.log(`ⓔ LLM 语义执行臂：三闸放行，已启用（${provider} 档 · 真实计费调用）`);
+  }
 } else if (selftestLlm) {
   console.log('ⓔ LLM 自检：三闸不全（需 LLM_STEP=1 + LLM_STEP_CONFIRM=我知晓真实计费 + API Key），跳过 LLM 采样');
 } else if (process.env.LLM_STEP === '1') {

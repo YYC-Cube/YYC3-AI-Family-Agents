@@ -30,6 +30,8 @@ const CAPABILITY = [
   'family_capability_plugin_denied_total',
   'family_llm_steps_total',
   'family_llm_output_fill_ratio',
+  'family_llm_usage_tokens_total',
+  'family_llm_usage_calls_total',
 ];
 
 /** 暴露文本中的指标名（取自 # HELP 行）。 */
@@ -74,14 +76,14 @@ if (__localShim) {
 }
 
 describe('五维指标映射（P1-T4）', () => {
-  it('D1: 运行时指标总数为 23（19 业务 + 4 协同）', () => {
+  it('D1: 运行时指标总数为 25（21 业务 + 4 协同）', () => {
     const names = helpNames(new FamilyMetrics().render());
-    globalThis.expect(names.length).toBe(23);
+    globalThis.expect(names.length).toBe(25);
     for (const name of COLLABORATION) globalThis.expect(names.includes(name)).toBe(true);
     for (const name of CAPABILITY) globalThis.expect(names.includes(name)).toBe(true);
   });
 
-  it('D2: 19 项运行时指标全部归属唯一主维（业务主维 14 + 单列 5）', () => {
+  it('D2: 21 项运行时指标全部归属唯一主维（业务主维 14 + 单列 7）', () => {
     const runtime = helpNames(new FamilyMetrics().render()).filter(
       (name) => !COLLABORATION.includes(name) && !CAPABILITY.includes(name),
     );

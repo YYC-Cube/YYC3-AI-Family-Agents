@@ -249,6 +249,8 @@
 
 ## 九、修订记录
 
+- v1.1.3（2026-10-30）：**E0 消费端接线已执行（TS 仓 v2.47.0 · PR 待合并）**——E0a 代码/配置/密钥迁移全部就绪（base.yaml local 档 + start-family-server local 分支三闸 + 智谱 key 迁 keybackup(600) + keybackup 兜底读取链）；E0b 计量分口径落地（LlmUsageCounter 三维 tags 分桶 + family_llm_usage_{tokens,calls}_total 双计数器 + baseDispatch 增量联动，343 例门禁含 E0c-3/M11 断言）；E0c 模型亲和三件套落地（reasoning 请求/响应透传 content 空不崩可计量 + maxTokens/timeout_ms base.yaml 档位注入）；usage 首日报（E0b 基线）落 docs/。**卡点（红线5 如实）**：网关 live 验收挂起——LAN :8000 存活但候选 key 均 403、旗舰直连 Tailscale 000、兜底77 无 qwen3-coder-30b；智谱侧新 key 429 余额不足（云通道实际已断，切换动机成立）。**待网关侧签发有效 key 后一条命令完成 live 验收**。回链：docs/YYC3-AI-Family-Agent-usage首日报-E0b基线-2026-10-30.md。
 - v1.0.0（2026-10-30）：天枢立档。总纲"人从众曌众从人"+ 态势判断 + E0 主线 3 条 + E1 维度提升 3 条 + E2 裂变 3 条 + E3 拓展 4 条 + E4 调众口 4 条 + 元提示词 + 波次时序；全部锚点基于 v2.44.0 代码实证。
 - v1.1.0（2026-10-30）：多行业场景与知识底座衔接增补——依据 YANYUCLOUDCUBE 侧《多行业场景Agent分析-20261030》与提示词工程 11/12/13 三卷核读：①全域三层地图（知识层/实现层两大代码族/场景层）；②E2a 加人格红线修正注（8 角色定数，行业裂变单位改为域包）；③E4a 实体化注（四场景库即首批域包）；④新增 §十：E5a 域包 DomainPack、E5b 运行时统一（TS 骨+Flask 魂两步走+P0 token 立即外置）、E5c 知识底座单向引用链、波次增补（P0 安全/域包先行/三薄域补齐/名不符实目录处置）。
 - v1.1.1（2026-10-30）：暂缓令——编程与企业蓝图演进挂起（E0 接线主线除外）；多领域同框对齐移交独立会话（执行提示词已签发至 YANYUCLOUDCUBE/YYC3-AI-Family-Agent/ 路径）；主线回归模型部署。
+- v1.1.2（2026-10-30）：同框对齐回执——YANYUCLOUDCUBE 侧 P0-P4 完成:令牌外置 keybackup(600)/伯乐统一知遇·伯乐/FAmily→Family/电商 DomainPack 样板(E5a 首件)/skills-library 129 条对账零失源+三薄域补登(S-01/S-02/S-05 各≥2)/模型映射表按附录 A 现役重排;git 六阶段提交在档,基线快照居首。**尾项:三库 PACK 复制待用户过目样板后执行,E5b 运行时统一仍待 TS 仓解冻。**回链:《YYC3-AI-Family-Agent-同框对齐完成报告-20261030.md》(YANYUCLOUDCUBE/YYC3-AI-Family-Agent/)。
