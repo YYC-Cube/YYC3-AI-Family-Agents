@@ -1,6 +1,6 @@
 # YYC³ AI Family · LLM Usage 首日报（E0b 基线）
 
-> **日期**：2026-10-30 · **口径版本**：E0b 计量分口径（M34 后首份） · **状态**：基线报（真实流量待本地网关注入）
+> **日期**：2026-10-30（当日二次升级 live 版） · **口径版本**：E0b 计量分口径 · **状态**：**live 数据版（E0a 已验收 · 真实流量来自本地网关）**
 > **编制**：家族接线工程师 · 依《E0 接线执行卡》（元启·天枢签发）
 
 ## 一、口径（E0b 已落地）
@@ -12,7 +12,15 @@
 - **联动点**：`family-server` baseDispatch 语义执行分支——每次技能执行的 usage **增量**按 `skillId` / `scenario=llm-assisted` 上报（agentId 由部署侧按调用方补齐）。
 - **聚合导出**：Prometheus 标准——按任意标签维度 `sum by(...)` 即得入住率报表口径（如 `sum by(skill_id)(family_llm_usage_tokens_total)`）。
 
-## 二、首期数据（2026-10-30）
+## 二、首期数据（2026-10-30 · live 版）
+
+| 场景 | 数据 | 说明 |
+| --- | --- | --- |
+| **本地网关（Tailscale :10086 · nemotron-3.5-super-vl）** | **uat:llm 5/5 · selftest 3 技能 5/5 字段填充 · 累计 3290 tokens** | **E0a live 验收通过（2026-10-31）**；三维计数器真值：family_llm_usage_tokens_total{skill_id="bole.achievement-insight"} 667 等 |
+| zhipu 云（glm-4-flash） | 0 tokens（key 429 余额不足，未再触碰） | 云通道停用中——**云账单零新增实证** |
+| 本地桩（契约测试） | 单测级 45 tokens / 3 次（分桶断言） | llm-provider.spec E0c-3 |
+
+## 二b、首期数据（基线版 · 留档）
 
 | 场景 | 数据 | 说明 |
 | --- | --- | --- |

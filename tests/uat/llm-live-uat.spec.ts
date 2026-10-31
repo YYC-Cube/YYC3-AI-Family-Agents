@@ -15,6 +15,8 @@
  *   UAT_LLM_BASE_URL   覆盖端点（如 z.ai 编码计划 Key 走 https://api.z.ai/api/paas/v4）
  *   UAT_LLM_MODEL      覆盖模型（默认 glm-4-flash / gpt-4o-mini）
  *   UAT_LLM_API_KEY_ENV 覆盖密钥变量名
+ *   UAT_LLM_ALLOW_HTTP 1 = 显式豁免 http 端点（仅限部署侧私有本地网关 · E0a；
+ *                      缺省拒绝 http，公网端点必须 https）
  *
  * 用例（共 5）：
  *   U1 身份自报（真实作答含身份锚「千行」+ usage 计量真实）
@@ -79,9 +81,13 @@ function makeProvider() {
   const opts = { timeoutMs: 30_000, maxRetries: 1, retryBaseMs: 500 };
   let base = process.env.UAT_LLM_BASE_URL;
   if (base) {
-    // 跨文件污点收窄：外部覆盖的 base 仅放行显式 https（拒绝其余 scheme）
+    // 跨文件污点收窄：外部覆盖的 base 仅放行 https；本地/内网网关（E0a · 部署侧
+    // 显式投喂的私有端点）需另加 UAT_LLM_ALLOW_HTTP=1 显式豁免——缺省拒绝 http
     const parsed = new URL(base);
-    if (parsed.protocol !== 'https:') throw new Error(`UAT_LLM_BASE_URL 仅允许 https（实际 ${parsed.protocol}）`);
+    const allowHttp = process.env.UAT_LLM_ALLOW_HTTP === '1';
+    if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && allowHttp)) {
+      throw new Error(`UAT_LLM_BASE_URL 仅允许 https（http 需 UAT_LLM_ALLOW_HTTP=1 显式豁免；实际 ${parsed.protocol}）`);
+    }
   } else {
     base = undefined;
   }
