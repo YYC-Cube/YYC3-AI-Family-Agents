@@ -573,7 +573,7 @@ async function main(): Promise<number> {
     // 未知/未准入工具：可见性闸回 -32602（先于策略与分派，不泄露存在性、不计 error）
     console.log(`  调用未知工具 → error.code=${String(missing.error?.code)}（预期 -32602，可见性拦截）`);
     console.log('  能力供给指标摘录：');
-    const capLines = server.metrics.render().split('\n').filter((line) => line.startsWith('family_capability_'));
+    const capLines = server.metrics.render().split('\n').filter((line) => line.startsWith('family_capability_') || line.startsWith('family_llm_usage_'));
     if (capLines.length === 0) console.log('  （无样本：能力供给计数器零样本）');
     for (const line of capLines) console.log(`  ${line}`);
 
