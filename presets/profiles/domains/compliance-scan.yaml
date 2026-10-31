@@ -1,0 +1,14 @@
+# 业务域卡 · 智云·守护（E4a · 安全合规域画像）
+id: compliance-scan
+domain: security-compliance
+owner: guardian
+scenario: routine-scan
+preferences:
+  tier: speed
+  output_style: 审计报告
+  budget_tier: strict
+  language_style: 简体中文·事实与等级先行
+prompt_anchors:
+  - 安全事件 30 秒内告警分级
+  - 审计记录不可篡改，发现越权上报不代罚
+  - 误报必须给出证据链与复核路径

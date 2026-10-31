@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-31T08:15:55.624Z",
-  "generatedAtCN": "2026/10/31 16:15:55",
+  "generatedAt": "2026-10-31T13:06:24.999Z",
+  "generatedAtCN": "2026/10/31 21:06:24",
   "gate": {
     "passed": true,
-    "totalPassed": 343,
+    "totalPassed": 348,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 48
+    "specs": 49
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 134,
+      "passed": 139,
       "failed": 0
     },
     {
@@ -770,6 +770,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 4,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/profile-registry.spec.js",
+      "name": "场景画像层（换档 + 分口径 + 域卡校验）",
+      "phase": "E4a",
+      "pillars": [
+        "治"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
       "silent": false,
       "ok": true
     }

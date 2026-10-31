@@ -1,0 +1,16 @@
+# 业务域卡 · 语枢·万物（E4a · ProfileRegistry 首批画像 · E1b 业务卷题源）
+# 换档演示卡：投资人简报 → 推理档（tier 占位语义，拍板后回填）
+id: investor-briefing
+domain: hotel-investment
+owner: thinker
+user: investor
+scenario: monthly-briefing
+preferences:
+  tier: reasoning
+  output_style: 结构化简报
+  budget_tier: standard
+  language_style: 简体中文·结论先行
+prompt_anchors:
+  - 测算口径先行（IRR / 回收期 / 敏感性三线）
+  - 数据来源必注，缺数明示不臆测
+  - 结论一页纸，附录放明细

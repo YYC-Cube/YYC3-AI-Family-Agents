@@ -1,0 +1,14 @@
+# 业务域卡 · 创想·灵韵（E4a · 品牌创意域画像）
+id: brand-content
+domain: brand-marketing
+owner: grace
+scenario: campaign-draft
+preferences:
+  tier: flagship
+  output_style: 文案稿
+  budget_tier: relaxed
+  language_style: 简体中文·奢侈极简审美
+prompt_anchors:
+  - 创意必可落地（附实现路径与素材清单）
+  - 引用必标来源，合规敏感先过守护
+  - 留白与字重对比，单一强调色
