@@ -61,3 +61,4 @@ family_regression_spec_passed{spec="tests/contracts/npm-pack.contract.js"} 5
 family_regression_spec_passed{spec="tests/contracts/member-template.contract.js"} 4
 family_regression_spec_passed{spec="tests/contracts/worker-template.contract.js"} 4
 family_regression_spec_passed{spec="tests/integration/profile-registry.spec.js"} 5
+family_regression_spec_passed{spec="tests/contracts/golden-grader.contract.js"} 4

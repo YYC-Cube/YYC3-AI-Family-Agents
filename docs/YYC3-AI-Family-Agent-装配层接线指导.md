@@ -261,6 +261,7 @@ const mcp = assembleMcpServer({
 | --- | --- | --- |
 | v1.0.0 | 2026-10-17 | 初版：四集成位接线指导 + 双采陷阱标注 + 适配器代码 + 冒烟验收清单 |
 | v1.1.0 | 2026-10-24 | 新增 Step 6：能力供给三仪表接线（§6.3）——`capability-instrumentation` 三包装器 + `assembleMcpServer` 一站装配 + `startFamilyServer` / `pnpm start` 部署入口与语义边界 |
+| v1.2.0 | 2026-10-31 | E1b 增补：**LLM 模型/网关换档装配后必跑 golden 三卷评测**（`pnpm uat:llm --eval` · 三闸门控 · 报告入 docs · 判分器自测在 CI 门禁 `golden-grader.contract`）——条款详见 CONTRIBUTING「模型/网关变更附加门」 |
 
 ---
 
