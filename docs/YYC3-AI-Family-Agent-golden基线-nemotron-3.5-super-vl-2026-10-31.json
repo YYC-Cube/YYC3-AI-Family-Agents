@@ -1,0 +1,768 @@
+{
+  "model": "nemotron-3.5-super-vl",
+  "at": "2026-10-31",
+  "volumeStats": [
+    {
+      "volume": "structured-json",
+      "total": 30,
+      "passed": 30,
+      "accuracy": 1,
+      "avgMs": 857,
+      "tokens": 3628
+    },
+    {
+      "volume": "business-zh",
+      "total": 32,
+      "passed": 18,
+      "accuracy": 0.563,
+      "avgMs": 3287,
+      "tokens": 4415
+    },
+    {
+      "volume": "consumer-profile",
+      "total": 30,
+      "passed": 0,
+      "accuracy": 0,
+      "avgMs": 583,
+      "tokens": 0
+    }
+  ],
+  "cases": [
+    {
+      "id": "S01",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 2489,
+      "answer": "[{\"month\":\"三月\",\"revenue\":1200000},{\"month\":\"四月\",\"revenue\":1500000}]"
+    },
+    {
+      "id": "S02",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 913,
+      "answer": "{\"occupancy\":0.82,\"adr\":380}"
+    },
+    {
+      "id": "S03",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 983,
+      "answer": "{\"intent\":\"orchestration\",\"confidence\":0.87}"
+    },
+    {
+      "id": "S04",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 718,
+      "answer": "{\"alert\":true,\"level\":\"watch\"}"
+    },
+    {
+      "id": "S05",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 617,
+      "answer": "{\"minutes\":225}"
+    },
+    {
+      "id": "S06",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1196,
+      "answer": "[{\"name\":\"张三\",\"duty\":\"安全\"},{\"name\":\"李四\",\"duty\":\"质量\"}]"
+    },
+    {
+      "id": "S07",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 967,
+      "answer": "{\"year\":2026,\"month\":10,\"day\":31}"
+    },
+    {
+      "id": "S08",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 776,
+      "answer": "[1, 3, 5, 9]"
+    },
+    {
+      "id": "S09",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 584,
+      "answer": "[\"a\",\"b\",\"c\"]"
+    },
+    {
+      "id": "S10",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 764,
+      "answer": "{\"total\":4.6,\"unit\":\"万\"}"
+    },
+    {
+      "id": "S11",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 567,
+      "answer": "{\"percent\":24}"
+    },
+    {
+      "id": "S12",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 573,
+      "answer": "{\"score\":2}"
+    },
+    {
+      "id": "S13",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 637,
+      "answer": "{\"intent\":\"orchestration\"}"
+    },
+    {
+      "id": "S14",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 553,
+      "answer": "{\"below\":true}"
+    },
+    {
+      "id": "S15",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 752,
+      "answer": "{\"engineers\":2,\"designers\":1}"
+    },
+    {
+      "id": "S16",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 702,
+      "answer": "{\"remainingRatio\":0.36}"
+    },
+    {
+      "id": "S17",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 910,
+      "answer": "[\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"]"
+    },
+    {
+      "id": "S18",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 548,
+      "answer": "{\"days\":5}"
+    },
+    {
+      "id": "S19",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 802,
+      "answer": "{\"rating\":4.6,\"reviews\":328}"
+    },
+    {
+      "id": "S20",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 752,
+      "answer": "{\"risk\":\"supply-delay\",\"level\":\"high\"}"
+    },
+    {
+      "id": "S21",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 639,
+      "answer": "{\"occupancy\":0.8}"
+    },
+    {
+      "id": "S22",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1628,
+      "answer": "[{\"type\":\"标间\",\"price\":320},{\"type\":\"大床\",\"price\":400},{\"type\":\"套房\",\"price\":880}]"
+    },
+    {
+      "id": "S23",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 597,
+      "answer": "{\"allClosed\":true}"
+    },
+    {
+      "id": "S24",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 657,
+      "answer": "{\"yoy\":8.4}"
+    },
+    {
+      "id": "S25",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 712,
+      "answer": "{\"name\":\"王五\",\"phone\":null}"
+    },
+    {
+      "id": "S26",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 946,
+      "answer": "{\"shifts\":{\"morning\":3,\"noon\":2,\"night\":3}}"
+    },
+    {
+      "id": "S27",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 704,
+      "answer": "{\"progress\":0.725}"
+    },
+    {
+      "id": "S28",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 687,
+      "answer": "{\"priority\":1,\"urgent\":true}"
+    },
+    {
+      "id": "S29",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 850,
+      "answer": "{\"total\":2000,\"diff\":400}"
+    },
+    {
+      "id": "S30",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1491,
+      "answer": "[{\"channel\":\"官网\",\"count\":12},{\"channel\":\"广告\",\"count\":9},{\"channel\":\"转介绍\",\"count\":5}]"
+    },
+    {
+      "id": "B01",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 2338,
+      "answer": "RevPAR：311.6 元。入住率 82% 与 ADR 380 元共同支撑了中高水平的房间收益，仍有 18% 的客房空置可进一步挖掘。"
+    },
+    {
+      "id": "B02",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 1843,
+      "answer": "{\"回收期\": 5.2, \"敏感性提示\": \"该回收期未考虑资金时间价值，若计入折现率，实际回收期将延长。\"}"
+    },
+    {
+      "id": "B03",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 4406,
+      "answer": "结论：优先选乙方案。\n\n理由：乙方案回收期 5 年，比甲方案 7 年提前 2 年回收投资，资金风险更低、资金周转更快；虽然乙方案 IRR 9% 低于甲方案 11%，但回收期优势更直接体现流动性与安全性。数据来源：本题给定（甲 IRR 11%、回收 7 年；乙 IRR 9%、回收 5 年）。"
+    },
+    {
+      "id": "B04",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 1678,
+      "answer": "全年预测无法给出：现有数据仅覆盖 9 个月，缺失 3 个月经营数据，不得编造。"
+    },
+    {
+      "id": "B05",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 1987,
+      "answer": "{\"intent\": \"orchestration\", \"confidence\": 0.9, \"missing_slots\": [\"巡检对象/范围\", \"巡检时间段\", \"巡检人员\"]}"
+    },
+    {
+      "id": "B06",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 1417,
+      "answer": "{\"intent\": \"查询电费趋势\", \"confidence\": 0.9, \"prediction\": \"查询电费趋势\"}"
+    },
+    {
+      "id": "B07",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "关键词命中 0/1（0.00 < 0.4）",
+      "durationMs": 1150,
+      "answer": "{\"intent\": \"greeting\", \"confidence\": 1.0, \"need_clarification\": false}"
+    },
+    {
+      "id": "B08",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "关键词命中 0/1（0.00 < 0.3）",
+      "durationMs": 2790,
+      "answer": "{\n  \"intent\": \"对比分析与预测\",\n  \"主类\": \"数据分析\",\n  \"次类\": \"趋势预测\",\n  \"缺槽\": [\n    \"具体数据内容\",\n    \"去年的对比数据\",\n    \"明年预测的具体指标或维度\"\n  ]\n}"
+    },
+    {
+      "id": "B09",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 4926,
+      "answer": "结论：不合适。\n\n理由链：\n1. 经验缺口：岗位要求 5 年，候选人 4 年，缺 1 年。\n2. 团队规模缺口：岗位要求带 20 人团队，候选人仅带单体酒店团队，未明确且大概率低于 20 人。\n3. 业态差异：岗位要求连锁酒店经验，候选人为单体酒店背景，缺乏连锁标准化运营、品牌管控及多店协同经验。"
+    },
+    {
+      "id": "B10",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 7796,
+      "answer": "1. 用户增长与留存：具备会员拉新、活跃与留存的运营经验，能设计并执行有效的增长策略。\n2. 权益体系设计：能根据用户分层设计会员等级与权益，提升付费意愿与续费率。\n3. 数据分析能力：熟练使用数据工具分析会员行为，通过数据洞察优化运营方案。\n4. 用户沟通与服务：具备良好的沟通能力，能高效处理会员反馈并提升用户满意度"
+    },
+    {
+      "id": "B11",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 4630,
+      "answer": "{\n  \"候选人\": \"A\",\n  \"技能匹配度\": \"100%\",\n  \"稳定性风险\": \"高（两年三跳，存在短期离职概率）\",\n  \"推荐结论\": \"推荐卡（有条件推荐）\",\n  \"风险注记\": \"技能完全匹配，但职业稳定性存疑，建议在面试中重点核实离职原因，并签订试用期绩效考核协议以降低用工风险。\"\n}"
+    },
+    {
+      "id": "B12",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 5644,
+      "answer": "岗位标签：门店经理/店长/分店负责人\n\n归并理由：三者均为门店最高管理负责人，核心职责一致，包括门店日常运营管理、团队领导与绩效考核、销售目标达成、客户服务质量监控及成本控制。虽称谓因企业规模、行业或区域习惯不同，但岗位权责、决策层级及对门店经营结果的问责本质相同，归并可统一人才画像、简化岗位分类并提升招聘与薪酬管理效"
+    },
+    {
+      "id": "B13",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 2686,
+      "answer": "基线：近6个月会员数序列为 1200/1180/1230/1250/1240/1260，窗口为最近6个月。\n\n下月情景区间：1220–1290（不担保单点）。"
+    },
+    {
+      "id": "B14",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 3444,
+      "answer": "{\n  \"status\": \"样本不足\",\n  \"data_volume\": \"5天\",\n  \"prediction_target\": \"下季度\",\n  \"conclusion\": \"无法预测\",\n  \"reason\": \"历史样本量严重不足，无法建立可靠的统计模型或趋势推断，预测结果缺乏置信度与业务参考价值。\"\n}"
+    },
+    {
+      "id": "B15",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 3216,
+      "answer": "{\n  \"level\": \"alert\",\n  \"reason\": \"能耗连续 3 周上行且增幅递增（+2%/+4%/+7%），呈加速恶化趋势，但未达累计临界阈值，建议升级为预警（alert）并启动能耗排查与管控。\"\n}"
+    },
+    {
+      "id": "B16",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 3418,
+      "answer": "乐观：假设需求强劲且供应受控，occupancy 预计维持在 90% 以上；\n中性：假设市场供需基本平衡，occupancy 预计维持在 80%~90% 之间；\n悲观：假设需求疲软或新增供应过多，occupancy 预计跌至 80% 以下。"
+    },
+    {
+      "id": "B17",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 7574,
+      "answer": "[\n  {\n    \"标题\": \"市中心商务标准间 含早餐 免费WiFi\",\n    \"字数\": 15,\n    \"实现提示\": \"渠道：携程/美团；图：大床房全景+自助早餐特写\"\n  },\n  {\n    \"标题\": \"近地铁站 精装大床房 24小时前台\",\n    \"字数\": 16,\n    \"实现提示\": \"渠道"
+    },
+    {
+      "id": "B18",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 5065,
+      "answer": "主标语：会员日，专属狂欢\n副标语：解锁会员特权，尽享超值福利\n行动按钮：立即领取\n\n留白与强调色用法：\n1. 留白：主标语周围预留至少 150px 空白区域，避免元素拥挤，突出视觉重心。\n2. 强调色：行动按钮及关键优惠金额采用品牌主色（如品牌红），其余文字使用深灰或白色，形成强烈对比。"
+    },
+    {
+      "id": "B19",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 5305,
+      "answer": "{\n  \"处置\": \"删除该引用或标注为【待出处】，禁止在未提供可核验来源的情况下保留\",\n  \"依据\": \"引用纪律要求所有数据、调研结论必须附带出处，无出处的引用视为违规\",\n  \"操作建议\": \"1. 立即移除『某调研显示 90% 用户偏好』表述；\\n2. 如需保留，须补充调研机构、时间、样本及链接/报告出处；\\"
+    },
+    {
+      "id": "B20",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 4520,
+      "answer": "1. 先过守护：确认文案未针对未成年人宣传，且未鼓励过量饮酒。\n2. 先过守护：确认文案包含“未成年人禁止饮酒”或“酒后不驾车”等必要健康/安全警示语。\n3. 先过守护：确认促销条款未涉及虚假夸大功效（如声称酒精可治病、缓解压力等），且价格信息真实。"
+    },
+    {
+      "id": "B21",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 22876,
+      "answer": ""
+    },
+    {
+      "id": "B22",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 600,
+      "answer": ""
+    },
+    {
+      "id": "B23",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 590,
+      "answer": ""
+    },
+    {
+      "id": "B24",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 581,
+      "answer": ""
+    },
+    {
+      "id": "B25",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 591,
+      "answer": ""
+    },
+    {
+      "id": "B26",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "B27",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "B28",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 584,
+      "answer": ""
+    },
+    {
+      "id": "B29",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 586,
+      "answer": ""
+    },
+    {
+      "id": "B30",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 584,
+      "answer": ""
+    },
+    {
+      "id": "B31",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 586,
+      "answer": ""
+    },
+    {
+      "id": "B32",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 591,
+      "answer": ""
+    },
+    {
+      "id": "C01",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "C02",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 581,
+      "answer": ""
+    },
+    {
+      "id": "C03",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 584,
+      "answer": ""
+    },
+    {
+      "id": "C04",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 581,
+      "answer": ""
+    },
+    {
+      "id": "C05",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "C06",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "C07",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "C08",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "C09",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 582,
+      "answer": ""
+    },
+    {
+      "id": "C10",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 584,
+      "answer": ""
+    },
+    {
+      "id": "C11",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "C12",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 582,
+      "answer": ""
+    },
+    {
+      "id": "C13",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "C14",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 581,
+      "answer": ""
+    },
+    {
+      "id": "C15",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "C16",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 584,
+      "answer": ""
+    },
+    {
+      "id": "C17",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "C18",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    },
+    {
+      "id": "C19",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 580,
+      "answer": ""
+    },
+    {
+      "id": "C20",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "C21",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 584,
+      "answer": ""
+    },
+    {
+      "id": "C22",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 586,
+      "answer": ""
+    },
+    {
+      "id": "C23",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 582,
+      "answer": ""
+    },
+    {
+      "id": "C24",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 583,
+      "answer": ""
+    },
+    {
+      "id": "C25",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 582,
+      "answer": ""
+    },
+    {
+      "id": "C26",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 580,
+      "answer": ""
+    },
+    {
+      "id": "C27",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 582,
+      "answer": ""
+    },
+    {
+      "id": "C28",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 582,
+      "answer": ""
+    },
+    {
+      "id": "C29",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 581,
+      "answer": ""
+    },
+    {
+      "id": "C30",
+      "volume": "consumer-profile",
+      "pass": false,
+      "detail": "调用失败：zhipu 接口返回 500：{\"error\":{\"message\":\"local_dgx error: connect ECONNREFUSED 100.65.64.49:8888\",\"type\":\"upstream_error\"}}",
+      "durationMs": 585,
+      "answer": ""
+    }
+  ]
+}

@@ -127,11 +127,26 @@ pnpm regression      # 或：node scripts/run-regression.mjs
 | 检查项 | 命令 | 标准 |
 | ---- | ---- | ---- |
 | 类型检查 | `tsc --noEmit` | 0 error |
-| 全量回归 | `pnpm regression` | 78/78 通过；失败即 exit 1 |
+| 全量回归 | `pnpm regression` | 全绿（当前基线见 README 门禁节）；失败即 exit 1 |
 | 显式跳过 | 各 spec 输出 | 跳过必须带原因，禁止静默 |
 | 面板 | `ops/observability/pillar-dashboard/` | 五支柱全绿 |
 | 敏感信息 | `git status` / 人工审阅 | 无 `.env`、`data/`、密钥 |
 | 文档链接 | 相对链接检查 | 无死链 |
+
+### 🥇 模型/网关变更附加门（E1b · golden 三卷）
+
+**候选模型或推理网关上线/切换前必跑 golden 评测**（判分器自测已在 CI 门禁 `golden-grader.contract` 在档）：
+
+```bash
+# 三闸 + 端点 env（本地私有网关 http 需 UAT_LLM_ALLOW_HTTP=1 显式豁免）
+UAT_LLM=1 UAT_LLM_CONFIRM=我知晓真实计费 \
+UAT_LLM_BASE_URL=<端点>/v1 UAT_LLM_MODEL=<模型> \
+UAT_LLM_API_KEY_ENV=<key 变量> <key 变量>=<值> \
+[ UAT_LLM_ALLOW_HTTP=1 ] [ UAT_LLM_EVAL_BASELINE=<上轮报告.json> ] \
+pnpm uat:llm --eval
+```
+
+产出：`docs/YYC3-AI-Family-Agent-golden基线-<模型>-<日期>.md`（准确率/时延/费用三维 + 可选 diff）；下轮以同名 `.json` 作 baseline 出对比。
 
 ---
 

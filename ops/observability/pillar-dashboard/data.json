@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-31T13:06:24.999Z",
-  "generatedAtCN": "2026/10/31 21:06:24",
+  "generatedAt": "2026-10-31T13:41:55.411Z",
+  "generatedAtCN": "2026/10/31 21:41:55",
   "gate": {
     "passed": true,
-    "totalPassed": 348,
+    "totalPassed": 352,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 49
+    "specs": 50
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 139,
+      "passed": 143,
       "failed": 0
     },
     {
@@ -784,6 +784,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/golden-grader.contract.js",
+      "name": "golden 判分器自测（三卷格式 + 窄判分容错）",
+      "phase": "E1b",
+      "pillars": [
+        "治"
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "total": 4,
       "silent": false,
       "ok": true
     }
