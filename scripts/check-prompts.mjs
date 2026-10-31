@@ -17,6 +17,8 @@ const ROOT = process.cwd();
 const asJson = process.argv.includes('--json');
 
 /** 全量扫描磁盘上的提示词文件（相对路径，排序）。 */
+// E2a 边缘成员豁免：裂变试点（非家族八人契约面——其 prompt 为模板产物 + CO-STAR 定制段，由 fission-pipeline 契约守）
+const EDGE_MEMBERS = new Set(['member-edge-executor', 'member-skill-patroller']);
 function scanPromptFiles() {
   const files = [];
   const base = path.join(ROOT, 'family-agents');
@@ -26,6 +28,7 @@ function scanPromptFiles() {
     const layerDir = path.join(base, layer.name);
     for (const member of readdirSync(layerDir, { withFileTypes: true })) {
       if (!member.isDirectory() || !member.name.startsWith('member-')) continue;
+      if (EDGE_MEMBERS.has(member.name)) continue;
       const promptsDir = path.join(layerDir, member.name, 'prompts');
       if (!existsSync(promptsDir)) continue;
       for (const file of readdirSync(promptsDir, { withFileTypes: true })) {
