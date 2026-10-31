@@ -1,0 +1,14 @@
+# 业务域卡 · 千里·伯乐（E4a · 推荐域画像）
+id: talent-matching
+domain: talent-recommendation
+owner: bole
+scenario: candidate-screening
+preferences:
+  tier: flagship
+  output_style: 结构化推荐卡
+  budget_tier: standard
+  language_style: 简体中文·画像最少够用
+prompt_anchors:
+  - 人岗匹配给理由链，不合适也诚实相告
+  - 候选画像只取岗位必需维度，不做全量采集
+  - 每荐必带匹配度与风险注记

@@ -36,6 +36,11 @@ import type { LearningBudget, PatternTriplet } from '../architecture-kernel/05-�
 import type { SkillStorePort } from '../architecture-kernel/05-持续学习引擎/learning-loop.js';
 import { NineLayerRegistry } from '../architecture-kernel/01-九层架构分层底座/layer-registry.js';
 import {
+  ProfileRegistry,
+  tierFromEnv,
+  type ProfileDefinition,
+} from './shared-core/profile-registry.js';
+import {
   LAYER_DESCRIPTORS,
   type CapabilityLayerId,
   type LayerProbe,
@@ -122,6 +127,14 @@ export interface FamilyServerConfig {
   };
   readonly metricsServer?: { readonly port?: number; readonly host?: string; readonly authToken?: string };
   /**
+   * 场景画像层（E4a · 众口登记簿）：部署侧解析 presets/profiles/domains/*.yaml 注入
+   * （manifest 同范式 · 结构校验 `pnpm profiles:check`）；profileResolver 把技能映射到
+   * 画像 id——语义执行的模型档位/输出风格随画像换档，计量按 `llm-assisted@<profile>` 分口径。
+   */
+  readonly profiles?: readonly ProfileDefinition[];
+  /** 技能 → 画像 id 映射（未命中走缺省档 `${LLM_STEP_TIER:-flagship}`）。 */
+  readonly profileResolver?: (skillId: string) => string | undefined;
+  /**
    * 学习闭环装配（M28 · 部署侧合流）：配置即嵌入内核 createRuntimeAssembly——
    * 每次分派完成发布一条 `task.executed` 总线事件馈入学习管道（失败轨迹 completed=false）；
    * 调度闸 usageMeter 自动接 llmUsage 计数器（provider 臂启用时真实计量，零实耗全额归还）；
@@ -169,6 +182,8 @@ export interface FamilyServerHandle {
   readonly learning?: RuntimeAssembly;
   /** 全局态势快照（M30 · 学习装配启用即存在——statusCenter.snapshot()，九层健康 + 最坏态 overall）。 */
   readonly situation?: () => GlobalSituation;
+  /** 场景画像注册中心（E4a · config.profiles 提供即存在——换档解析与分口径标签）。 */
+  readonly profiles?: ProfileRegistry;
   /** 外部家人 A2A 编排（M22；未启用为 undefined）。 */
   readonly a2a?: { readonly directory: CardDirectory; readonly client: DelegateClient };
   readonly metricsServer?: MetricsServerHandle;
@@ -186,6 +201,8 @@ function baseDispatch(
   llmRunner?: LlmStepRunner,
   metrics?: FamilyMetrics,
   llmUsage?: LlmUsageCounter,
+  profiles?: ProfileRegistry,
+  profileResolver?: (skillId: string) => string | undefined,
 ): McpToolDispatcher {
   const logicalByTool = new Map(
     tools.map((tool) => {
@@ -211,15 +228,18 @@ function baseDispatch(
     const base = executeManifestSkill(entry, (ctx.args ?? {}) as Record<string, unknown>);
     if (!base.inputOk) throw new Error(`输入契约不满足（${entry.id}）：${base.inputViolations.join('；')}`);
     if (!base.llmRequired) return base; // 无步骤条目：确定性结果（同步快速路径）
-    // E0b 分口径：本次技能执行的 usage 增量按 skillId/scenario 上报（agentId 由部署侧补）
+    // E0b 分口径 + E4a 换档：usage 增量按 skillId 与画像分口径标签上报
+    // （画像命中 → `llm-assisted@<profileId>`；未命中 → 基础标签，缺省档走 env 占位）
     const usageBefore = llmUsage?.totalTokens ?? 0;
+    const profileId = profiles ? profileResolver?.(entry.id) : undefined;
+    const scenarioTag = profiles ? profiles.resolve(profileId).scenarioTag : 'llm-assisted';
     return executeSkillWithLlm(entry, (ctx.args ?? {}) as Record<string, unknown>, {
       runner: llmRunner,
       metrics,
     }).then((result) => {
       if (llmUsage && metrics) {
         metrics.recordLlmUsage(
-          { skillId: entry.id, scenario: 'llm-assisted' },
+          { skillId: entry.id, scenario: scenarioTag },
           Math.max(0, llmUsage.totalTokens - usageBefore),
           1,
         );
@@ -242,8 +262,10 @@ function executeDispatch(
   metrics: FamilyMetrics,
   a2a: { directory: CardDirectory; client: DelegateClient; allowedSkills: ReadonlySet<string> } | undefined,
   llmUsage?: LlmUsageCounter,
+  profiles?: ProfileRegistry,
+  profileResolver?: (skillId: string) => string | undefined,
 ): McpToolDispatcher {
-  const base = baseDispatch(registry, tools, entriesByLogicalId, llmRunner, metrics, llmUsage);
+  const base = baseDispatch(registry, tools, entriesByLogicalId, llmRunner, metrics, llmUsage, profiles, profileResolver);
   if (!a2a) return base;
   const a2aArm = async (ctx: { traceId?: string; args?: unknown }): Promise<unknown> => {
     const args = (ctx.args ?? {}) as { skillId?: unknown; input?: unknown };
@@ -495,9 +517,26 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     });
     situation = () => statusCenter.snapshot();
   }
+  // 场景画像层（E4a）：部署侧注入画像定义（部署侧解析域卡 YAML，manifest 同范式）；
+  // profileResolver 把技能映射到画像——换档 tier/输出风格 + 计量分口径标签
+  const profileRegistry = config.profiles
+    ? new ProfileRegistry(tierFromEnv(process.env))
+    : undefined;
+  profileRegistry?.loadAll(config.profiles);
+
   const dispatcher: McpToolDispatcher =
     config.dispatch ??
-    executeDispatch(registry, config.tools, entriesByLogicalId, llmRunner, metrics, a2a, llmUsage);
+    executeDispatch(
+      registry,
+      config.tools,
+      entriesByLogicalId,
+      llmRunner,
+      metrics,
+      a2a,
+      llmUsage,
+      profileRegistry,
+      config.profileResolver,
+    );
 
   const mcp = assembleMcpServer({
     serverInfo: config.serverInfo,
@@ -523,6 +562,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     ...(llmUsage ? { llmUsage } : {}),
     ...(learning ? { learning } : {}),
     ...(situation ? { situation } : {}),
+    ...(profileRegistry ? { profiles: profileRegistry } : {}),
     ...(a2a ? { a2a: { directory: a2a.directory, client: a2a.client } } : {}),
     metricsServer,
     async stop() {

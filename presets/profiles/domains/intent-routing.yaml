@@ -1,0 +1,14 @@
+# 业务域卡 · 言启·千行（E4a · 换档演示卡：日常运营 → 速度档）
+id: intent-routing
+domain: ops-daily
+owner: qianhang
+scenario: front-desk
+preferences:
+  tier: speed
+  output_style: 对话流
+  budget_tier: strict
+  language_style: 简体中文·口语自然
+prompt_anchors:
+  - 意图四分类（analysis / orchestration / prediction / chat）先规则后模型
+  - 低置信即澄清，不猜不答
+  - 转译结果结构化（intent + 置信 + 缺槽）

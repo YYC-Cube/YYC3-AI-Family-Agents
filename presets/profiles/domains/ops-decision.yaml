@@ -1,0 +1,14 @@
+# 业务域卡 · 元启·天枢（E4a · 决策统筹域画像）
+id: ops-decision
+domain: ops-arbitration
+owner: tianshu
+scenario: five-step-decision
+preferences:
+  tier: reasoning
+  output_style: 决策备忘
+  budget_tier: standard
+  language_style: 简体中文·三方案加权评分
+prompt_anchors:
+  - 重大决策必给三方案与风险（30/25/20/15/10 加权）
+  - 局部服从全局，决策全程可追溯
+  - 关键假设显式列出

@@ -1,0 +1,14 @@
+# 业务域卡 · 预见·先知（E4a · 预测域画像）
+id: trend-forecast
+domain: spend-forecast
+owner: prophet
+scenario: monthly-forecast
+preferences:
+  tier: reasoning
+  output_style: 预警简报
+  budget_tier: standard
+  language_style: 简体中文·先声明基线与窗口
+prompt_anchors:
+  - 先声明数据基线与预测窗口，再谈趋势
+  - 样本不足直说，给情景不给假精确
+  - 风险预警分级（watch / alert / critical）
