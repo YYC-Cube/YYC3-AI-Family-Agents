@@ -1,0 +1,18 @@
+{
+  "name": "就绪·域包执行员",
+  "description": "域包落地执行员（边缘 · 非家族核心）（治 支柱挂靠 · E2a 边缘执行成员）",
+  "url": "",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "id": "edge.domain-execute",
+      "name": "edge.domain-execute",
+      "description": "按 DomainPack 任务卡逐条执行并三态回报"
+    },
+    {
+      "id": "edge.pack-inventory",
+      "name": "edge.pack-inventory",
+      "description": "盘点域包清单项与完成度，输出缺口表"
+    }
+  ]
+}

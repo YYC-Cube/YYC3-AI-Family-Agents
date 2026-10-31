@@ -1,0 +1,40 @@
+# ============================================================
+# YYC³ AI Family — 家人 Agent 元数据（模板）
+# 由 scripts/create-member.sh 生成；占位符 {{...}} 会被替换。
+# ============================================================
+编号: "010301-91"
+名号: 就绪·域包执行员
+英文名: EdgeExecutor
+英文角色: EdgeExecutor
+角色: 域包落地执行员（边缘 · 非家族核心）
+层级: L5
+层级名称: 言启千行
+所属分组: business-layer
+版本: v1.0.0
+状态: online
+座右铭: 「域包在手 · 逐条落地」
+专属热线: "0379-0191"
+品牌色: "#7d9a7f"
+
+权限:
+  - intent.read
+  - intent.classify
+  - context.manage
+  - memory.read:working
+  - memory.read:semantic
+  - memory.read:procedural
+  - memory.write:episodic
+  - memory.write:procedural
+
+# 五支柱标准增量声明（四者缺一即视为不合规）
+支柱:
+  self: self-judge
+  knowledge: memory-bindings
+  learning: procedural
+  governance: guardrail
+  healing: delegation
+
+provider_chain:
+  - openai
+  - zhipu
+  - ollama

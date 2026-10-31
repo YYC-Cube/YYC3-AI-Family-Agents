@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-10-31T13:41:55.411Z",
-  "generatedAtCN": "2026/10/31 21:41:55",
+  "generatedAt": "2026-10-31T14:59:21.179Z",
+  "generatedAtCN": "2026/10/31 22:59:21",
   "gate": {
     "passed": true,
-    "totalPassed": 352,
+    "totalPassed": 356,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 50
+    "specs": 51
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 143,
+      "passed": 147,
       "failed": 0
     },
     {
@@ -791,6 +791,20 @@
       "file": "tests/contracts/golden-grader.contract.js",
       "name": "golden 判分器自测（三卷格式 + 窄判分容错）",
       "phase": "E1b",
+      "pillars": [
+        "治"
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "total": 4,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/fission-pipeline.contract.js",
+      "name": "裂变管线契约（人格红线 + 技能查重 + 端到端）",
+      "phase": "E2a",
       "pillars": [
         "治"
       ],

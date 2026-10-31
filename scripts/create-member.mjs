@@ -131,11 +131,19 @@ function paramsFromAgentYaml(yamlText) {
 
 const CHECK_EXCLUDE_MEMBERS = ['member-qianhang']; // 已接线参考实现（手工增强）
 // 演进文件白名单：生成后按家人定制（内容自由 · 必须存在；质量由专项契约守——
-// prompts 由 P1-T5 提示词契约守质，rules-draft 为学习管线产物）
+// prompts 由 P1-T5 提示词契约守质，rules-draft 为学习管线产物）；
+// E2a 起支持成员限定条目 `member-xxx/<rel>`（裂变产物的 CO-STAR 定制段）
 const DRIFT_WHITELIST = new Set([
   'procedural/rules-draft.yaml',
   'prompts/intent-detection.prompt.ts',
   'prompts/query-parsing.prompt.ts',
+  // E2a 试点（管线产出定制三件 · 存在性与内容由 fission-pipeline 契约守）
+  'member-edge-executor/system-prompt.md',
+  'member-edge-executor/member-manifest.yaml',
+  'member-edge-executor/agent-card.json',
+  'member-skill-patroller/system-prompt.md',
+  'member-skill-patroller/member-manifest.yaml',
+  'member-skill-patroller/agent-card.json',
 ]);
 
 function checkMode() {
@@ -174,7 +182,8 @@ function checkMode() {
 
       for (const rel of relGenerated) {
         const relPosix = toPosix(rel);
-        if (DRIFT_WHITELIST.has(relPosix)) {
+        const whitelisted = DRIFT_WHITELIST.has(relPosix) || DRIFT_WHITELIST.has(`${member.id}/${relPosix}`);
+        if (whitelisted) {
           if (!fs.existsSync(path.join(member.dir, rel))) {
             failures.push(`${member.id}/${relPosix}：演进文件缺失（白名单要求存在）`);
           }
@@ -191,7 +200,8 @@ function checkMode() {
         }
       }
       for (const rel of relCommitted) {
-        if (DRIFT_WHITELIST.has(toPosix(rel))) continue;
+        const relPosix2 = toPosix(rel);
+        if (DRIFT_WHITELIST.has(relPosix2) || DRIFT_WHITELIST.has(`${member.id}/${relPosix2}`)) continue;
         if (!fs.existsSync(path.join(regenDir, rel))) {
           failures.push(`${member.id}/${toPosix(rel)}：孤儿文件（模板无 · 非白名单）`);
         }
@@ -280,11 +290,210 @@ function createMode(argv) {
 }
 
 /* ------------------------------------------------------------------ */
+/* scaffold 模式（E2a · 门禁全自动裂变管线）                              */
+/* ------------------------------------------------------------------ */
+
+/** 人格红线：八位家族核心身份不可稀释（名号 + 专属职务头衔，命中即拒）。 */
+const FAMILY_IDENTITY = [
+  '千里·伯乐', '言启·千行', '预见·先知', '语枢·万物', '创想·灵韵', '格物·宗师', '智云·守护', '元启·天枢',
+  '首席推荐官', '首席预言家', '首席思考者', '首席导航员', '首席创意官', '首席质量官', '首席安全官',
+];
+
+const PILLARS = new Set(['自', '知', '学', '治', '愈']);
+/** 层级 → 分组（与八家人分布对齐：L2–L5 业务执行层 / L6–L9 核心保障决策层）。 */
+function groupOfLayer(layer) {
+  return ['L2', 'L3', 'L4', 'L5'].includes(layer) ? 'business-layer' : 'core-layer';
+}
+
+/** 读家族主清单技能 id 集（查重源一：manifest 文本内出现的技能 slug）。 */
+function manifestSkillSlugs() {
+  try {
+    return fs.readFileSync(path.join(ROOT, 'presets', 'family-manifest.yaml'), 'utf8');
+  } catch {
+    return '';
+  }
+}
+
+function scaffoldMode(argv) {
+  const startedAt = Date.now();
+  const args = {};
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i].startsWith('--')) args[argv[i]] = argv[i + 1] ?? '';
+  }
+  const outDir = path.resolve(args['--out-dir'] ?? MEMBERS_DIR);
+  const fail = (stage, msg) => {
+    console.error(`❌ [${stage}] ${msg}`);
+    console.error(`⏱ 管线终止于 ${((Date.now() - startedAt) / 1000).toFixed(1)}s（未产出）`);
+    process.exit(1);
+  };
+
+  // ---- 闸 0：角色卡结构 ----
+  let card;
+  try {
+    card = JSON.parse(fs.readFileSync(args['--card'], 'utf8'));
+  } catch (e) {
+    fail('角色卡', `读取/解析失败——${e.message}`);
+  }
+  const costar = card.costar ?? {};
+  for (const [key, value] of [
+    ['id', card.id], ['name', card.name], ['enName', card.enName], ['role', card.role],
+    ['layer', card.layer], ['pillar', card.pillar], ['number', card.number],
+    ['costar.objective', costar.objective], ['costar.audience', costar.audience],
+  ]) {
+    if (!value) fail('角色卡', `缺必需字段 ${key}（CO-STAR 五要素 + 挂靠支柱 + 技能清单）`);
+  }
+  if (!card.id.startsWith('member-')) fail('角色卡', `id 必须以 member- 开头（当前 ${card.id}）`);
+  if (!LAYER_NAMES[card.layer]) fail('角色卡', `layer 必须为 L2..L9（当前 ${card.layer}）`);
+  if (!PILLARS.has(card.pillar)) fail('角色卡', `pillar 挂靠必须为 自|知|学|治|愈（当前 ${card.pillar}）`);
+  if (!/^\d{2}$/.test(String(card.number))) fail('角色卡', `number 必须两位数字（当前 ${card.number}）`);
+  if (!Array.isArray(card.skills) || card.skills.length === 0) fail('角色卡', 'skills 独有技能清单不可为空');
+
+  // ---- 闸 1：人格红线（八人格定数不可稀释） ----
+  const identityText = [card.name, card.role, card.enName, ...Object.values(costar)].filter(Boolean).join(' ');
+  const hit = FAMILY_IDENTITY.find((token) => identityText.includes(token));
+  if (hit) fail('人格红线', `命中家族核心身份「${hit}」——八人格定数不可稀释；裂变对象限边缘执行成员（换名号/职务后重试）`);
+
+  // ---- 闸 2：技能查重（家族 manifest 45 技能 + skills/ 目录全量） ----
+  const manifestText = manifestSkillSlugs();
+  for (const skill of card.skills) {
+    if (!/^[a-z0-9-]+\.[a-z0-9-]+$/.test(skill.slug)) fail('技能查重', `技能 slug 非法（${skill.slug} · 形如 edge.domain-execute）`);
+    if (manifestText.includes(skill.slug)) fail('技能查重', `技能 ${skill.slug} 与家族清单重复——边缘成员只能携带独有技能`);
+    const ownerDir = path.join(ROOT, 'skills');
+    try {
+      const walk = (dir) => {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          const abs = path.join(dir, entry.name);
+          if (entry.isDirectory()) walk(abs);
+          else if (entry.name === 'SKILL.md' && fs.readFileSync(abs, 'utf8').includes(`id: ${skill.slug}`)) {
+            fail('技能查重', `技能 ${skill.slug} 与 skills/ 产物重复`);
+          }
+        }
+      };
+      walk(ownerDir);
+    } catch { /* 无 skills 目录 */ }
+  }
+
+  // ---- 产出：模板目录（身份参数派生）+ 成员 manifest + 自含 agent-card + CO-STAR 定制段 ----
+  const group = groupOfLayer(card.layer);
+  const targetDir = path.resolve(outDir, group, card.id);
+  if (!targetDir.startsWith(outDir + path.sep)) fail('产出', '输出越界');
+  if (fs.existsSync(targetDir)) fail('产出', `目标已存在，禁止覆盖——${targetDir}`);
+
+  const identity = {
+    id: card.id,
+    name: card.name,
+    enName: card.enName,
+    role: card.role,
+    layer: card.layer,
+    number: String(card.number),
+    group,
+    hotline: card.hotline ?? '0379-0000',
+    color: card.color ?? '#8aa1b3',
+    motto: card.motto ?? '边缘执行 · 就地尽责',
+  };
+  identity.layerName = LAYER_NAMES[card.layer];
+  identity.roleEn = card.enName;
+  generateInto(targetDir, identity);
+
+  // 成员 manifest（自含清单：不碰家族主 manifest 45 条契约面）
+  const manifestLines = [
+    '# 成员清单（E2a 裂变管线产出 · 自含——不入家族主 manifest）',
+    `id: ${card.id}`,
+    `name: ${card.name}`,
+    `role: ${card.role}`,
+    `pillar: ${card.pillar}`,
+    'costar:',
+    `  context: ${costar.context ?? ''}`,
+    `  objective: ${costar.objective}`,
+    `  style: ${costar.style ?? '简洁结构化'}`,
+    `  tone: ${costar.tone ?? '平实'}`,
+    `  audience: ${costar.audience}`,
+    'skills:',
+  ];
+  for (const skill of card.skills) manifestLines.push(`  - slug: ${skill.slug}`, `    description: ${skill.description ?? ''}`);
+  fs.writeFileSync(path.join(targetDir, 'member-manifest.yaml'), `${manifestLines.join('\n')}\n`);
+
+  // 自含 agent-card（A2A 卡最小形态）
+  fs.writeFileSync(
+    path.join(targetDir, 'agent-card.json'),
+    `${JSON.stringify({
+      name: card.name,
+      description: `${card.role}（${card.pillar} 支柱挂靠 · E2a 边缘执行成员）`,
+      url: '',
+      version: '1.0.0',
+      skills: card.skills.map((s) => ({ id: s.slug, name: s.slug, description: s.description ?? '' })),
+    }, null, 2)}\n`,
+  );
+
+  // CO-STAR 定制段（追加 system-prompt.md——入册时该文件进成员限定白名单）
+  const promptFile = path.join(targetDir, 'system-prompt.md');
+  fs.appendFileSync(promptFile, [
+    '',
+    '---',
+    '',
+    '## CO-STAR 角色卡（E2a 管线注入）',
+    '',
+    `- **C 背景**：${costar.context ?? '（未提供）'}`,
+    `- **O 目标**：${costar.objective}`,
+    `- **S 风格**：${costar.style ?? '简洁结构化'}`,
+    `- **T 语气**：${costar.tone ?? '平实'}`,
+    `- **A 受众**：${costar.audience}`,
+    `- **挂靠支柱**：${card.pillar}（行为契约由 pillar-contracts 门禁守护）`,
+    `- **独有技能**：${card.skills.map((s) => s.slug).join(' · ')}`,
+    `- **模型档位**：\${LLM_STEP_TIER:-flagship}（env 占位 · 强推理位拍板后回填）`,
+    '',
+  ].join('\n'),
+  );
+
+  // ---- 闸 3：局部零漂移（管线确定性自证：模板重生成与产出逐字节一致 · 定制三件豁免） ----
+  const regenDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yyc3-scaffold-'));
+  const exempt = new Set(['system-prompt.md', 'member-manifest.yaml', 'agent-card.json']);
+  try {
+    generateInto(regenDir, identity);
+    const listFiles = (dir) => {
+      const out = [];
+      const walk = (d) => {
+        for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+          const abs = path.join(d, e.name);
+          if (e.isDirectory()) walk(abs);
+          else out.push(abs);
+        }
+      };
+      walk(dir);
+      return out;
+    };
+    for (const regenFile of listFiles(regenDir)) {
+      const rel = path.relative(regenDir, regenFile);
+      const relPosix3 = toPosix(rel);
+      if (exempt.has(relPosix3)) continue; // 定制三件（模板生成后管线叠加——比对豁免、存在性由本闸孤儿检查守
+      const produced = path.join(targetDir, rel);
+      if (!fs.existsSync(produced)) fail('零漂移', `产物缺 ${relPosix3}`);
+      if (!fs.readFileSync(regenFile).equals(fs.readFileSync(produced))) fail('零漂移', `产物漂移 ${relPosix3}`);
+    }
+    for (const producedFile of listFiles(targetDir)) {
+      const rel = toPosix(path.relative(targetDir, producedFile));
+      if (exempt.has(rel)) continue;
+      if (!fs.existsSync(path.join(regenDir, rel))) fail('零漂移', `产物孤儿文件 ${rel}`);
+    }
+  } finally {
+    fs.rmSync(regenDir, { recursive: true, force: true });
+  }
+
+  const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+  console.log(`✅ [全绿] 裂变产出：${card.name}（${card.id} · ${group} · 挂靠${card.pillar}）`);
+  console.log(`   目录：${path.relative(ROOT, targetDir)}（模板 + member-manifest + agent-card + CO-STAR 定制段）`);
+  console.log(`   技能：${card.skills.map((s) => s.slug).join(' · ')}（独有 · 查重过）`);
+  console.log(`⏱ 管线耗时 ${seconds}s（门禁 ≤600s：四闸全过——角色卡结构 / 人格红线 / 技能查重 / 零漂移）`);
+  console.log('入册提示：DRIFT_WHITELIST 增成员限定三条（system-prompt.md / member-manifest.yaml / agent-card.json）后 pnpm member:check 全绿');
+}
+
+/* ------------------------------------------------------------------ */
 
 const mode = process.argv[2];
 if (mode === 'check') checkMode();
 else if (mode === 'create') createMode(process.argv.slice(3));
+else if (mode === 'scaffold') scaffoldMode(process.argv.slice(3));
 else {
-  console.error('用法：node scripts/create-member.mjs create <flags> | check');
+  console.error('用法：node scripts/create-member.mjs create <flags> | scaffold --card <角色卡.json> | check');
   process.exit(1);
 }

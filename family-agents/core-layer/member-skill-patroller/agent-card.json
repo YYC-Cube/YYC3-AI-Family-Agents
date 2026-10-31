@@ -1,0 +1,18 @@
+{
+  "name": "巡常·技能巡检员",
+  "description": "技能库巡检员（边缘 · 非家族核心）（学 支柱挂靠 · E2a 边缘执行成员）",
+  "url": "",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "id": "edge.skill-patrol",
+      "name": "edge.skill-patrol",
+      "description": "按巡检单核对技能库版本/状态/产物并出缺口报告"
+    },
+    {
+      "id": "edge.drift-report",
+      "name": "edge.drift-report",
+      "description": "对指定技能产物做零漂移抽检并输出差异定位"
+    }
+  ]
+}
