@@ -1,0 +1,768 @@
+{
+  "model": "nemotron-3.5-super-vl",
+  "at": "2026-11-01",
+  "volumeStats": [
+    {
+      "volume": "structured-json",
+      "total": 30,
+      "passed": 30,
+      "accuracy": 1,
+      "avgMs": 838,
+      "tokens": 3628
+    },
+    {
+      "volume": "business-zh",
+      "total": 32,
+      "passed": 28,
+      "accuracy": 0.875,
+      "avgMs": 6926,
+      "tokens": 9202
+    },
+    {
+      "volume": "consumer-profile",
+      "total": 30,
+      "passed": 30,
+      "accuracy": 1,
+      "avgMs": 651,
+      "tokens": 3327
+    }
+  ],
+  "cases": [
+    {
+      "id": "S01",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1629,
+      "answer": "[{\"month\":\"三月\",\"revenue\":1200000},{\"month\":\"四月\",\"revenue\":1500000}]"
+    },
+    {
+      "id": "S02",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 909,
+      "answer": "{\"occupancy\":0.82,\"adr\":380}"
+    },
+    {
+      "id": "S03",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 887,
+      "answer": "{\"intent\":\"orchestration\",\"confidence\":0.87}"
+    },
+    {
+      "id": "S04",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 708,
+      "answer": "{\"alert\":true,\"level\":\"watch\"}"
+    },
+    {
+      "id": "S05",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1024,
+      "answer": "{\"minutes\":225}"
+    },
+    {
+      "id": "S06",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1193,
+      "answer": "[{\"name\":\"张三\",\"duty\":\"安全\"},{\"name\":\"李四\",\"duty\":\"质量\"}]"
+    },
+    {
+      "id": "S07",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 963,
+      "answer": "{\"year\":2026,\"month\":10,\"day\":31}"
+    },
+    {
+      "id": "S08",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 763,
+      "answer": "[1, 3, 5, 9]"
+    },
+    {
+      "id": "S09",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 577,
+      "answer": "[\"a\",\"b\",\"c\"]"
+    },
+    {
+      "id": "S10",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 756,
+      "answer": "{\"total\":4.6,\"unit\":\"万\"}"
+    },
+    {
+      "id": "S11",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 558,
+      "answer": "{\"percent\":24}"
+    },
+    {
+      "id": "S12",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 573,
+      "answer": "{\"score\":2}"
+    },
+    {
+      "id": "S13",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 635,
+      "answer": "{\"intent\":\"orchestration\"}"
+    },
+    {
+      "id": "S14",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 560,
+      "answer": "{\"below\":true}"
+    },
+    {
+      "id": "S15",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 754,
+      "answer": "{\"engineers\":2,\"designers\":1}"
+    },
+    {
+      "id": "S16",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 694,
+      "answer": "{\"remainingRatio\":0.36}"
+    },
+    {
+      "id": "S17",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 918,
+      "answer": "[\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"]"
+    },
+    {
+      "id": "S18",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 547,
+      "answer": "{\"days\":5}"
+    },
+    {
+      "id": "S19",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 804,
+      "answer": "{\"rating\":4.6,\"reviews\":328}"
+    },
+    {
+      "id": "S20",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 744,
+      "answer": "{\"risk\":\"supply-delay\",\"level\":\"high\"}"
+    },
+    {
+      "id": "S21",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 648,
+      "answer": "{\"occupancy\":0.8}"
+    },
+    {
+      "id": "S22",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1639,
+      "answer": "[{\"type\":\"标间\",\"price\":320},{\"type\":\"大床\",\"price\":400},{\"type\":\"套房\",\"price\":880}]"
+    },
+    {
+      "id": "S23",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 590,
+      "answer": "{\"allClosed\":true}"
+    },
+    {
+      "id": "S24",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 647,
+      "answer": "{\"yoy\":8.4}"
+    },
+    {
+      "id": "S25",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 719,
+      "answer": "{\"name\":\"王五\",\"phone\":null}"
+    },
+    {
+      "id": "S26",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 950,
+      "answer": "{\"shifts\":{\"morning\":3,\"noon\":2,\"night\":3}}"
+    },
+    {
+      "id": "S27",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 693,
+      "answer": "{\"progress\":0.725}"
+    },
+    {
+      "id": "S28",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 697,
+      "answer": "{\"priority\":1,\"urgent\":true}"
+    },
+    {
+      "id": "S29",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 856,
+      "answer": "{\"total\":2000,\"diff\":400}"
+    },
+    {
+      "id": "S30",
+      "volume": "structured-json",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 1490,
+      "answer": "[{\"channel\":\"官网\",\"count\":12},{\"channel\":\"广告\",\"count\":9},{\"channel\":\"转介绍\",\"count\":5}]"
+    },
+    {
+      "id": "B01",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 2445,
+      "answer": "RevPAR：311.6 元。入住率 82% 与 ADR 380 元叠加，房价变现效率尚可；建议进一步挖掘高入住时段的溢价空间以提升 RevPAR。"
+    },
+    {
+      "id": "B02",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 1229,
+      "answer": "5.2 年；现金流若下降或初始投资上升，回收期将延长。"
+    },
+    {
+      "id": "B03",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 4074,
+      "answer": "结论：优先选乙方案。\n\n理由：乙方案回收期仅5年，比甲方案（7年）提前2年回收，资金风险更低、流动性更好；虽乙方案IRR（9%）低于甲方案（11%），但更短的回收期意味着更早脱险，更适合风险偏好较低或资金周转要求较高的场景。数据来源：本题给定。"
+    },
+    {
+      "id": "B04",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 5823,
+      "answer": "1. 缺数明示：当前缺失 3 个月经营数据，无法直接得出全年实际值。\n2. 预测口径：全年预测 = 已有 9 个月实际数据 + 缺失 3 个月按“历史同期/业务基线/保守假设”建模估算（具体假设需另行披露，不得编造）。\n3. 交付结论：在未补全缺失 3 个月数据且未明确预测假设前，不给出具体全年数字，仅提供“已有 9 "
+    },
+    {
+      "id": "B05",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 2082,
+      "answer": "{\"intent\": \"orchestration\", \"confidence\": 0.9, \"missing_slots\": [\"巡检对象/范围\", \"巡检时间段\", \"负责人/执行人\"]}"
+    },
+    {
+      "id": "B06",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 1428,
+      "answer": "{\"intent\": \"查询电费趋势\", \"confidence\": 0.9, \"prediction\": \"查询电费趋势\"}"
+    },
+    {
+      "id": "B07",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "关键词命中 0/1（0.00 < 0.4）",
+      "durationMs": 1193,
+      "answer": "{\"intent\": \"greeting\", \"confidence\": 0.99, \"need_clarification\": false}"
+    },
+    {
+      "id": "B08",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 1986,
+      "answer": "{\n  \"intent\": \"compare_and_forecast\",\n  \"main_category\": \"data_analysis\",\n  \"sub_category\": \"trend_analysis\",\n  \"missing_slots\": [\n    \"data_source\",\n    \"time_"
+    },
+    {
+      "id": "B09",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 5374,
+      "answer": "结论：不合适。\n\n理由链：\n1. 经验缺口：岗位要求 5 年，候选人 4 年，不满足最低年限门槛。\n2. 场景缺口：岗位要求连锁酒店经验，候选人为单体酒店，缺乏连锁体系运营、标准化管理及品牌规范执行背景。\n3. 团队规模缺口：岗位要求带 20 人团队，候选人未提及团队规模，单体酒店通常团队规模较小，带 20 人团队经验"
+    },
+    {
+      "id": "B10",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 3081,
+      "answer": "1. 用户增长与拉新能力\n2. 会员体系与权益设计能力\n3. 用户活跃与留存运营能力\n4. 数据分析与用户分层能力\n5. 会员沟通与社群运营能力\n6. 会员生命周期价值（LTV）提升能力"
+    },
+    {
+      "id": "B11",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 3805,
+      "answer": "{\n  \"candidate\": \"A\",\n  \"skill_match\": \"100%\",\n  \"recommendation\": \"推荐\",\n  \"match_score\": 85,\n  \"risk_note\": \"技能完全匹配，但近两年三次跳槽，稳定性存疑，存在较高的早期离职风险。建议在面试中重点核实离职原因，并"
+    },
+    {
+      "id": "B12",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "关键词命中 0/1（0.00 < 0.4）",
+      "durationMs": 2488,
+      "answer": "岗位标签：门店负责人\n\n归并理由：三者均为门店最高管理岗位，核心职责一致，均负责门店全局经营、团队管理及业绩达成，仅称谓不同，无需区分。"
+    },
+    {
+      "id": "B13",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 2820,
+      "answer": "基线：近6个月会员数序列为 1200/1180/1230/1250/1240/1260，窗口为最近6个月。\n\n下月情景区间：1220–1280（不担保单点）。"
+    },
+    {
+      "id": "B14",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 3096,
+      "answer": "{\n  \"status\": \"样本不足\",\n  \"data_volume\": \"5天\",\n  \"prediction_target\": \"下季度\",\n  \"risk_level\": \"极高\",\n  \"conclusion\": \"数据量严重不足，无法支撑季度级预测，建议扩充历史样本或调整预测粒度。\"\n}"
+    },
+    {
+      "id": "B15",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 3269,
+      "answer": "{\n  \"level\": \"alert\",\n  \"reason\": \"能耗连续 3 周呈加速上行（+2%/+4%/+7%），增幅逐周扩大，已超出正常波动范围，存在持续恶化趋势，需立即介入排查，但尚未达到临界失控阈值。\"\n}"
+    },
+    {
+      "id": "B16",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 3476,
+      "answer": "乐观：假设宏观经济强劲复苏且新增供应受限，occupancy 预计维持在 95% 以上。\n中性：假设市场供需基本平衡，occupancy 预计维持在 85%-90% 之间。\n悲观：假设经济下行且竞争加剧，occupancy 预计跌至 75% 以下。"
+    },
+    {
+      "id": "B17",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "关键词命中 0/1（0.00 < 0.3）",
+      "durationMs": 5985,
+      "answer": "[\n  {\n    \"title\": \"市中心商务酒店 | 近地铁 免费WiFi\",\n    \"channel\": \"携程/美团\",\n    \"image\": \"大堂前台+商务单间实拍\"\n  },\n  {\n    \"title\": \"高性价比中端酒店 | 干净整洁 近景点\",\n    \"channel\": \"飞猪/同程"
+    },
+    {
+      "id": "B18",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 5203,
+      "answer": "主标语：会员日，专属宠爱\n副标语：解锁会员特权，惊喜福利限时领取\n行动按钮：立即领取福利\n\n留白与强调色用法：\n1. 留白：主标语周围预留至少 15% 画幅空白，避免元素堆砌，突出视觉重心。\n2. 强调色：仅用于行动按钮背景及关键福利金额/日期，其余区域保持中性色调，引导用户视线直接落点按钮。"
+    },
+    {
+      "id": "B19",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 5433,
+      "answer": "1. 立即停止使用该文案，禁止在任何渠道发布或继续传播。\n2. 要求提供权威调研出处（调研机构、时间、样本、方法论、原始报告链接等）。\n3. 在未获得可验证出处前，删除该引用或改为无具体数据的表述（如“用户普遍偏好”）。\n4. 记录违规并通报文案责任人，按引用纪律进行处罚或培训。\n5. 建立文案发布前引用核查机制，所有"
+    },
+    {
+      "id": "B20",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 4142,
+      "answer": "1. 先过守护：确认文案未针对未成年人推广，且未鼓励过量饮酒或酒驾。\n2. 资质合规：确认含酒精饮品拥有有效的食品经营许可证及酒类经营资质。\n3. 标识规范：确认文案中包含“未成年人禁止饮酒”或“过量饮酒有害健康”等法定警示语。"
+    },
+    {
+      "id": "B21",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 6023,
+      "answer": "{\n  \"问题清单\": [\n    {\n      \"级别\": \"blocker\",\n      \"问题\": \"数据无来源\",\n      \"修复建议\": \"标注每项数据的采集渠道、时间范围、采集工具及负责人，建立数据溯源表。\"\n    },\n    {\n      \"级别\": \"blocker\",\n      \"问题"
+    },
+    {
+      "id": "B22",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 23333,
+      "answer": "[\n  {\n    \"维度\": \"内容完整性\",\n    \"标准\": \"0分：缺失核心板块（如进度、问题、计划）；1分：仅包含1个核心板块；2分：包含2个核心板块，但关键信息缺失；3分：包含3个核心板块，信息基本齐全；4分：包含全部核心板块，信息详实；5分：包含全部板块且补充了亮点/风险/附件等扩展信息\"\n  },\n "
+    },
+    {
+      "id": "B23",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 12327,
+      "answer": "{\n  \"sop_optimization_suggestions\": [\n    {\n      \"category\": \"标准化操作口径\",\n      \"suggestion\": \"将下属的零失误操作细节转化为 SOP 中的【标准动作清单】，明确每个步骤的执行标准、验收点及禁止项。\"\n    },\n    {\n "
+    },
+    {
+      "id": "B24",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 3119,
+      "answer": "结论：不放行。\n\n理由：存在 2 个 blocker 级缺陷，属于致命问题，直接导致验收不通过，必须修复后重新提交验收；3 个 minor 缺陷虽不影响核心功能，但需在后续迭代中修复，不影响本次放行决策。"
+    },
+    {
+      "id": "B25",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 5530,
+      "answer": "定级：阻断\n处置动作：立即撤回代码并清理仓库历史记录；轮换/废弃泄露令牌并生成新令牌；扫描全仓库及分支是否存在其他硬编码凭据；检查访问日志排查令牌是否被非法使用；对相关开发人员进行安全编码培训。\n上报口径：向安全团队和代码仓库管理员报告事件，记录泄露令牌范围、影响系统及处置进度，必要时上报至合规或高层管理层。"
+    },
+    {
+      "id": "B26",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 2/2",
+      "durationMs": 13991,
+      "answer": "{\n  \"处置结论\": \"误报\",\n  \"漏洞类型\": \"路径穿越 (Path Traversal)\",\n  \"证据链\": [\n    \"扫描报告指出的触发点为文件上传/下载接口，但实际代码实现中对文件名进行了白名单校验或使用了安全的路径拼接函数（如 `path.join` 结合 `path.resolve` 后进行前"
+    },
+    {
+      "id": "B27",
+      "volume": "business-zh",
+      "pass": false,
+      "detail": "关键词命中 0/1（0.00 < 0.4）",
+      "durationMs": 2662,
+      "answer": "【P0 紧急】系统监测到越权访问尝试，请立即核查并处置。\n\n事实：检测到异常访问请求，涉及未授权资源访问，时间窗口 30 秒内。"
+    },
+    {
+      "id": "B28",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 6437,
+      "answer": "1. 事实：审计日志条目必须包含 SHA-256 哈希值，且该哈希值需覆盖当前条目内容与前一条目哈希，形成链式结构。等级：P0（致命）。\n2. 事实：审计日志必须定期（每 24 小时）将哈希根或日志摘要写入不可篡改外部存储（如 WORM 存储、区块链或公证服务）。等级：P1（重要）。\n3. 事实：审计日志的写入操作必须"
+    },
+    {
+      "id": "B29",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 18998,
+      "answer": "{\n  \"budget\": 1000000,\n  \"options\": [\n    {\n      \"name\": \"消防改造（合规刚需）\",\n      \"allocation\": 1000000,\n      \"scores\": {\n        \"合规性\": 100,\n        \"风险规避\": 100,\n"
+    },
+    {
+      "id": "B30",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 11734,
+      "answer": "门店 A 利润高但集团要求扶植新品牌，按“局部服从全局”口径，仲裁意见如下：\n\n1. 仲裁结论：集团扶植新品牌的战略指令优先，门店 A 利润高属局部绩效，必须服从全局布局。\n2. 执行要求：门店 A 无权以高利润为由拒绝或拖延新品牌扶植任务，应按集团部署分配资源、配合导流、开展联合推广。\n3. 利益平衡：集团应在新品牌"
+    },
+    {
+      "id": "B31",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/1",
+      "durationMs": 43598,
+      "answer": "{\n  \"决策主题\": \"是否引入机器人送餐\",\n  \"方案A\": {\n    \"名称\": \"全面引入（全场景覆盖）\",\n    \"关键假设\": [\n      \"门店布局与动线满足机器人导航要求，无需大规模装修\",\n      \"高峰时段订单量足以支撑机器人高频调度，避免闲置\",\n      \"顾客对机器人送餐的接受"
+    },
+    {
+      "id": "B32",
+      "volume": "business-zh",
+      "pass": true,
+      "detail": "关键词命中 1/2",
+      "durationMs": 5436,
+      "answer": "{\n  \"decision_point\": \"在资源有限的情况下，决定优先开发功能A而非功能B\",\n  \"basis\": \"基于初步的市场调研问卷，认为功能A的用户需求更高\",\n  \"deviation\": \"上线后数据显示，功能B的实际留存率和转化率显著高于功能A，且功能A的采用率低于预期\",\n  \"improvem"
+    },
+    {
+      "id": "C01",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 648,
+      "answer": "{\"intent\":\"会议安排\"}"
+    },
+    {
+      "id": "C02",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 771,
+      "answer": "{\"day\":\"周三\",\"time\":\"下午三点\"}"
+    },
+    {
+      "id": "C03",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 565,
+      "answer": "{\"fever\":true}"
+    },
+    {
+      "id": "C04",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 594,
+      "answer": "{\"sentiment\":-1}"
+    },
+    {
+      "id": "C05",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 671,
+      "answer": "{\"orderId\":\"8837\"}"
+    },
+    {
+      "id": "C06",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 572,
+      "answer": "{\"category\":\"repair\"}"
+    },
+    {
+      "id": "C07",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 584,
+      "answer": "{\"skill\":\"inventory.query\"}"
+    },
+    {
+      "id": "C08",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 940,
+      "answer": "{\"needClarify\":true,\"missing\":[\"楼栋\"]}"
+    },
+    {
+      "id": "C09",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 561,
+      "answer": "{\"urgency\":4}"
+    },
+    {
+      "id": "C10",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 764,
+      "answer": "{\"intent\":\"extend-stay\",\"nights\":1}"
+    },
+    {
+      "id": "C11",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 549,
+      "answer": "{\"usable\":false}"
+    },
+    {
+      "id": "C12",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 736,
+      "answer": "{\"adults\":2,\"children\":1}"
+    },
+    {
+      "id": "C13",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 552,
+      "answer": "{\"type\":\"company\"}"
+    },
+    {
+      "id": "C14",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 568,
+      "answer": "{\"intent\":\"facility\"}"
+    },
+    {
+      "id": "C15",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 753,
+      "answer": "{\"price\":68,\"unit\":\"套\"}"
+    },
+    {
+      "id": "C16",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 714,
+      "answer": "{\"needTool\":true,\"tool\":\"weather\"}"
+    },
+    {
+      "id": "C17",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 611,
+      "answer": "{\"inMinutes\":15}"
+    },
+    {
+      "id": "C18",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 669,
+      "answer": "{\"tags\":[\"hygiene\"]}"
+    },
+    {
+      "id": "C19",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 659,
+      "answer": "{\"from\":\"zh\",\"to\":\"en\"}"
+    },
+    {
+      "id": "C20",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 666,
+      "answer": "{\"action\":\"cancel\",\"scope\":\"last\"}"
+    },
+    {
+      "id": "C21",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 572,
+      "answer": "{\"copies\":5}"
+    },
+    {
+      "id": "C22",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 751,
+      "answer": "{\"urgency\":5,\"category\":\"rescue\"}"
+    },
+    {
+      "id": "C23",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 667,
+      "answer": "{\"intent\":\"query\",\"topic\":\"points\"}"
+    },
+    {
+      "id": "C24",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 596,
+      "answer": "{\"template\":\"weekly.report\"}"
+    },
+    {
+      "id": "C25",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 629,
+      "answer": "{\"needClarify\":true}"
+    },
+    {
+      "id": "C26",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 599,
+      "answer": "{\"roomType\":\"TW\"}"
+    },
+    {
+      "id": "C27",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 703,
+      "answer": "{\"status\":\"processing\",\"progress\":60}"
+    },
+    {
+      "id": "C28",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 562,
+      "answer": "{\"topic\":\"breakfast\"}"
+    },
+    {
+      "id": "C29",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 728,
+      "answer": "{\"escalate\":true,\"to\":\"human\"}"
+    },
+    {
+      "id": "C30",
+      "volume": "consumer-profile",
+      "pass": true,
+      "detail": "JSON 可解析且断言全过",
+      "durationMs": 578,
+      "answer": "{\"needApproval\":true}"
+    }
+  ]
+}
