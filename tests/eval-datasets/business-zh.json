@@ -106,7 +106,8 @@
    "prompt": "用户说『把这数据跟去年比比再讲讲明年』：给 intent；若跨类说明主类与次类，缺槽列明。",
    "assert": {
     "keywords": [
-     "analysis"
+     "analysis",
+     "数据分析"
     ],
     "minHitRatio": 0.3
    }
@@ -288,7 +289,9 @@
    "assert": {
     "keywords": [
      "维度",
-     "评分"
+     "dimension",
+     "评分",
+     "scoring"
     ],
     "minHitRatio": 0.5
    }
