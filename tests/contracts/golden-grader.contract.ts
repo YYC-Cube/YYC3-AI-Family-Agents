@@ -42,7 +42,7 @@ if (__localShim) {
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { grade, gradeKeywords, gradeStructured, extractJson } from '../eval-datasets/grader.js';
+import { grade, gradeKeywords, gradeStructured, extractJson, normalizeText } from '../eval-datasets/grader.js';
 
 const ROOT = process.cwd();
 const DATASETS = path.join(ROOT, 'tests', 'eval-datasets');
@@ -101,7 +101,7 @@ describe('golden 判分器自测（E1b · 先自测后启用）', () => {
       keywords: ['RevPAR'], numbers: ['311.6'], minHitRatio: 0.5,
     });
     expect(narrow.pass).toBe(true);
-    expect(narrow.detail).toContain('等价通过');
+    expect(narrow.detail).toContain('数值集合等价');
     // 围栏包裹的 JSON 同样可解析（extractStepJson 同语义）
     const parsed = extractJson('```json\n{"intent":"chat"}\n```');
     expect(parsed.intent).toBe('chat');
@@ -116,6 +116,34 @@ describe('golden 判分器自测（E1b · 先自测后启用）', () => {
     expect(
       gradeStructured('{"intent":"chat","extra":"' + 'x'.repeat(80) + '"}', { parse: 'object', maxChars: 60 }).pass,
     ).toBe(false);
+  });
+
+  it('G5 文本归一（M40）：全角→半角 · 千分位消除 · 大小写不敏感', () => {
+    const normalized = normalizeText('ＩＲＲ为１２．３４，合计 1,234,567 元，ＡＤＲ');
+    expect(normalized.includes('irr')).toBe(true);
+    expect(normalized.includes('12.34')).toBe(true);
+    expect(normalized.includes('1234567')).toBe(true);
+    expect(normalized.includes('adr')).toBe(true);
+  });
+
+  it('G6 同义组 anyOf（M40）：「告警|alert」任一命中；全角/大小写变体命中', () => {
+    const zh = gradeKeywords('已触发告警分级：ｗａｔｃｈ', { keywords: ['告警|alert', 'ＷＡＴＣＨ|watch'], minHitRatio: 1 });
+    expect(zh.pass).toBe(true);
+    const en = gradeKeywords('ALERT level escalated', { keywords: ['告警|alert'], minHitRatio: 1 });
+    expect(en.pass).toBe(true);
+    const miss = gradeKeywords('一切正常', { keywords: ['告警|alert'], minHitRatio: 1 });
+    expect(miss.pass).toBe(false);
+  });
+
+  it('G7 数值集合等价（M40）：311.60 ≡ 311.6 · 千分位/单位后缀容忍 · 集合包含语义', () => {
+    // 答案不含关键词 → 强制走数值通道：311.60 ≡ 311.6（数值相等非字符串包含）
+    const equiv = gradeKeywords('每间可售房收入约 311.60 元，结论健康', { keywords: ['RevPAR'], numbers: ['311.6'], minHitRatio: 0.5 });
+    expect(equiv.pass).toBe(true);
+    expect(equiv.detail).toContain('数值集合等价');
+    const thousands = gradeKeywords('总投资 1,234,567 元，回本约 5.2 年', { keywords: ['回收期'], numbers: ['1234567', '5.2'], minHitRatio: 0.5 });
+    expect(thousands.pass).toBe(true);
+    const wrongNumber = gradeKeywords('结果是 312 元', { keywords: ['RevPAR'], numbers: ['311.6'], minHitRatio: 0.5 });
+    expect(wrongNumber.pass).toBe(false); // 数值不等不通过
   });
 });
 
