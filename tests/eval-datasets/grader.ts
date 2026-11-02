@@ -35,6 +35,34 @@ export interface GradeResult {
   readonly detail: string;
 }
 
+/**
+ * 文本归一（M40 判分升级）：全角→半角 · 小写 · 去千分位逗号——
+ * 消除「同义措辞之外的格式方差」（ＩＲＲ/irr、1,234/1234）。
+ */
+export function normalizeText(text: string): string {
+  let out = String(text ?? '')
+    .replace(/[\uFF01-\uFF5E]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+    .replace(/\u3000/g, ' ')
+    .toLowerCase();
+  // 千分位循环消除（1,234,567 → 1234567——单遍 regex 只消一层）
+  let prev: string;
+  do {
+    prev = out;
+    out = out.replace(/(\d),(\d{3})/g, '$1$2');
+  } while (out !== prev);
+  return out;
+}
+
+/** 数值抽取（归一后文本）：整数/小数集合（容忍单位与百分号后缀）。 */
+export function extractNumbers(text: string): number[] {
+  return [...normalizeText(text).matchAll(/\d+(?:\.\d+)?/g)].map((m) => Number(m[0]));
+}
+
+/** 关键词命中（组语义）：`a|b` 同义组任一命中计 1——「告警|alert」覆盖中英自由措辞。 */
+function keywordHit(answer: string, keyword: string): boolean {
+  const normalized = normalizeText(answer);
+  return keyword.split('|').some((alt) => normalized.includes(normalizeText(alt)));
+}
 /** 剥离围栏并抽取首个 JSON 对象/数组；无法解析返回 undefined。 */
 export function extractJson(text: string): unknown {
   const stripped = String(text).replace(/```(?:json)?/gi, '').trim();
@@ -79,26 +107,32 @@ export function gradeStructured(answer: string, assert: StructuredAssert): Grade
     }
   }
   for (const token of assert.contains ?? []) {
-    if (!raw.includes(String(token))) return { pass: false, detail: `未包含期望值 ${token}` };
+    if (!String(token).includes('|') && raw.includes(String(token))) continue; // 原文直含（含则过）
+    if (keywordHit(raw, String(token))) continue; // M40：组语义（a|b 任一）+ 归一比对
+    return { pass: false, detail: `未包含期望值 ${token}` };
   }
   return { pass: true, detail: 'JSON 可解析且断言全过' };
 }
 
-/** business-zh 卷判分（关键词 + 反关键词 + 数值等价容错通道）。 */
+/** business-zh 卷判分（关键词组语义 + 反关键词 + 数值集合等价通道 · M40 升级）。 */
 export function gradeKeywords(answer: string, assert: KeywordAssert): GradeResult {
   const raw = String(answer ?? '');
   for (const bad of assert.antiKeywords ?? []) {
-    if (raw.includes(bad)) return { pass: false, detail: `命中反关键词 ${bad}` };
+    if (keywordHit(raw, bad)) return { pass: false, detail: `命中反关键词 ${bad}` };
   }
   const keywords = assert.keywords ?? [];
-  const hits = keywords.filter((k) => raw.includes(k));
+  const hits = keywords.filter((k) => keywordHit(raw, k));
   const ratio = keywords.length === 0 ? 1 : hits.length / keywords.length;
   const threshold = assert.minHitRatio ?? 0.5;
   if (ratio < threshold) {
-    // 数值等价通道：判分器关键词面窄时，数值断言全中仍视为通过（不误杀数值正确答案）
-    const numbers = assert.numbers ?? [];
-    if (numbers.length > 0 && numbers.every((n) => raw.includes(String(n)))) {
-      return { pass: true, detail: `关键词比 ${hits.length}/${keywords.length} 不足，但数值断言全中（等价通过）` };
+    // 数值集合等价通道（M40）：关键词面窄时，断言数值 ⊆ 答案数值集合（数值相等，非字符串包含——
+    // 311.60 ≡ 311.6 · 容忍 1,234 / 346.5元 / 95.7% 格式）仍过——不误杀数值正确答案
+    const expected = assert.numbers ?? [];
+    if (expected.length > 0) {
+      const got = new Set(extractNumbers(raw));
+      if (expected.every((n) => got.has(Number(n)))) {
+        return { pass: true, detail: `关键词比 ${hits.length}/${keywords.length} 不足，但数值集合等价（${expected.join('=')} 全中）` };
+      }
     }
     return { pass: false, detail: `关键词命中 ${hits.length}/${keywords.length}（${ratio.toFixed(2)} < ${threshold}）` };
   }
