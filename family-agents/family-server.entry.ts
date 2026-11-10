@@ -13,6 +13,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import readline from 'node:readline';
 import { readFileSync, realpathSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
@@ -427,6 +428,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
   const persistUsage = (): void => {
     if (usageFile && llmUsage) saveUsageSnapshot(usageFile, llmUsage.snapshot());
   };
+  process.on('exit', () => persistUsage()); // M41 兜底：任意退出路径同步落盘（exit 回调仅可同步 IO）
   const onUsageRecorded = usageFile
     ? (): void => {
         if ((usageWrites += 1) % usageFlushEvery === 0) persistUsage();
@@ -646,6 +648,65 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
   };
 }
 
+/**
+ * MCP stdio 服务循环（M41.5 · host 接入形态）：逐行读 JSON-RPC 请求 → handler →
+ * 响应帧写回（一行一帧 · id 关联允许乱序）。stdout 仅协议响应——横幅/日志走 stderr。
+ * stdin 关闭（host 断开）→ 排空在途响应 → stop → 进程退出。返回 rl 供测试/宿主控制。
+ */
+export function serveMcpStdio(
+  server: FamilyServerHandle,
+  io?: {
+    readonly input?: NodeJS.ReadableStream;
+    readonly output?: NodeJS.WritableStream;
+    /** host 断开（stdin close）排空并 stop 后回调——CLI 场景传 process.exit；测试不传（进程存活）。 */
+    readonly onClose?: () => void;
+  },
+): NodeJS.ReadableStream {
+  const input = io?.input ?? process.stdin;
+  const output = io?.output ?? process.stdout;
+  console.error(
+    `YYC³ 家族服务已就绪（MCP stdio · 技能 ${server.registry.list().length} · /metrics ${server.metricsServer?.url ?? '未启用'}）`,
+  );
+  if (server.llmRunner) console.error('  LLM 语义臂：已启用（配置档 · 真实计费调用）');
+  const rl = readline.createInterface({ input, terminal: false });
+  const inflight: Promise<unknown>[] = [];
+  rl.on('line', (line) => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    const respond = (frame: string): void => {
+      output.write(`${frame}\n`);
+    };
+    try {
+      const out = server.mcp.handler.handle(trimmed) as unknown;
+      if (out && typeof (out as Promise<string>).then === 'function') {
+        const p = (out as Promise<string>).then(respond).catch((e) => {
+          respond(
+            JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32603, message: String(e?.message ?? e).slice(0, 200) } }),
+          );
+        });
+        inflight.push(p);
+      } else if (out) {
+        respond(String(out));
+      }
+    } catch (e) {
+      respond(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          id: null,
+          error: { code: -32603, message: `internal error: ${String(e instanceof Error ? e.message : e).slice(0, 160)}` },
+        }),
+      );
+    }
+  });
+  rl.on('close', () => {
+    void Promise.allSettled(inflight).then(async () => {
+      await server.stop();
+      io?.onClose?.();
+    });
+  });
+  return rl;
+}
+
 /** CLI 模式（`node family-server.entry.js [--selftest]`）：stdin 收配置 JSON，由运行器注入。 */
 async function main(): Promise<number> {
   const config = JSON.parse(readFileSync(0, 'utf8')) as FamilyServerConfig;
@@ -751,16 +812,10 @@ async function main(): Promise<number> {
     return okPass && missingPass ? 0 : 1;
   }
 
-  console.log(`YYC³ 家族服务（P6-A 雏形）已就绪`);
-  console.log(`  技能装载：${server.registry.list().length} 条（skills_loaded 已记账）`);
-  console.log(`  MCP 处理器：无状态 JSON-RPC（initialize/ping/tools/list/tools/call）`);
-  console.log(`  /metrics：${server.metricsServer?.url ?? '（未启用）'}`);
-  console.log('  Ctrl+C 优雅停止');
-  await new Promise<void>((resolve) => {
-    process.once('SIGINT', resolve);
-    process.once('SIGTERM', resolve);
-  });
-  await server.stop();
+  // M41.5 · host 接入形态：MCP stdio 服务循环（stdout 仅协议响应 · host 断开即停）
+  serveMcpStdio(server, { onClose: () => process.exit(0) });
+  process.once('SIGINT', () => process.exit(0));
+  process.once('SIGTERM', () => process.exit(0));
   return 0;
 }
 
