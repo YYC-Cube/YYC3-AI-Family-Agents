@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-11-10T15:26:56.653Z",
-  "generatedAtCN": "2026/11/10 23:26:56",
+  "generatedAt": "2026-11-10T15:51:33.559Z",
+  "generatedAtCN": "2026/11/10 23:51:33",
   "gate": {
     "passed": true,
-    "totalPassed": 364,
+    "totalPassed": 367,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 52
+    "specs": 53
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 155,
+      "passed": 158,
       "failed": 0
     },
     {
@@ -826,6 +826,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 5,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/mcp-stdio-serve.contract.js",
+      "name": "MCP stdio 服务循环（host 接入形态）",
+      "phase": "M41.5",
+      "pillars": [
+        "治"
+      ],
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "total": 3,
       "silent": false,
       "ok": true
     }

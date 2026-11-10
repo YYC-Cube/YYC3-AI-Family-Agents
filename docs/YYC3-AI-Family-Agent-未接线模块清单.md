@@ -5,7 +5,7 @@
   拟人为本，AI为核，纯粹为心
   ============================================================
   Document: YYC3-AI-Family-Agent-未接线模块清单
-  Version : v1.39.0
+  Version : v1.40.0
   Contact : admin@yanyucloud.com
   Homepage: https://matrix.yyc3.top
   ============================================================
@@ -23,7 +23,7 @@
 file: YYC3-AI-Family-Agent-未接线模块清单.md
 description: 02 内核与 03 家人实现集的接线状态盘点（已接线 / 仅编译 / 骨架 / 配置未加载）
 author: AI Tutor <Intelligent Application Implementation Expert>
-version: v1.39.0
+version: v1.40.0
 created: 2026-10-23
 updated: 2026-10-30
 status: active
@@ -73,8 +73,8 @@ category: report
 | ---- | -------- | ------ | ------ | ---- |
 | `architecture-kernel` | 116 | **94** | **22** | 核心链路已接线（含 CAGEERF 分解 + P1-T4b 协同度仪表 + P3-MCP 协议语义 + P3-T3 统一技能 id + P3-T4 索引契约 + P3-T5 评测契约 + P4-T2/T3/T4 能力注册中心与准入治理 + P4-T5 工具目录分派 + P2 a2a-adapter 与安全策略映射 + §6.3 能力供给接线仪表 + M23–M26 学习调度/生命周期/编排四件转实 + P8 收尾装配位（学习落位 / usage 回填）+ M29 九层底座全接线）；**A 类骨架清零** |
 | `family-agents` | 150 | **36** | **114** | `shared-core` 记忆 / 学习 / LLM 主链路全接线；家人意图链路 4 文件 + 伯乐成就面板已接线；8 位家人薄转发 provider 与 llm-adapter barrel 属部署侧消费（纯可达口径计仅编译） |
-| `tests` | 53 | 53 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线 / P6 家族服务装配·执行引擎·语义臂·学习调度·生命周期·家族编排 / P9-a 九层底座 / R1/R2 npm 双包契约 / R4 家人模板脚手架契约 / R5 外部 Worker 模板契约） |
-| **合计** | **346** | **184** | **162** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
+| `tests` | 54 | 54 | 0 | 门禁入口（含 P1 llm-provider / 千行 e2e / P1-T1 清单 / P1-T2 卡片 / P1-T3 MCP / P1-T4 五维 / P1-T4b 协同接线 / P1-T5 提示词契约 / P3-T2 技能产物 / P3-MCP 协议语义 / P3-T3 统一 id / P3-T4 渐进披露 / P3-T5 行为评测 / P3-T6 能力供给契约 / P4-T1 能力包格式 / P4-T2·T4 静态注册中心 / P4-T3 准入治理 / P4-T5 工具目录与分派 / P4-T6 打包分发注册闭环与打包 CLI 契约 / P2-T1 外部 Worker 契约 / P2-T2 A2A 适配层 / P2-T4 安全策略映射 / §6.3 能力供给生产接线 / P6 家族服务装配·执行引擎·语义臂·学习调度·生命周期·家族编排 / P9-a 九层底座 / R1/R2 npm 双包契约 / R4 家人模板脚手架契约 / R5 外部 Worker 模板契约） |
+| **合计** | **347** | **185** | **162** | 另：8 个家人自测 spec 未纳入编译与门禁；2 个 UAT 门控 spec（`uat:llm` / `uat:external`）在编译范围但不作门禁入口，不纳入本表 |
 
 > 已接线 183 = kernel 94 + agents 37 + tests 52（门禁入口 51 + grader.ts；试点 2 目录 26 ts 为编译不接线——部署侧消费；UAT 门控 3 不计入）。v1.20.0 起「已接线」统一为**纯静态可达**口径（可复现 BFS：相对导入 + `@shared` 别名 + barrel 透传，以门禁入口为根）：与 v1.19.0 手工盘点相比，agents 41 → 34 全部来自口径统一（家人薄转发 provider 等部署侧消费文件移入仅编译，**无实际拆线**——family-agents 文件数与内容在 P5 零变更）；kernel 45 → 69 含 P5 新增 5 文件 + P6 新增（mcp-server-assembly / skill-executor）与别名解析补全。**v1.24.0 已完成仅编译文件逐文件归类复核（见 §2.5，v1.25.0 起随接线滚动更新）**；§三 / §四 的逐行 ✅/◐ 明细以 §2.5 归类结论为准（本表为权威口径）。
 
@@ -358,6 +358,7 @@ category: report
 | v1.37.0 | 2026-10-31 | **裂变管线门禁全自动（M39 · E2a · 解冻第一波全清）**：create-member scaffold 模式（角色卡 CO-STAR 输入 → 四闸全绿才产出：结构/人格红线/技能查重/零漂移 · 计时 ≤600s）；试点 2 例入册（member-edge-executor 挂治 / member-skill-patroller 挂学 · 独有技能 edge.* 4 条 · 成员自含 manifest/agent-card 不入家族主清单）；负例 ×2 + 端到端 + 在册 = 契约 fission-pipeline 4 例；prompt.contract 边缘豁免 + member:check 9 成员零漂移；presets/EDGE-MEMBERS.md 登记；门禁 352 → **356/356**（**51 套件 · 入口 51** · 治 144）；包 2.51.0；统计 318/182/136 → **345/183/162**（agents +26 试点 ts 编译不接线 · tests +1 契约入口） |
 | v1.38.0 | 2026-11-02 | **判分升级第一批（M40 · E1b 后续）**：grader 三升级（normalizeText 归一 / 同义组 anyOf / 数值集合等价——311.60≡311.6 · 千分位容忍）；契约 G5-G7 入 CI；全量复跑 91/92 = 98.9% 与 11-01 基线持平（挂题收敛至 B27 固定单题 · 模型特性）；基线报告 v4 入 docs；门禁 356 → **359/359**（51 套件 · 治 147）；包 2.52.0；统计维持 345/183/162 |
 | v1.39.0 | 2026-11-10 | **计量持久化（M41 · 观察窗量具修复）**：LlmUsageCounter 恢复构造器 + family-server usagePersist（启动恢复 + /metrics 种子 + 分派每 N 次原子落盘 + stop 落盘）+ 启动器缺省注入 data/metrics-usage.json（YYC3_USAGE_PERSIST=0 关）；recordLlmUsage 空串标签归 unknown；pack-plugin 排除 .DS_Store（治本）；新套件 usage-persistence 5 例；门禁 359 → **364/364**（**52 套件 · 入口 52** · 治 152）；包 2.53.0；统计 345/183/162 → **346/184/162** |
+| v1.40.0 | 2026-11-10 | **MCP host 接入形态（M41.5 · 真实流量入口）**：entry serveMcpStdio 服务循环（逐行 JSON-RPC · stdout 纯净性走 stderr · 坏行 -32700 不崩 · host 断开排空→stop→onClose）；main 常驻分支升级为 serve 循环（npx yyc3-family-server 直连 ZCode/Claude）；进程 exit 钩子兜底计量落盘；《MCP 接入指南》入 docs（我们自己的模型 :10086 + 三闸 env + 观察窗计量配置）；新契约 mcp-stdio-serve 3 例（治）；门禁 364 → **367/367**（**53 套件 · 入口 53** · 治 155）；包 2.54.0；统计 346/184/162 → **347/185/162**（tests +1 契约） |
 | v1.24.0 | 2026-10-24 | **M22 运行时编排升级 + 仅编译逐文件复核**：① `family-server.entry.ts` `external` 配置（M22 · P7-c）——`shared.a2a-delegate` 工具经 `DelegateClient` 真实委托外部家人（HttpA2aTransport + 启动期 well-known card 发现 + 能力清单闸 + traceId 优先级链与 W3C 头外发）；启动器按实例契约自动装配；A9 套件 +1（注入传输 hermetic + 实活 selftest 委托 `state=completed`）；`instrumentMcpDispatcher` 异步感知修正（thenable 归一——此前异步拒绝错记 ok）；门禁 288 → **289/289**；包 2.34.0（M22 时点）。② §2.5 新增：仅编译 167 文件逐文件归类复核（A 骨架 20 · B barrel 22 · C 功能骨架 9 · D 家人模板衍生 108 · E shared-core 部件 6 · F UAT 2）——**无一处误判已交付或应拆未拆** |
 
 ---

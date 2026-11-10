@@ -80,6 +80,7 @@ const SPECS = [
   { file: 'tests/contracts/golden-grader.contract.js', pillars: ['治'], phase: 'E1b', name: 'golden 判分器自测（三卷格式 + 窄判分容错）' },
   { file: 'tests/contracts/fission-pipeline.contract.js', pillars: ['治'], phase: 'E2a', name: '裂变管线契约（人格红线 + 技能查重 + 端到端）' },
   { file: 'tests/integration/usage-persistence.spec.js', pillars: ['治'], phase: 'M41', name: '计量持久化（跨进程累计口径）' },
+  { file: 'tests/contracts/mcp-stdio-serve.contract.js', pillars: ['治'], phase: 'M41.5', name: 'MCP stdio 服务循环（host 接入形态）' },
   // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
   // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];
