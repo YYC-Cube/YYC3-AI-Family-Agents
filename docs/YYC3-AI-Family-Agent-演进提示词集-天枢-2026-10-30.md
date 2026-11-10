@@ -250,6 +250,7 @@
 
 ## 九、修订记录
 
+- v1.2.10（2026-11-10）：**计量持久化落地（M41 · 观察窗量具修复 · v1.2.9 归因的工程对策）**——LlmUsageCounter 恢复构造器 + family-server usagePersist（启动恢复 + /metrics 种子 + 分派原子落盘 + stop 落盘）+ 启动器缺省注入 data/metrics-usage.json；「stdio 生命周期计数器随进程清零」结构性缺口补齐——11-14 复核窗口量具就绪（新核验：cat data/metrics-usage.json 跨进程累计）；附带治本 pack-plugin .DS_Store 混入（4 条目漂移恢复）；门禁 359 → **364/364**（52 套件）。回链：CHANGELOG v2.53.0。
 - v1.2.9（2026-11-07）：**分口径观察窗终局：未达标 → 第二波顺延第一轮（新窗口 11-14 24:00）**——四判据全未达（calls 0/300 · tokens 0/60K · 0 员 · 0 场景）；归因「真无流量」（通道层无障碍——E0 live 验收与 4 轮评测 usage 均正常入账在案；瓶颈=消费侧无常驻服务与日常调用）；处置按判据顺延一周（≤2 轮），不建议刷量凑数（污染报表语义）；救济路径（常驻起服务 + 日常用八家臣）入终局报告。回链：docs/YYC3-AI-Family-Agent-观察窗终局报告-2026-11-07.md。
 - v1.2.8（2026-11-02）：**npm 双包首发（解冻令豁免项闭环 ✅ · R1-R3 终局）**——@yyc3/ai-family-kernel@2.52.0 + @yyc3/ai-family-agent@2.52.0 经四步手册发布（M32 预检 + W0 安审四项全过 · classic token env 直传零落盘 · registry 可见验证）；digest 公示（SHA256SUMS 3 条）+ 发布记录入 docs；**复用路线 R1-R5 全部终局**。token 已建议撤销轮转。回链：docs/YYC3-AI-Family-Agent-npm发布记录-2026-11-02.md。
 - v1.2.7（2026-11-02）：**判分升级第一批落地（M40 · v1.2.5 登记项启动）**——grader 三升级：①normalizeText 文本归一（全角→半角 · 循环千分位消除 · 小写）；②同义组 anyOf（`a|b` 任一命中 · keywords/antiKeywords/contains 全通道）；③数值断言升级为集合等价（311.60≡311.6 · 容忍 1,234,567/346.5元/95.7% 格式 · 数值相等非字符串包含）。契约 +3 例（G5 归一 / G6 组语义 / G7 集合等价）· 门禁 356 → 359 全绿；全量复跑 92 题：**91/92 = 98.9%（16399 tok）与 11-01 基线持平**——挂题稳定收敛至 B27 固定单题（模型行为特性 · 非判分面问题），语义/embedding 判分为第二批（需评估 hermetic 边界）。回链：docs/YYC3-AI-Family-Agent-golden基线-nemotron-3.5-super-vl-2026-11-02.md。

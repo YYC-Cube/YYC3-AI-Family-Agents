@@ -46,6 +46,15 @@ const config = {
   },
 };
 
+// 计量持久化（M41 · 缺省启用 · YYC3_USAGE_PERSIST=0 关闭）：跨进程累计口径
+// （stdio 生命周期计数器随进程清零的结构性缺口由此补齐——观察窗判据量具）
+if (process.env.YYC3_USAGE_PERSIST !== '0') {
+  config.usagePersist = {
+    file: process.env.YYC3_USAGE_FILE ?? 'data/metrics-usage.json',
+    flushEvery: Number(process.env.YYC3_USAGE_FLUSH_EVERY ?? 5),
+  };
+}
+
 // 外部家人 A2A 编排（M22）：存在实例契约即自动装配（端点/能力/令牌环境变量）
 try {
   const inst = parseYaml(fs.readFileSync(path.join(ROOT, 'presets/external-worker/blueprint-13.worker.yaml'), 'utf8'));

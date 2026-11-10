@@ -11,6 +11,8 @@
  *       stdin 收运行器注入的 JSON）；family-agents → architecture-kernel 单向依赖。
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { readFileSync, realpathSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
@@ -127,6 +129,12 @@ export interface FamilyServerConfig {
   };
   readonly metricsServer?: { readonly port?: number; readonly host?: string; readonly authToken?: string };
   /**
+   * 计量持久化（M41）：file 指向快照（启动器缺省注入 data/metrics-usage.json）——
+   * 启动恢复（计数器基线 + /metrics 种子）+ 分派每 N 次落盘 + stop 落盘；
+   * stdio 生命周期计数器随进程清零的结构性缺口由此补齐（观察窗累计口径量具）。
+   */
+  readonly usagePersist?: { readonly file: string; readonly flushEvery?: number };
+  /**
    * 场景画像层（E4a · 众口登记簿）：部署侧解析 presets/profiles/domains/*.yaml 注入
    * （manifest 同范式 · 结构校验 `pnpm profiles:check`）；profileResolver 把技能映射到
    * 画像 id——语义执行的模型档位/输出风格随画像换档，计量按 `llm-assisted@<profile>` 分口径。
@@ -203,6 +211,7 @@ function baseDispatch(
   llmUsage?: LlmUsageCounter,
   profiles?: ProfileRegistry,
   profileResolver?: (skillId: string) => string | undefined,
+  onUsageRecorded?: () => void,
 ): McpToolDispatcher {
   const logicalByTool = new Map(
     tools.map((tool) => {
@@ -238,11 +247,9 @@ function baseDispatch(
       metrics,
     }).then((result) => {
       if (llmUsage && metrics) {
-        metrics.recordLlmUsage(
-          { skillId: entry.id, scenario: scenarioTag },
-          Math.max(0, llmUsage.totalTokens - usageBefore),
-          1,
-        );
+        const delta = Math.max(0, llmUsage.totalTokens - usageBefore);
+        metrics.recordLlmUsage({ skillId: entry.id, scenario: scenarioTag }, delta, 1);
+        if (delta > 0) onUsageRecorded?.(); // M41：有真实增量才触发落盘计数
       }
       return result;
     });
@@ -264,8 +271,11 @@ function executeDispatch(
   llmUsage?: LlmUsageCounter,
   profiles?: ProfileRegistry,
   profileResolver?: (skillId: string) => string | undefined,
+  onUsageRecorded?: () => void,
 ): McpToolDispatcher {
-  const base = baseDispatch(registry, tools, entriesByLogicalId, llmRunner, metrics, llmUsage, profiles, profileResolver);
+  const base = baseDispatch(
+    registry, tools, entriesByLogicalId, llmRunner, metrics, llmUsage, profiles, profileResolver, onUsageRecorded,
+  );
   if (!a2a) return base;
   const a2aArm = async (ctx: { traceId?: string; args?: unknown }): Promise<unknown> => {
     const args = (ctx.args ?? {}) as { skillId?: unknown; input?: unknown };
@@ -358,8 +368,70 @@ function learningDispatch(
 }
 
 /** 启动家族服务（装载 → MCP 装配 → 可选 /metrics 暴露）。 */
+
+/**
+ * 计量快照读写（M41 · 计量持久化）：`data/metrics-usage.json` 形态——
+ * 启动恢复（计数器基线 + /metrics 种子）与落盘（原子写：tmp + rename）；
+ * 读失败（缺失/坏 JSON/schema 不符）一律返回 undefined（如实从零起账）。
+ */
+export function loadUsageSnapshot(file) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (parsed?.schema === 'yyc3.usage-snapshot/v1') return parsed;
+  } catch {
+    /* 缺失/损坏：从零起账 */
+  }
+  return undefined;
+}
+
+export function saveUsageSnapshot(file, snapshot) {
+  try {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    const tmp = `${file}.tmp`;
+    fs.writeFileSync(
+      tmp,
+      `${JSON.stringify(
+        {
+          schema: 'yyc3.usage-snapshot/v1',
+          updatedAt: new Date().toISOString(),
+          totals: { promptTokens: snapshot.promptTokens, completionTokens: snapshot.completionTokens, calls: snapshot.calls },
+          buckets: snapshot.buckets.map((b) => ({
+            agentId: b.agentId, skillId: b.skillId, scenario: b.scenario,
+            promptTokens: b.promptTokens, completionTokens: b.completionTokens, calls: b.calls,
+          })),
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    fs.renameSync(tmp, file);
+    return true;
+  } catch {
+    return false; // 落盘失败不阻断推理主链（下次 flush 重试）
+  }
+}
+
 export async function startFamilyServer(config: FamilyServerConfig): Promise<FamilyServerHandle> {
   const metrics = new FamilyMetrics();
+  // 计量持久化（M41）：启动恢复——计数器基线 + /metrics 三维计数器种子（跨进程累计口径）
+  const usageFile = config.usagePersist?.file;
+  const usageFlushEvery = Math.max(1, config.usagePersist?.flushEvery ?? 5);
+  let llmUsage: LlmUsageCounter | undefined;
+  let usageWrites = 0;
+  if (usageFile) {
+    llmUsage = new LlmUsageCounter(loadUsageSnapshot(usageFile));
+    for (const b of llmUsage.snapshot().buckets) {
+      metrics.recordLlmUsage({ agentId: b.agentId, skillId: b.skillId, scenario: b.scenario }, b.totalTokens, b.calls);
+    }
+  }
+  const persistUsage = (): void => {
+    if (usageFile && llmUsage) saveUsageSnapshot(usageFile, llmUsage.snapshot());
+  };
+  const onUsageRecorded = usageFile
+    ? (): void => {
+        if ((usageWrites += 1) % usageFlushEvery === 0) persistUsage();
+      }
+    : undefined;
   const registry = instrumentSkillRegistry(new SkillRegistry(), metrics);
   registry.loadFromManifest(config.manifestEntries);
   // 执行引擎索引：清单条目自带 steps/io 契约（P3-T1②），注册表定义不含正文
@@ -370,7 +442,6 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
   // P8 收尾 b：provider 构造臂自动挂 LlmUsageCounter（真实 usage 计量，句柄 llmUsage 暴露）；
   // E0c：maxTokens / timeoutMs 由 base.yaml llm.providers.* 档位注入（思考型档位建议 maxTokens 3072）
   const llmTimeout = config.llm?.timeoutMs !== undefined ? { timeoutMs: config.llm.timeoutMs } : {};
-  let llmUsage: LlmUsageCounter | undefined;
   const llmRunner: LlmStepRunner | undefined =
     config.llmRunner ??
     (config.llm
@@ -395,7 +466,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
                 ),
           config.llm.model ?? (config.llm.provider === 'openai' ? 'gpt-4o-mini' : 'glm-4-flash'),
           config.llm.maxTokens ?? 1024,
-          (llmUsage = new LlmUsageCounter()),
+          (llmUsage ??= new LlmUsageCounter()),
         )
       : undefined);
 
@@ -536,6 +607,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
       llmUsage,
       profileRegistry,
       config.profileResolver,
+      onUsageRecorded,
     );
 
   const mcp = assembleMcpServer({
@@ -568,6 +640,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     async stop() {
       if (stopped) return;
       stopped = true;
+      persistUsage(); // M41：优雅停止前落盘计量快照（跨进程累计）
       await metricsServer?.close();
     },
   };

@@ -38,17 +38,52 @@ export interface LlmUsageTags {
   readonly scenario?: string;
 }
 
+/** 恢复状态（M41 计量持久化）：快照形态的子集——启动时由部署侧从持久化文件读入。 */
+export interface LlmUsageCounterRestore {
+  readonly totals?: {
+    readonly promptTokens?: number;
+    readonly completionTokens?: number;
+    readonly calls?: number;
+  };
+  readonly buckets?: readonly {
+    readonly agentId?: string;
+    readonly skillId?: string;
+    readonly scenario?: string;
+    readonly promptTokens?: number;
+    readonly completionTokens?: number;
+    readonly calls?: number;
+  }[];
+}
+
 /**
  * 累计 LLM 用量计数器（P8 收尾 b · usage 回填生产端）：真实 provider usage 逐调用
  * 累计；totalTokens 即运行时装配调度闸 usageMeter 端口值（份额记账冲抵）。
  * E0b 分口径：record 可附三维 tags（agentId/skillId/scenario），分桶快照供
  * /metrics 聚合导出（家族用量报表口径地基）。
+ * M41 持久化：构造器可注入恢复状态（快照文件读出）——跨进程累计口径
+ * （stdio 生命周期计数器随进程清零的结构性缺口由此补齐；落盘归部署侧）。
  */
 export class LlmUsageCounter {
   private promptTokens = 0;
   private completionTokens = 0;
   private calls = 0;
   private readonly buckets = new Map<string, { promptTokens: number; completionTokens: number; calls: number }>();
+
+  constructor(restored?: LlmUsageCounterRestore) {
+    if (restored?.totals) {
+      this.promptTokens += Math.max(0, restored.totals.promptTokens ?? 0);
+      this.completionTokens += Math.max(0, restored.totals.completionTokens ?? 0);
+      this.calls += Math.max(0, restored.totals.calls ?? 0);
+    }
+    for (const b of restored?.buckets ?? []) {
+      const key = `${b.agentId ?? ''}|${b.skillId ?? ''}|${b.scenario ?? ''}`;
+      const bucket = this.buckets.get(key) ?? { promptTokens: 0, completionTokens: 0, calls: 0 };
+      bucket.promptTokens += Math.max(0, b.promptTokens ?? 0);
+      bucket.completionTokens += Math.max(0, b.completionTokens ?? 0);
+      bucket.calls += Math.max(0, b.calls ?? 0);
+      this.buckets.set(key, bucket);
+    }
+  }
 
   /** 记一次调用的真实用量（负值按 0 计，防脏数据透支；tags 缺省归 others 桶）。 */
   record(

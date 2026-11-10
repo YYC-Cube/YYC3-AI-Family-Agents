@@ -113,11 +113,12 @@ function buildZip(entries) {
 
 // ---------- 打包内容收集 ----------
 
-/** 递归收集目录下全部文件的仓库相对路径（按路径字典序）。 */
+/** 递归收集目录下全部文件的仓库相对路径（按路径字典序；排除 macOS 系统文件——防 .DS_Store 混入条目）。 */
 function collectFiles(root, dir) {
   const abs = path.join(root, dir);
   if (!existsSync(abs)) return [];
   return readdirSync(abs, { withFileTypes: true }).flatMap((e) => {
+    if (e.name === '.DS_Store') return [];
     const rel = path.join(dir, e.name);
     return e.isDirectory() ? collectFiles(root, rel) : [rel];
   }).sort();
