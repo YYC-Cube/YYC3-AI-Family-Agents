@@ -22,6 +22,15 @@ bd16ea6cfdfb…  ai-family-agent/yyc3-ai-family-agent-2.52.0.tgz
 
 > 全量 SHA256 以仓内 `dist/SHA256SUMS.txt` 为准（`pnpm pack:npm` 确定性重算）；验证：`shasum -a 256 <tarball>` 比对。
 
+## 后续版本
+
+| 包 | 版本 | 内容 | 发布日 |
+| --- | --- | --- | --- |
+| 双包 | **2.54.0**（当前 latest） | M41 计量持久化 + M41.5 serveMcpStdio host 接入形态 | 2026-11-11 |
+| 双包 | 2.52.0 | 首发（M31 装配） | 2026-11-02 |
+
+**token 轮转已完成**（2026-11-11 确认：classic 已换新并实测可用——旧双暴露 token 作废）；发布走本地鉴权（zsh 源劫持正常）。
+
 ## 安装验证
 
 ```bash

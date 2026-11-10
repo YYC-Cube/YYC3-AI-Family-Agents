@@ -250,6 +250,7 @@
 
 ## 九、修订记录
 
+- v1.2.12（2026-11-11）：**npm 2.54.0 发布 + 接入运维完整版落地**——双包 2.54.0 上架 latest（含 M41 持久化 + M41.5 serve 循环——@latest 接入样例自此成立）；token 轮转完成确认（classic 已换新实测可用——豁免项闭环收官）；《接入与运维指南·完整落地版》入 docs（接入篇复制即用：ZCode/Claude/全局/仓内四形态 + 运维篇：生命周期/计量观察窗/golden/发布/安全/故障处置手册/备份回滚/升级 + 环境变量总表与命令速查）。回链：docs/YYC3-AI-Family-Agent-接入与运维指南-完整版.md。
 - v1.2.11（2026-11-10）：**MCP host 接入形态落地（M41.5 · 真实流量入口 · TS 仓 v2.54.0）**——entry serveMcpStdio 服务循环（逐行 JSON-RPC · stdout 仅协议帧/横幅走 stderr · 坏行 -32700 不崩 · host 断开排空→stop→onClose）；main 常驻分支升级为 serve 循环——**npx yyc3-family-server 直连 ZCode/Claude Desktop**（host env 块承载三闸 + 本地网关档：我们自己的模型 ：10086 · nemotron-3.5-super-vl · 零云账单）；进程 exit 钩子兜底 M41 计量落盘；《MCP 接入指南》入 docs；契约 mcp-stdio-serve 3 例（行协议/容错/stdout 纯净）；门禁 364 → **367/367**（53 套件）。回链：docs/YYC3-AI-Family-Agent-MCP接入指南-M41.5.md。
 - v1.2.10（2026-11-10）：**计量持久化落地（M41 · 观察窗量具修复 · v1.2.9 归因的工程对策）**——LlmUsageCounter 恢复构造器 + family-server usagePersist（启动恢复 + /metrics 种子 + 分派原子落盘 + stop 落盘）+ 启动器缺省注入 data/metrics-usage.json；「stdio 生命周期计数器随进程清零」结构性缺口补齐——11-14 复核窗口量具就绪（新核验：cat data/metrics-usage.json 跨进程累计）；附带治本 pack-plugin .DS_Store 混入（4 条目漂移恢复）；门禁 359 → **364/364**（52 套件）。回链：CHANGELOG v2.53.0。
 - v1.2.9（2026-11-07）：**分口径观察窗终局：未达标 → 第二波顺延第一轮（新窗口 11-14 24:00）**——四判据全未达（calls 0/300 · tokens 0/60K · 0 员 · 0 场景）；归因「真无流量」（通道层无障碍——E0 live 验收与 4 轮评测 usage 均正常入账在案；瓶颈=消费侧无常驻服务与日常调用）；处置按判据顺延一周（≤2 轮），不建议刷量凑数（污染报表语义）；救济路径（常驻起服务 + 日常用八家臣）入终局报告。回链：docs/YYC3-AI-Family-Agent-观察窗终局报告-2026-11-07.md。
