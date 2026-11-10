@@ -339,10 +339,11 @@ export class FamilyMetrics {
     totalTokens: number,
     calls = 1,
   ): void {
+    // 空串与缺失同归 unknown（M41：快照恢复链 bucket split 会产出空串）
     const labels = {
-      agent_id: tags.agentId ?? 'unknown',
-      skill_id: tags.skillId ?? 'unknown',
-      scenario: tags.scenario ?? 'unknown',
+      agent_id: tags.agentId || 'unknown',
+      skill_id: tags.skillId || 'unknown',
+      scenario: tags.scenario || 'unknown',
     };
     if (totalTokens > 0) this.llmUsageTokens.inc(labels, totalTokens);
     this.llmUsageCalls.inc(labels, calls);

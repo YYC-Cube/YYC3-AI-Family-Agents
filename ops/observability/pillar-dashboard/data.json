@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-11-02T04:16:32.449Z",
-  "generatedAtCN": "2026/11/02 12:16:32",
+  "generatedAt": "2026-11-10T15:26:56.653Z",
+  "generatedAtCN": "2026/11/10 23:26:56",
   "gate": {
     "passed": true,
-    "totalPassed": 359,
+    "totalPassed": 364,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 51
+    "specs": 52
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 150,
+      "passed": 155,
       "failed": 0
     },
     {
@@ -812,6 +812,20 @@
       "failed": 0,
       "skipped": 0,
       "total": 4,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/integration/usage-persistence.spec.js",
+      "name": "计量持久化（跨进程累计口径）",
+      "phase": "M41",
+      "pillars": [
+        "治"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
       "silent": false,
       "ok": true
     }
