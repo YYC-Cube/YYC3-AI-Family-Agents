@@ -43,31 +43,33 @@ scope: 适用 v2.54.0+（npm @yyc3/ai-family-agent@2.54.0 · @yyc3/ai-family-ker
 | npm（npx 形态） | 公开包无需登录 | `npm view @yyc3/ai-family-agent version` → 2.54.0 |
 | 磁盘 | `data/` 可写（计量快照 + 技能库落盘） | 相对 cwd；建议绝对路径配置 |
 
-## 1.2 ZCode 接入（`mcpServers` 块 · 复制即用）
+## 1.2 ZCode 接入（复制即用 · 首选全局 bin 直调）
 
-在 ZCode 的 MCP 配置（`~/.zcode/settings.json` 或项目级）加入：
+ZCode 的 MCP 配置在 **`~/.zcode/cli/config.json`** → `mcp` → `servers`（嵌套键；环境变量键名为 **`environment`**）。加入：
+
+**首选形态**（`npm i -g @yyc3/ai-family-agent` 后直调 bin——零网络冷启动，避开 npx 每次启动查 registry 的 70 秒坑）：
 
 ```jsonc
-{
-  "mcpServers": {
-    "yyc3-family": {
-      "command": "npx",
-      "args": ["-y", "@yyc3/ai-family-agent@latest"],
-      "env": {
-        "LLM_STEP": "1",
-        "LLM_STEP_CONFIRM": "我知晓真实计费",
-        "LLM_STEP_PROVIDER": "local",
-        "LLM_STEP_BASE_URL": "http://100.126.132.112:10086/v1",
-        "LLM_STEP_MODEL": "nemotron-3.5-super-vl",
-        "LOCAL_GATEWAY_API_KEY": "local-gateway-keyless",
-        "YYC3_USAGE_FILE": "/Users/<你>/YYC-Cube/personal/YYC3-AI-FAmily-Agent/data/metrics-usage.json"
-      }
-    }
+// 在 ~/.zcode/cli/config.json 的 "mcp" → "servers" 对象内追加：
+"yyc3-family": {
+  "type": "stdio",
+  "command": "yyc3-family-server",
+  "args": [],
+  "environment": {
+    "LLM_STEP": "1",
+    "LLM_STEP_CONFIRM": "我知晓真实计费",
+    "LLM_STEP_PROVIDER": "local",
+    "LLM_STEP_BASE_URL": "http://100.126.132.112:10086/v1",
+    "LLM_STEP_MODEL": "nemotron-3.5-super-vl",
+    "LOCAL_GATEWAY_API_KEY": "local-gateway-keyless",
+    "YYC3_USAGE_FILE": "/Users/<你>/YYC-Cube/personal/YYC3-AI-FAmily-Agent/data/metrics-usage.json"
   }
 }
 ```
 
-要点：`YYC3_USAGE_FILE` 用**绝对路径**（host 拉起的 cwd 不可控）；`LOCAL_GATEWAY_API_KEY` 占位即可（`/v1` 免 key），正式鉴权走网关侧 apiKeys 签发后替换真值。
+**备选形态**（未装全局包时）：`"command": "npx", "args": ["-y", "@yyc3/ai-family-agent@latest"]`，其余字段同上。
+
+> 一键接入：`node scripts/install-family-mcp.mjs` 自动完成上述注入 + 备份 + 验证（见 §1.8）。要点：`YYC3_USAGE_FILE` 用**绝对路径**（host 拉起的 cwd 不可控）；`LOCAL_GATEWAY_API_KEY` 占位即可（`/v1` 免 key），正式鉴权走网关侧 apiKeys 签发后替换真值。
 
 ## 1.3 Claude Desktop 接入
 
@@ -118,6 +120,19 @@ cat data/metrics-usage.json
 # ④（可选）Prometheus 核验：
 curl -s localhost:9464/metrics | grep family_llm_usage_calls_total
 ```
+
+## 1.8 一键接入脚本（install-family-mcp · 推荐路径）
+
+```bash
+node scripts/install-family-mcp.mjs              # 幂等注入 ZCode + Claude 配置（备份先行 + 一分钟验证）
+node scripts/install-family-mcp.mjs --check      # 只检查不改写（exit 0=已接入 · 2=未接入）
+node scripts/install-family-mcp.mjs --dry-run    # 预演（报告将写入内容，不落盘）
+node scripts/install-family-mcp.mjs --global-bin # 先 npm i -g 全局装包，再注入直调形态（首选）
+```
+
+- **幂等**：已配置则报告跳过（exit 0）；每次改写前自动备份 `<配置>.backup-yyyc3-<时间戳>`。
+- **密钥零落盘**：只写占位串 `local-gateway-keyless`，真值由网关侧签发后手动替换。
+- **验证**：注入后自动拉起服务完成 initialize/tools/list 握手并报告工具数。
 
 ---
 
@@ -214,6 +229,42 @@ cd ../ai-family-agent    && npm publish --access public
 - **host 侧**：`@latest` 自动跟随（npx 缓存建议 `npx -y @…@2.54.0` 锁版或清 npx 缓存）；MINOR 升级零迁移（配置字段向后兼容）。
 - **仓侧**：MINOR 随 PR 递增；publish 前必过 `pnpm regression` + W0 安审（M32 预检）。
 - **回滚**：npm `dist-tags` 指回旧版（`npm dist-tag add @yyc3/ai-family-agent@2.53.0 latest`）；仓内 `git revert` + PR。
+
+---
+
+# 第三部分 · 开发者手册（十分钟上手 · C3）
+
+## 3.1 心智模型
+
+单一事实源 `presets/family-manifest.yaml`（45 技能 · 8×8 委托矩阵 · 五支柱声明）→ 四派生（Agent Card / SKILL.md / MCP 工具目录 / 提示词契约）→ `manifest:check` / `skills:check` 全链零漂移校验。**改能力 = 改清单，不改产物**。
+
+## 3.2 端口注入速查（13 插拔点 · 最小嵌入四必选）
+
+全表见《可复用性分析》§三。最小嵌入四必选：`store`（技能持久化）· `llm`（语义臂档位，local=我们自己的模型）· `nineLayer.probes`（层级健康探针）· `usageMeter`（学习配额计量，配 `LlmUsageCounter`）：
+
+```ts
+import { createRuntimeAssembly } from '@yyc3/ai-family-kernel';
+const rt = createRuntimeAssembly({
+  store: mySkillStore,
+  llm: { provider: 'local', model: 'nemotron-3.5-super-vl', baseUrl: 'http://100.126.132.112:10086/v1' },
+  usageMeter: new LlmUsageCounter(),
+});
+```
+
+## 3.3 新成员四步 CLI
+
+```bash
+pnpm member:create <名号>   # ① 模板衍生（千行链路门禁）
+pnpm manifest:check         # ② 清单同步（新成员入 manifest）
+pnpm skills:gen             # ③ 技能产物派生
+pnpm regression             # ④ 全量门禁（防退化红线）
+```
+
+## 3.4 变更纪律
+
+任何变更后必跑 `pnpm regression`（367+ 例 · 53 套件）；模型/网关变更加跑 golden 三卷（§2.4）；发布走 `pack:npm` 四步 + digest 公示（§2.5）。
+
+---
 
 ## 附录 A · 环境变量总表（运行面）
 

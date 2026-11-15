@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-11-10T15:51:33.559Z",
-  "generatedAtCN": "2026/11/10 23:51:33",
+  "generatedAt": "2026-11-15T17:37:43.489Z",
+  "generatedAtCN": "2026/11/16 01:37:43",
   "gate": {
     "passed": true,
-    "totalPassed": 367,
+    "totalPassed": 375,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 53
+    "specs": 55
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 158,
+      "passed": 166,
       "failed": 0
     },
     {
@@ -840,6 +840,34 @@
       "failed": 0,
       "skipped": 0,
       "total": 3,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/stdio-host-handshake.contract.js",
+      "name": "MCP stdio host 握手（死锁治本回归 · 真实宿主行为）",
+      "phase": "P0-H5",
+      "pillars": [
+        "治"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "total": 2,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/install-family-mcp.contract.js",
+      "name": "一键接入脚本契约（幂等 · 零密钥 · 备份 · JSONC）",
+      "phase": "P0-A2",
+      "pillars": [
+        "治"
+      ],
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "total": 6,
       "silent": false,
       "ok": true
     }

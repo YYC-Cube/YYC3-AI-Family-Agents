@@ -81,6 +81,8 @@ const SPECS = [
   { file: 'tests/contracts/fission-pipeline.contract.js', pillars: ['治'], phase: 'E2a', name: '裂变管线契约（人格红线 + 技能查重 + 端到端）' },
   { file: 'tests/integration/usage-persistence.spec.js', pillars: ['治'], phase: 'M41', name: '计量持久化（跨进程累计口径）' },
   { file: 'tests/contracts/mcp-stdio-serve.contract.js', pillars: ['治'], phase: 'M41.5', name: 'MCP stdio 服务循环（host 接入形态）' },
+  { file: 'tests/contracts/stdio-host-handshake.contract.js', pillars: ['治'], phase: 'P0-H5', name: 'MCP stdio host 握手（死锁治本回归 · 真实宿主行为）' },
+  { file: 'tests/contracts/install-family-mcp.contract.js', pillars: ['治'], phase: 'P0-A2', name: '一键接入脚本契约（幂等 · 零密钥 · 备份 · JSONC）' },
   // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
   // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];
