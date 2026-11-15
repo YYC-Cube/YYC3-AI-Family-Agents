@@ -47,7 +47,7 @@ scope: 适用 v2.54.0+ · 承接《可复用性分析》v1.2.0 · 证据基《�
 ## 一、为什么现在做：零流量归因链（2026-11-16 复核证据）
 
 1. `data/metrics-usage.json` 不存在 → 持久化量具从未触发 → **真实调用为零**（判据全项 ❌）。
-2. 取证：ZCode `~/.zcode/settings.json` 与 Claude Desktop 配置均**无 `yyc3-family` 条目** → 接入动作未发生。
+2. 取证：ZCode `~/.zcode/cli/config.json`（`mcp.servers`）与 Claude Desktop `claude_desktop_config.json` 均**无 `yyc3-family` 条目** → 接入动作未发生。（接入指南原引用的 `~/.zcode/settings.json` 路径实际不存在——已随 A1 修正为真实配置位置。）
 3. 工具链侧无缺口：npm latest = 2.54.0（M41 持久化 + M41.5 serve 循环均在架）、金包 `family-core-1.0.0.skill` 在位、门禁 367/367。
 4. 结论：瓶颈已从「工具链缺口」转移为「**接入摩擦**」。治理 = 把接入动作从"手抄配置 + 冷启动等待"降为"一条命令 / 一次解包"，并新增离线形态。本方案即为此立案。
 

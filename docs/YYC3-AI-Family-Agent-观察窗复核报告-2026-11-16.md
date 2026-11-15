@@ -48,7 +48,7 @@ scope: 演进集 v1.2.0 观察窗判据 · 11-14 窗口（第一轮顺延后窗�
 | 证据点 | 结果 |
 | --- | --- |
 | `data/` 目录 | 仓库内不存在（快照从未产生——持久化量具从未被触发） |
-| ZCode `~/.zcode/settings.json` | 无 `yyc3-family` mcpServers 条目 |
+| ZCode `~/.zcode/cli/config.json` → `mcp.servers` | 无 `yyc3-family` 条目（指南旧引用的 `~/.zcode/settings.json` 路径不存在——已随 A1 修正） |
 | Claude Desktop `claude_desktop_config.json` | 无 `yyc3-family` 条目 |
 | npm latest | 2.54.0 在架（工具链侧无缺口） |
 

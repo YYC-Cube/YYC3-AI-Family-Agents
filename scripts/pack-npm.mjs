@@ -337,6 +337,7 @@ function buildAgent(stageDir) {
   fs.copyFileSync(path.join(ROOT, 'family-agents', 'family-server.entry.ts'), entryTarget);
   copyDir(path.join(ROOT, 'presets'), path.join(stageDir, 'presets'));
   copyDir(path.join(ROOT, 'assets'), path.join(stageDir, 'assets'));
+  copyDir(path.join(ROOT, 'configs'), path.join(stageDir, 'configs'));
 
   // 源期别名重写（NodeNext 下 paths 不可靠——直接改写为包内相对路径，与内核包同源方案）：
   //   @shared/<name> → family-agents/shared-core/<name>/index.js
@@ -396,7 +397,7 @@ function buildAgent(stageDir) {
       './family-server.entry': './dist/family-agents/family-server.entry.js',
       './package.json': './package.json',
     },
-    files: ['dist', 'presets', 'assets', 'bin'],
+    files: ['dist', 'presets', 'assets', 'bin', 'configs'],
     dependencies: {},
   });
 
@@ -437,19 +438,32 @@ function buildAgent(stageDir) {
     'agent 包 dist',
   );
 
-  // bin：stdin 配置 JSON 直通（自检 --selftest 透传；密钥经环境变量由 provider 自取）
+  // bin：包内资产装配配置经 stdin 首行注入（H5 修复：host 帧直通余量流；stdout 协议纯净）
   const binDir = path.join(stageDir, 'bin');
   fs.mkdirSync(binDir, { recursive: true });
+  fs.copyFileSync(path.join(ROOT, 'scripts/lib/family-server-config.mjs'), path.join(binDir, 'config-loader.mjs'));
+  fs.copyFileSync(path.join(ROOT, 'scripts/lib/yaml-lite.mjs'), path.join(binDir, 'yaml-lite.mjs'));
   fs.writeFileSync(
     path.join(binDir, 'yyc3-family-server.mjs'),
     `#!/usr/bin/env node
-/** YYC³ 家族服务 MCP Server 启动器（打包器生成）：配置 JSON 走 stdin，参数直透。 */
+/** YYC³ 家族服务 MCP Server 启动器（打包器生成）：配置由包内资产装配（config-loader）经 stdin 首行注入，host 帧直通。 */
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { buildFamilyServerConfig } from './config-loader.mjs';
 
-const entry = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist', 'family-agents', 'family-server.entry.js');
-const child = spawn(process.execPath, [entry, ...process.argv.slice(2)], { stdio: ['pipe', 'inherit', 'inherit'] });
+const here = path.dirname(fileURLToPath(import.meta.url));
+const pkgRoot = path.join(here, '..');
+const entry = path.join(pkgRoot, 'dist', 'family-agents', 'family-server.entry.js');
+
+// 装配件日志已走 stderr（config-loader 全线 console.error）——stdout 保持 MCP 协议纯净（H4）
+const { config, llmEnvInject } = buildFamilyServerConfig(pkgRoot);
+
+const child = spawn(process.execPath, [entry, ...process.argv.slice(2)], {
+  stdio: ['pipe', 'inherit', 'inherit'],
+  env: { ...process.env, ...llmEnvInject },
+});
+child.stdin.write(JSON.stringify(config) + '\\n');
 process.stdin.pipe(child.stdin);
 child.on('exit', (code) => process.exit(code ?? 0));
 `,
@@ -461,13 +475,13 @@ child.on('exit', (code) => process.exit(code ?? 0));
     generateReadme(
       '@yyc3/ai-family-agent',
       [
-        'YYC³ 家族服务 MCP Server：stdio JSON-RPC 2.0（initialize/ping/tools/list/tools/call），确定性执行臂缺省即用，LLM 语义臂三闸门控（`LLM_STEP=1` + 确认串 + API Key 环境变量）。',
+        'YYC³ 家族服务 MCP Server：stdio JSON-RPC 2.0（initialize/ping/tools/list/tools/call），配置由包内资产自动装配（45 技能目录 + 准入治理），确定性执行臂缺省即用，LLM 语义臂三闸门控（`LLM_STEP=1` + 确认串 + API Key 环境变量）。',
         '',
         '```bash',
-        'echo \'{"serverInfo":{"name":"demo","version":"1.0.0"},"tools":[],"manifestEntries":[]}\' | yyc3-family-server --selftest',
+        'yyc3-family-server --selftest    # 自检：装载 + 抽样调用 + 指标摘录',
         '```',
         '',
-        '配置契约（stdin JSON）：`serverInfo` / `tools` / `manifestEntries` 必需，`admission` / `llm` / `external` / `metricsServer` 可选——见根仓 family-server.entry.ts 头注。',
+        'host 接入（mcpServers）：`command: yyc3-family-server`（`npm i -g` 后直调，零网络冷启动；备选 `npx -y @yyc3/ai-family-agent@latest`）。详见根仓《接入与运维指南·完整版》。',
       ].join('\n'),
     ),
   );

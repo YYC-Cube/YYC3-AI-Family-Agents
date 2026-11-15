@@ -1,151 +1,31 @@
 #!/usr/bin/env node
 /**
  * 家族服务启动器（start-family-server）—— P6-A（M14）· 部署侧 IO 装配。
- * 职责：读取部署资产（assets/mcp-tools.json 工具目录 + presets/family-manifest.yaml
- *       技能清单）→ 组装配置 JSON 经 stdin 注入隔离编译后的 family-server.entry
- *       （编译约定同 run-uat-llm：临时目录 tsconfig + 别名 loader，不污染工作区）。
+ * 职责：装配配置 JSON（共享件 scripts/lib/family-server-config.mjs）经 stdin 首行注入
+ *       隔离编译后的 family-server.entry（编译约定同 run-uat-llm：临时目录 tsconfig +
+ *       别名 loader，不污染工作区）。
  * 用法：
- *   pnpm start               # 常驻服务：/metrics（默认 9464）+ MCP 处理器就绪，Ctrl+C 停止
+ *   pnpm start               # 常驻服务：stdin 直通 MCP 行协议（host 帧），Ctrl+C 优雅停止
  *   pnpm start --selftest    # 自检：装载 + 抽样调用 + 指标摘录后 exit 0
  * 环境：YYC3_METRICS_PORT / YYC3_METRICS_HOST / YYC3_METRICS_TOKEN / YYC3_ADMISSION_MODE
  *       （observe|enforce，默认 observe）/ YYC3_KEEP_TMP=1 保留编译目录（调试）。
  */
 
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { parseYaml } from './lib/yaml-lite.mjs';
+import { buildFamilyServerConfig } from './lib/family-server-config.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ENTRY = 'family-agents/family-server.entry.ts';
 const selftest = process.argv.includes('--selftest');
-
-// ---------- 1. 部署资产读取（IO 归本脚本；entry 零文件 IO） ----------
-
-const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/mcp-tools.json'), 'utf8'));
-const manifest = parseYaml(fs.readFileSync(path.join(ROOT, 'presets/family-manifest.yaml'), 'utf8'));
-const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-
-if (!Array.isArray(catalog.tools) || catalog.tools.length === 0) throw new Error('工具目录为空：assets/mcp-tools.json');
-if (!Array.isArray(manifest.skills) || manifest.skills.length === 0) throw new Error('技能清单为空：presets/family-manifest.yaml');
-
-const config = {
-  serverInfo: { name: 'yyc3-family', version: pkg.version },
-  tools: catalog.tools,
-  manifestEntries: manifest.skills,
-  admission: {
-    allowed: ['family-core'],
-    mode: process.env.YYC3_ADMISSION_MODE === 'enforce' ? 'enforce' : 'observe',
-  },
-  metricsServer: {
-    port: Number(process.env.YYC3_METRICS_PORT ?? 9464),
-    host: process.env.YYC3_METRICS_HOST ?? '127.0.0.1',
-    ...(process.env.YYC3_METRICS_TOKEN ? { authToken: process.env.YYC3_METRICS_TOKEN } : {}),
-  },
-};
-
-// 计量持久化（M41 · 缺省启用 · YYC3_USAGE_PERSIST=0 关闭）：跨进程累计口径
-// （stdio 生命周期计数器随进程清零的结构性缺口由此补齐——观察窗判据量具）
-if (process.env.YYC3_USAGE_PERSIST !== '0') {
-  config.usagePersist = {
-    file: process.env.YYC3_USAGE_FILE ?? 'data/metrics-usage.json',
-    flushEvery: Number(process.env.YYC3_USAGE_FLUSH_EVERY ?? 5),
-  };
-}
-
-// 外部家人 A2A 编排（M22）：存在实例契约即自动装配（端点/能力/令牌环境变量）
-try {
-  const inst = parseYaml(fs.readFileSync(path.join(ROOT, 'presets/external-worker/blueprint-13.worker.yaml'), 'utf8'));
-  if (inst?.worker?.endpoint) {
-    config.external = {
-      endpoint: inst.worker.endpoint,
-      ...(inst.worker.auth?.token_env ? { tokenEnv: inst.worker.auth.token_env } : {}),
-      ...(inst.worker.timeout_ms ? { timeoutMs: inst.worker.timeout_ms } : {}),
-      ...(Array.isArray(inst.worker.capabilities) ? { skills: inst.worker.capabilities } : {}),
-    };
-    console.log(`ⓔ 外部家人编排：${inst.worker.id ?? 'external'} @ ${inst.worker.endpoint}（实例契约自动装配）`);
-  }
-} catch { /* 无实例：外部编排保持关闭 */ }
-
-// LLM 语义执行臂（M16）三闸门控（同 uat:llm 范式）：缺一保持确定性臂。
-// --selftest:llm（M17）额外要求三闸 + 密钥齐备（env 或 .env），否则跳过 LLM 采样 exit 0。
-// E0a：provider 档支持 zhipu | openai | local（LLM_STEP_PROVIDER，缺省按 key 判定）；
-//      密钥兜底顺序：env → ~/.yyc3-keybackup/zhipu.env（600 · 真值唯一存放地）→ 仓内 .env（兼容旧布置）。
-// E0c：max_tokens / timeout_ms 自 configs/base.yaml llm.providers.<档> 注入（思考型档位建议 max_tokens 3072）。
-let baseLlmProviders = {};
-try {
-  baseLlmProviders = parseYaml(fs.readFileSync(path.join(ROOT, 'configs', 'base.yaml'), 'utf8'))?.llm?.providers ?? {};
-} catch { /* 无 base.yaml */ }
-const llmEnvInject = {};
-const keyBackupEnv = path.join(os.homedir(), '.yyc3-keybackup', 'zhipu.env');
-const llmKeyEnv =
-  process.env.ZHIPU_API_KEY?.trim() ? 'ZHIPU_API_KEY'
-  : process.env.OPENAI_API_KEY?.trim() ? 'OPENAI_API_KEY'
-  : process.env.LOCAL_GATEWAY_API_KEY?.trim() ? 'LOCAL_GATEWAY_API_KEY'
-  : null;
-let llmKeyed = Boolean(llmKeyEnv);
-if (!llmKeyed) {
-  // keybackup 兜底（密钥服务读取；只透传给子进程，不打印值）
-  try {
-    const kb = fs.readFileSync(keyBackupEnv, 'utf8');
-    const m = kb.match(/^(ZHIPU_API_KEY|OPENAI_API_KEY|LOCAL_GATEWAY_API_KEY)=(.+)$/m);
-    if (m && m[2].trim()) {
-      llmKeyed = true;
-      llmEnvInject[m[1]] = m[2].trim();
-    }
-  } catch { /* 无 keybackup */ }
-}
-if (!llmKeyed) {
-  // .env 兜底（兼容旧布置；E0a 后真值应只在 keybackup）
-  try {
-    const dotenv = fs.readFileSync(path.join(ROOT, '.env'), 'utf8');
-    const m = dotenv.match(/^(ZHIPU_API_KEY|OPENAI_API_KEY)=(.+)$/m);
-    if (m && m[2].trim()) {
-      llmKeyed = true;
-      llmEnvInject[m[1]] = m[2].trim();
-    }
-  } catch { /* 无 .env */ }
-}
 const selftestLlm = process.argv.includes('--selftest:llm');
-const llmGated = process.env.LLM_STEP === '1' && process.env.LLM_STEP_CONFIRM === '我知晓真实计费' && llmKeyed;
-if (llmGated) {
-  const requested = process.env.LLM_STEP_PROVIDER ?? '';
-  let provider;
-  let apiKeyEnv = llmKeyEnv ?? 'ZHIPU_API_KEY';
-  if (requested === 'local') {
-    // E0a 本地网关档：第三闸 = 网关 key 环境变量存在（本地推理也计自家 GPU 折旧）
-    provider = 'local';
-    apiKeyEnv = process.env.LLM_LOCAL_KEY_ENV ?? 'LOCAL_GATEWAY_API_KEY';
-    if (!process.env[apiKeyEnv]?.trim() && !llmEnvInject[apiKeyEnv]?.trim()) {
-      console.log(`ⓔ local 档缺网关 key（${apiKeyEnv}），保持确定性臂`);
-      provider = '';
-    }
-  } else if (requested === 'openai' || requested === 'zhipu') {
-    provider = requested;
-  } else {
-    provider = llmKeyEnv === 'OPENAI_API_KEY' || (!llmKeyEnv && Object.keys(llmEnvInject)[0] === 'OPENAI_API_KEY') ? 'openai' : 'zhipu';
-  }
-  if (provider) {
-    const profile = baseLlmProviders[provider] ?? {};
-    config.llm = {
-      provider,
-      ...(process.env.LLM_STEP_MODEL || profile.model ? { model: process.env.LLM_STEP_MODEL ?? profile.model } : {}),
-      ...(process.env.LLM_STEP_BASE_URL || profile.base_url
-        ? { baseUrl: process.env.LLM_STEP_BASE_URL ?? profile.base_url }
-        : {}),
-      ...(profile.max_tokens !== undefined ? { maxTokens: profile.max_tokens } : {}),
-      ...(profile.timeout_ms !== undefined ? { timeoutMs: profile.timeout_ms } : {}),
-      ...(provider === 'local' ? { apiKeyEnv } : {}),
-    };
-    console.log(`ⓔ LLM 语义执行臂：三闸放行，已启用（${provider} 档 · 真实计费调用）`);
-  }
-} else if (selftestLlm) {
-  console.log('ⓔ LLM 自检：三闸不全（需 LLM_STEP=1 + LLM_STEP_CONFIRM=我知晓真实计费 + API Key），跳过 LLM 采样');
-} else if (process.env.LLM_STEP === '1') {
-  console.log('ⓔ LLM 语义执行臂：三闸不全，保持确定性臂');
-}
+
+// ---------- 1. 配置装配（部署侧 IO 归共享件；entry 零文件 IO） ----------
+
+const { config, llmEnvInject } = buildFamilyServerConfig(ROOT, { selftestLlm });
 
 // ---------- 2. 隔离编译环境（与 run-regression / run-uat-llm 约定一致） ----------
 
@@ -226,7 +106,7 @@ register(new URL('./loader.mjs', import.meta.url));
 
 function cleanup(code) {
   if (process.env.YYC3_KEEP_TMP) {
-    console.log(`🧷 临时目录保留（YYC3_KEEP_TMP=1）：${tmp}`);
+    console.error(`🧷 临时目录保留（YYC3_KEEP_TMP=1）：${tmp}`);
   } else {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -235,7 +115,7 @@ function cleanup(code) {
 
 // ---------- 3. 编译 + 运行 ----------
 
-console.log(`⏳ 编译中（隔离临时环境；工具 ${catalog.tools.length} · 技能 ${manifest.skills.length}）…`);
+console.error(`⏳ 编译中（隔离临时环境；工具 ${config.tools.length} · 技能 ${config.manifestEntries.length}）…`);
 const tscLocal = path.join(ROOT, 'node_modules', '.bin', 'tsc');
 try {
   execFileSync(fs.existsSync(tscLocal) ? tscLocal : 'tsc', ['-p', path.join(tmp, 'tsconfig.json')], {
@@ -253,7 +133,6 @@ if (!fs.existsSync(target)) {
   cleanup(1);
 }
 
-console.log(selftest || selftestLlm ? '▶ 家族服务自检（selftest）…' : '▶ 启动家族服务（Ctrl+C 优雅停止）…');
 const childArgs = [
   '--import',
   pathToFileURL(path.join(tmp, 'register.mjs')).href,
@@ -261,15 +140,33 @@ const childArgs = [
   ...(selftest || selftestLlm ? ['--selftest'] : []),
   ...(selftestLlm ? [`--llm-sample=${process.env.LLM_STEP_SAMPLE ?? 3}`] : []),
 ];
-const r = spawnSync(process.execPath, childArgs, {
+
+if (selftest || selftestLlm) {
+  // 自检注入态：配置整段经 stdin 注入（entry 首行读取兼容 EOF——无换行亦收）
+  console.error('▶ 家族服务自检（selftest）…');
+  const r = spawnSync(process.execPath, childArgs, {
+    cwd: ROOT,
+    stdio: ['pipe', 'inherit', 'inherit'],
+    input: JSON.stringify(config),
+    env: { ...process.env, ...llmEnvInject },
+    timeout: selftestLlm ? 540_000 : 120_000,
+  });
+  if (r.error) {
+    console.error(`❌ 运行异常：${r.error.message}`);
+    cleanup(1);
+  }
+  cleanup(r.status ?? 1);
+}
+
+// 常驻 host 形态（H5 修复）：stdin 首行注入配置 + 余量直通 MCP 帧 + 信号转发
+console.error('▶ 启动家族服务（MCP stdio 常驻 · Ctrl+C 优雅停止）…');
+const child = spawn(process.execPath, childArgs, {
   cwd: ROOT,
   stdio: ['pipe', 'inherit', 'inherit'],
-  input: JSON.stringify(config),
   env: { ...process.env, ...llmEnvInject },
-  timeout: selftestLlm ? 540_000 : selftest ? 120_000 : undefined,
 });
-if (r.error) {
-  console.error(`❌ 运行异常：${r.error.message}`);
-  cleanup(1);
-}
-cleanup(r.status ?? 1);
+child.stdin.write(`${JSON.stringify(config)}\n`);
+process.stdin.pipe(child.stdin);
+process.once('SIGINT', () => child.kill('SIGINT'));
+process.once('SIGTERM', () => child.kill('SIGTERM'));
+child.on('exit', (code) => cleanup(code ?? 0));

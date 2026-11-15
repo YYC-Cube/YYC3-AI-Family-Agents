@@ -10,6 +10,11 @@
 
 ### Added
 
+- **H5 握手死锁修复（host 接入治本 · v2.55.0）**：`family-server.entry.ts` CLI 模式改「stdin 首行配置 + 余量流直通 serveMcpStdio」（`readConfigFromStdin`/`boot` 重构——修复前 `readFileSync(0)` 读全 stdin 等 EOF，真实 host 全部握手死锁/立即退出）；`scripts/start-family-server.mjs` 常驻路径改 spawn + 管道直通 + 信号转发（修复前 spawnSync 注入后 stdin 即闭），运行器/装配件日志统一走 stderr（stdout 协议纯净性 H4 不破）；npm bin `yyc3-family-server` 改由包内资产自动装配配置（`config-loader.mjs` 随包分发——与仓内运行器共用 `scripts/lib/family-server-config.mjs` 共享件，杜绝双处漂移；`configs/` 随包）
+- **一键接入脚本（P0-A2）**：`scripts/install-family-mcp.mjs`——幂等注入 ZCode（`~/.zcode/cli/config.json` → `mcp.servers` + `environment` 键）/ Claude Desktop（`mcpServers` + `env` 键）· 改写前备份（`.backup-yyyc3-<时间戳>`）· 密钥零落盘（仅占位串）· 注入后真实握手验证；`runCli(argv, env)` 进程内可测 + `--check`（exit 0/2）判定面 + `--dry-run` 预演
+- **接入文档修正（P0-A1 + C3）**：ZCode 配置路径 `~/.zcode/settings.json`（实际不存在）→ `~/.zcode/cli/config.json` 的 `mcp.servers`；全局 bin 直调升首选形态（避开 npx preferOnline 冷启动 70s 实测坑）；接入指南新增 §1.8 一键接入 + 第三部分《开发者手册》（端口注入速查 / 新成员四步 CLI / 变更纪律）
+- **技能触发描述润色（P0-B2）**：`packaging/yyc3-ai-family-coding/SKILL.md` description 触发信号 pushy 化（成员名号 / 协同闭环 / CAGEERF / 九层架构前置）
+- **P0 契约套件**：`tests/contracts/stdio-host-handshake.contract.ts`（H5 真实宿主行为——三帧响应 + 断开优雅退出；H5b selftest 注入态兼容）· `tests/contracts/install-family-mcp.contract.ts`（A2-1..6：预演 / 检查判定面 / 注入形态 / 幂等 / 备份与零密钥 / JSONC 宽容解析）
 - **家族契约清单（P1-T1）**：`presets/family-manifest.yaml` 成为八位家人身份 / 能力 / 技能 / 协同的唯一事实源——45 项技能（共用 13 · 专用 32）、8×8 委托矩阵（56 条边）、五支柱与协议栈声明；`scripts/check-manifest.mjs`（`pnpm manifest:check`）校验结构自洽、技能引用完整性、kernel 锚点存在，并与 8 份 `agent.yaml` 做规范性字段零漂移比对；零依赖 YAML 子集解析器见 `scripts/lib/yaml-lite.mjs`
 - **Agent Card（P1-T2）**：`assets/schemas/agent-card.schema.json`（对齐蓝图 1207 §3.2）+ `scripts/gen-agent-cards.mjs`（`pnpm manifest:cards`）由清单派生 8 张卡片到 `assets/agent-cards/`，`--check` 模式做「产物 ↔ 清单」零漂移校验；JSON Schema 子集校验器见 `scripts/lib/json-schema-lite.mjs`
 - **门禁新增两个契约套件**：`tests/contracts/manifest.contract.ts`（7 例）与 `tests/contracts/agent-card.contract.ts`（8 例），CI 另加不阻断的清单软校验步骤

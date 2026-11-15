@@ -14,7 +14,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
-import { readFileSync, realpathSync } from 'node:fs';
+import { PassThrough } from 'node:stream';
+import { realpathSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import {
@@ -475,6 +476,7 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
   // 外部家人 A2A 编排（M22 · P7-c）：card 目录 + 委托客户端（注入 card/transport 供测试）
   let a2a: { directory: CardDirectory; client: DelegateClient; allowedSkills: ReadonlySet<string> } | undefined;
   if (config.external) {
+    try {
     const ext = config.external;
     const transport = ext.transport ?? new HttpA2aTransport({
       timeoutMs: ext.timeoutMs ?? 5_000,
@@ -509,6 +511,12 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
       client: new DelegateClient({ directory, transport }),
       allowedSkills: new Set(ext.skills ?? card.skills.map((s) => s.id)),
     };
+    } catch (e) {
+      // 降级不崩（H5 类启动脆弱性治本）：外部 card 发现失败（端点掉线/契约非法）时
+      // 确定性臂照常服务——外部家人掉线不得拖垮整个家族服务。
+      console.error(`ⓔ 外部家人编排降级：${e instanceof Error ? e.message : String(e)}——确定性臂照常服务`);
+      a2a = undefined;
+    }
   }
 
   // 学习闭环装配（M28）+ 九层态势环（M30 · 终极生产闭环）：嵌入内核运行时——
@@ -707,9 +715,58 @@ export function serveMcpStdio(
   return rl;
 }
 
-/** CLI 模式（`node family-server.entry.js [--selftest]`）：stdin 收配置 JSON，由运行器注入。 */
-async function main(): Promise<number> {
-  const config = JSON.parse(readFileSync(0, 'utf8')) as FamilyServerConfig;
+/** CLI 模式（`node family-server.entry.js [--selftest]`）：stdin 首行收配置 JSON（运行器/bin 注入），余量流为 MCP 行协议帧。 */
+function main(): Promise<number> {
+  return new Promise((resolve) => {
+    readConfigFromStdin((configText, rest) => {
+      void boot(configText, rest).then(resolve);
+    });
+  });
+}
+
+/**
+ * 首行 = 配置 JSON；余量经 PassThrough 交给 serveMcpStdio（真实 host 帧）。
+ * stdin 先闭（selftest 注入态：运行器 spawnSync input 无换行）则整段即配置。
+ */
+function readConfigFromStdin(onReady: (configText: string, rest: PassThrough) => void): void {
+  let line = '';
+  let done = false;
+  const rest = new PassThrough();
+  process.stdin.on('data', (chunk) => {
+    if (done) {
+      rest.write(chunk);
+      return;
+    }
+    const text = String(chunk);
+    const idx = text.indexOf('\n');
+    if (idx >= 0) {
+      line += text.slice(0, idx);
+      rest.write(text.slice(idx + 1));
+      done = true;
+      onReady(line, rest);
+    } else {
+      line += text;
+    }
+  });
+  process.stdin.on('end', () => {
+    if (!done) {
+      done = true;
+      rest.end();
+      onReady(line, rest);
+    } else {
+      rest.end();
+    }
+  });
+}
+
+async function boot(configText: string, rest: PassThrough): Promise<number> {
+  let config: FamilyServerConfig;
+  try {
+    config = JSON.parse(configText.trim() || '{}') as FamilyServerConfig;
+  } catch {
+    console.error('❌ stdin 首行配置 JSON 解析失败');
+    return 1;
+  }
   const server = await startFamilyServer(config);
   const call = async (name: string, args: Record<string, unknown> = {}) => {
     const out = server.mcp.handler.handle(
@@ -812,11 +869,14 @@ async function main(): Promise<number> {
     return okPass && missingPass ? 0 : 1;
   }
 
-  // M41.5 · host 接入形态：MCP stdio 服务循环（stdout 仅协议响应 · host 断开即停）
-  serveMcpStdio(server, { onClose: () => process.exit(0) });
+  // M41.5 · host 接入形态：MCP stdio 服务循环（stdout 仅协议响应 · host 断开即停）。
+  // 输入流 = 首行配置之后的余量流（真实 host 帧）；selftest 注入态（stdin 先闭）不走到这里。
+  serveMcpStdio(server, { input: rest, output: process.stdout, onClose: () => process.exit(0) });
   process.once('SIGINT', () => process.exit(0));
   process.once('SIGTERM', () => process.exit(0));
-  return 0;
+  // 常驻：进程退出由 onClose / SIGINT / SIGTERM 接管——main 承诺永不 settle
+  // （H5 修复：此前返回 0 会被底部 main().then(process.exit) 立即杀掉，就绪即退出）。
+  return new Promise<number>(() => {});
 }
 
 // 直接执行（非被 import）时进入 CLI 模式；配置 JSON 由运行器经 stdin 注入。
