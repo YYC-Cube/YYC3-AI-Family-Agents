@@ -12,6 +12,7 @@
  */
 
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import readline from 'node:readline';
 import { PassThrough } from 'node:stream';
@@ -130,6 +131,8 @@ export interface FamilyServerConfig {
     readonly timeoutMs?: number;
   };
   readonly metricsServer?: { readonly port?: number; readonly host?: string; readonly authToken?: string };
+  /** HTTP 常驻传输（P1-A3）：配置后 serveMcpHttp 提供 streamable HTTP（POST /mcp · 对齐 2026-07-28 规范子集）。 */
+  readonly httpServer?: { readonly port?: number; readonly host?: string };
   /**
    * 计量持久化（M41）：file 指向快照（启动器缺省注入 data/metrics-usage.json）——
    * 启动恢复（计数器基线 + /metrics 种子）+ 分派每 N 次落盘 + stop 落盘；
@@ -715,6 +718,63 @@ export function serveMcpStdio(
   return rl;
 }
 
+/**
+ * MCP streamable HTTP 传输（P1-A3）：POST /mcp 接收 JSON-RPC → handler → 响应帧。
+ * 对齐 MCP 2026-07-28 规范子集（请求-响应；服务端主动 SSE 流无业务需要未实现）。
+ * 与 stdio 并存可同启（同一 handler）；返回 { url, close } 供宿主/测试控制。
+ */
+export function serveMcpHttp(
+  server: FamilyServerHandle,
+  opts: { readonly port?: number; readonly host?: string },
+): Promise<{ readonly url: string; close: () => Promise<void> }> {
+  const host = opts.host ?? '127.0.0.1';
+  const handler = http.createServer((req, res) => {
+    if (req.method !== 'POST' || (req.url ?? '').split('?')[0] !== '/mcp') {
+      res.writeHead(404, { 'content-type': 'text/plain' }).end('not found');
+      return;
+    }
+    let body = '';
+    req.on('data', (chunk) => {
+      body += String(chunk);
+      if (body.length > 1_000_000) req.destroy();
+    });
+    req.on('end', () => {
+      const respond = (frame: string): void => {
+        res.writeHead(200, { 'content-type': 'application/json' }).end(frame);
+      };
+      try {
+        const out = server.mcp.handler.handle(body.trim()) as unknown;
+        if (out && typeof (out as Promise<string>).then === 'function') {
+          (out as Promise<string>)
+            .then(respond)
+            .catch((e) =>
+              respond(
+                JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32603, message: String(e?.message ?? e).slice(0, 200) } }),
+              ),
+            );
+        } else {
+          respond(
+            String(out ?? JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'invalid request' } })),
+          );
+        }
+      } catch {
+        respond(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'parse error' } }));
+      }
+    });
+  });
+  return new Promise((resolve, reject) => {
+    handler.once('error', reject);
+    handler.listen(opts.port ?? 0, host, () => {
+      const addr = handler.address();
+      const port = addr && typeof addr === 'object' ? addr.port : opts.port;
+      resolve({
+        url: `http://${host}:${port}/mcp`,
+        close: () => new Promise((r) => handler.close(() => r())),
+      });
+    });
+  });
+}
+
 /** CLI 模式（`node family-server.entry.js [--selftest]`）：stdin 首行收配置 JSON（运行器/bin 注入），余量流为 MCP 行协议帧。 */
 function main(): Promise<number> {
   return new Promise((resolve) => {
@@ -872,8 +932,19 @@ async function boot(configText: string, rest: PassThrough): Promise<number> {
   // M41.5 · host 接入形态：MCP stdio 服务循环（stdout 仅协议响应 · host 断开即停）。
   // 输入流 = 首行配置之后的余量流（真实 host 帧）；selftest 注入态（stdin 先闭）不走到这里。
   serveMcpStdio(server, { input: rest, output: process.stdout, onClose: () => process.exit(0) });
-  process.once('SIGINT', () => process.exit(0));
-  process.once('SIGTERM', () => process.exit(0));
+  // P1-A3：HTTP 常驻传输（配置即启用——与 stdio 并存，同一 handler）
+  let httpHandle: Awaited<ReturnType<typeof serveMcpHttp>> | undefined;
+  if (config.httpServer) {
+    void serveMcpHttp(server, config.httpServer).then((h) => {
+      httpHandle = h;
+      console.error(`  HTTP 常驻：${h.url}（streamable HTTP · POST JSON-RPC）`);
+    });
+  }
+  const shutdown = (): void => {
+    void (httpHandle ? httpHandle.close() : Promise.resolve()).then(() => process.exit(0));
+  };
+  process.once('SIGINT', shutdown);
+  process.once('SIGTERM', shutdown);
   // 常驻：进程退出由 onClose / SIGINT / SIGTERM 接管——main 承诺永不 settle
   // （H5 修复：此前返回 0 会被底部 main().then(process.exit) 立即杀掉，就绪即退出）。
   return new Promise<number>(() => {});

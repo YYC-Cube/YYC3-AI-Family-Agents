@@ -83,6 +83,9 @@ const SPECS = [
   { file: 'tests/contracts/mcp-stdio-serve.contract.js', pillars: ['治'], phase: 'M41.5', name: 'MCP stdio 服务循环（host 接入形态）' },
   { file: 'tests/contracts/stdio-host-handshake.contract.js', pillars: ['治'], phase: 'P0-H5', name: 'MCP stdio host 握手（死锁治本回归 · 真实宿主行为）' },
   { file: 'tests/contracts/install-family-mcp.contract.js', pillars: ['治'], phase: 'P0-A2', name: '一键接入脚本契约（幂等 · 零密钥 · 备份 · JSONC）' },
+  { file: 'tests/contracts/member-skills.contract.js', pillars: ['治'], phase: 'P1-B3', name: '成员技能视图契约（人格单一事实源 · 零漂移）' },
+  { file: 'tests/contracts/http-serve.contract.js', pillars: ['治'], phase: 'P1-A3', name: 'MCP streamable HTTP 传输契约（POST /mcp · 路由闸 · 容错 · 关闭）' },
+  { file: 'tests/contracts/p1-distribution.contract.js', pillars: ['治'], phase: 'P1-B4/C1/C2', name: 'P1 分发面契约（插件装配 · 模板脚手架 · 内核样板）' },
   // UAT（tests/uat/external-worker-uat.spec.ts）刻意不进本清单（P2-T3）：真实外部端点调用
   // 只走 `pnpm uat:external` 三闸门控，保持回归门禁 hermetic 与「跳过 0」口径。
 ];

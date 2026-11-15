@@ -67,3 +67,6 @@ family_regression_spec_passed{spec="tests/integration/usage-persistence.spec.js"
 family_regression_spec_passed{spec="tests/contracts/mcp-stdio-serve.contract.js"} 3
 family_regression_spec_passed{spec="tests/contracts/stdio-host-handshake.contract.js"} 2
 family_regression_spec_passed{spec="tests/contracts/install-family-mcp.contract.js"} 6
+family_regression_spec_passed{spec="tests/contracts/member-skills.contract.js"} 4
+family_regression_spec_passed{spec="tests/contracts/http-serve.contract.js"} 4
+family_regression_spec_passed{spec="tests/contracts/p1-distribution.contract.js"} 5

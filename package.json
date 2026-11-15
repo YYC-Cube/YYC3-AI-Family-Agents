@@ -1,6 +1,6 @@
 {
   "name": "@yyc3/ai-family-agent",
-  "version": "2.55.0",
+  "version": "2.56.0",
   "private": true,
   "description": "YYC³ AI Family Agent 编程体系 — 自·知·学·治·愈 五支柱融合内核（TypeScript，零运行时依赖）",
   "license": "MIT",
@@ -57,6 +57,8 @@
     "prompts:check": "node scripts/check-prompts.mjs",
     "skills:gen": "node scripts/gen-skill-artifacts.mjs",
     "skills:check": "node scripts/gen-skill-artifacts.mjs --check",
+    "member-skills": "node scripts/gen-member-skills.mjs",
+    "plugin:assemble": "node scripts/gen-plugin.mjs",
     "mcp:tools": "node scripts/gen-mcp-tools.mjs",
     "mcp:tools:check": "node scripts/gen-mcp-tools.mjs --check",
     "plugins:check": "node scripts/check-plugins.mjs",

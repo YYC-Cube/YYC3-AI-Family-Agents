@@ -1,0 +1,13 @@
+{
+  "name": "family-app-template",
+  "private": true,
+  "type": "module",
+  "description": "家族服务最小模板（C1）——@yyc3/ai-family-agent MCP Server 即插即用样板",
+  "scripts": {
+    "start": "yyc3-family-server",
+    "selftest": "yyc3-family-server --selftest"
+  },
+  "dependencies": {
+    "@yyc3/ai-family-agent": "^2.56.0"
+  }
+}

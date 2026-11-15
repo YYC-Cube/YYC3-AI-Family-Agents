@@ -1,0 +1,9 @@
+{
+  "name": "embedded-kernel-example",
+  "private": true,
+  "type": "module",
+  "description": "内核消费样板（C2）——@yyc3/ai-family-kernel 进程内嵌入最小示例",
+  "dependencies": {
+    "@yyc3/ai-family-kernel": "^2.56.0"
+  }
+}
