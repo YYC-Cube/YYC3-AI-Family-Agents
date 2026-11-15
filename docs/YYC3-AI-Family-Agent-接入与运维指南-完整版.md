@@ -278,6 +278,7 @@ pnpm regression             # ④ 全量门禁（防退化红线）
 | `LOCAL_GATEWAY_API_KEY` | — | 网关 key（/v1 免 key 时占位） |
 | `YYC3_USAGE_FILE` / `YYC3_USAGE_FLUSH_EVERY` / `YYC3_USAGE_PERSIST` | data/metrics-usage.json / 5 / 启用 | 计量持久化 |
 | `YYC3_METRICS_PORT` / `HOST` / `TOKEN` | 9464 / 127.0.0.1 / — | /metrics 端点 |
+| `YYC3_HTTP_PORT` / `YYC3_HTTP_HOST` | 未设（关） | streamable HTTP 常驻（`POST /mcp` · A3）——配置即与 stdio 并存 |
 | `YYC3_ADMISSION_MODE` | observe | observe \| enforce |
 | `UAT_LLM*` / `EXT_WORKER*` | — | UAT 三闸（评测/外部端点，不入 CI） |
 

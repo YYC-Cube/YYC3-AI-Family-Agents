@@ -26,18 +26,23 @@ bd16ea6cfdfb…  ai-family-agent/yyc3-ai-family-agent-2.52.0.tgz
 
 | 包 | 版本 | 内容 | 发布日 |
 | --- | --- | --- | --- |
-| 双包 | **2.55.0**（当前 latest） | **H5 握手死锁治本**（真实 host 三路径全通：bin 配置注入 + 首行配置/余量流 + 常驻进程保活）+ 外部编排降级兜底 + P0-A2 一键接入脚本 | 2026-11-16 |
+| 双包 | **2.56.0**（当前 latest） | P1 封装深化全量：B3 成员技能组 + B4 插件装配 + A3 HTTP 常驻 + C1 脚手架 + C2 内核样板 | 2026-11-16 |
+| 双包 | 2.55.0 | **H5 握手死锁治本**（真实 host 三路径全通：bin 配置注入 + 首行配置/余量流 + 常驻进程保活）+ 外部编排降级兜底 + P0-A2 一键接入脚本 | 2026-11-16 |
 | 双包 | 2.54.0 | M41 计量持久化 + M41.5 serveMcpStdio host 接入形态 | 2026-11-11 |
 | 双包 | 2.52.0 | 首发（M31 装配） | 2026-11-02 |
 
 **token 轮转已完成**（2026-11-11 确认：classic 已换新并实测可用——旧双暴露 token 作废）；发布走本地鉴权（zsh 源劫持正常）。
 
-### 2.55.0 发布回执（2026-11-16）
+### 2.56.0 发布回执（2026-11-16 · A4 金包公示例行化）
 
-- **背景**：接入形态对真实 host 从未验证——npm bin 不注入配置 + entry `readFileSync(0)` 等 EOF + 运行器 spawnSync 后 stdin 即闭 + 常驻分支被 `main().then(process.exit)` 就绪即杀。修复后实测：initialize→三帧响应 **202ms** · 45 工具 · stdout 纯净 · 断开优雅退出 code=0。
-- **本版**：H5 修复（首行配置+余量流 / 常驻 Promise 不 settle / 运行器管道直通 / bin 包内配置装配 config-loader）+ 外部家人编排降级兜底 + A2 一键接入脚本（幂等·备份·零密钥·握手验证）。
-- **门禁**：375/375 全绿（53+2 套件 · H5/A2 双新契约）。
-- **digest**：`dist/SHA256SUMS.txt` 已重算（2.55.0 双 tarball + 金包）。
+- **内容**：B3 成员技能组（8 员视图 · 已装 `~/.zcode/skills/`）· B4 插件装配（`dist/yyc3-family-plugin`）· A3 `serveMcpHttp`（`YYC3_HTTP_PORT` 启用）· C1 模板脚手架 · C2 内核样板——P1 全量闭环，门禁 **388/388**。
+- **digest 公示（R3 · SHA256SUMS 例行）**：
+  ```
+  f645bdb5d2c9…  ai-family-kernel/yyc3-ai-family-kernel-2.56.0.tgz
+  76754cd58598…  ai-family-agent/yyc3-ai-family-agent-2.56.0.tgz
+  14cdb08b46be…  ai-family-agent/assets/packs/family-core-1.0.0.skill   ← 金包（自 2.52.0 起恒值，零漂移锚定）
+  ```
+- **金包公示例行化（A4）**：每版回执随附金包 digest 行——金包内容不变则 digest 恒值（上三版一致 `14cdb08b46be…`），变更即漂移可审计。
 
 ## 安装验证
 
