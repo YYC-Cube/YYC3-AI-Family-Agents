@@ -203,6 +203,7 @@ cd ../ai-family-agent    && npm publish --access public
 | 症状 | 诊断 | 处置 |
 | --- | --- | --- |
 | host 无 `yyc3-family` 工具 | bin 未拉起 / npx 失败 | `npx -y @yyc3/ai-family-agent@latest --selftest` 单跑看 stderr |
+| 握手挂起：发 initialize 无响应帧 | **2.54.0 及以前的真实 host 死锁**（entry 读全 stdin 等 EOF） | **升级 ≥2.55.0**（H5 治本：首行配置+余量流直通；实测握手 202ms）· 勿用 2.54.0 接 host |
 | LLM 步骤 isError：ECONNREFUSED | 本地网关/上游掉线（如 svl2 维护） | 探活 `/v1/models`；恢复后重跑 golden（BASELINE diff） |
 | LLM isError 429（智谱 1113） | 云 key 余额不足 | 预期内（已切本地）——勿充值续云，走 local 档 |
 | LLM isError 403 invalid | 网关 key 失效 | 换网关侧签发 key 或占位钥（免 key 路由） |
