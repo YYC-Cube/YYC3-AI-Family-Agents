@@ -10,6 +10,13 @@
 
 ### Added
 
+- **P1 封装深化全量（v2.56.0）**：
+  - **B3 成员技能组**：`scripts/gen-member-skills.mjs`（`pnpm member-skills`）——由 `agent.yaml`（身份）+ `family-manifest.yaml`（技能归属 owner 编号 + delegation 委托矩阵）派生 8 员 granular 技能视图 `packaging/member-skills/<slug>/SKILL.md`（主技能=路由，成员技能=深度视角）；人格单一事实源不变，产物零手改（`--check` 字节级零漂移）
+  - **B4 marketplace 分发**：`scripts/gen-plugin.mjs`（`pnpm plugin:assemble`）装配自包含 ZCode 插件目录 `dist/yyc3-family-plugin/`（`.zcode-plugin/plugin.json` 组件清单 9 技能 · `marketplace.json` · 技能组件镜像）——本地目录一键装（Settings → Plugin Management → Discover → +）
+  - **A3 HTTP 常驻形态**：`serveMcpHttp`（entry 导出）——streamable HTTP `POST /mcp`（对齐 2026-07-28 规范子集 · 404 路由闸 · -32700 容错 · 优雅关闭）；`YYC3_HTTP_PORT`/`YYC3_HTTP_HOST` 配置即启用（与 stdio 并存，同一 handler；SIGINT/SIGTERM 经 HTTP close 后退出）
+  - **C1 脚手架**：`examples/family-app-template/`（三步即插即用）+ `scripts/create-family-app.mjs`（幂等衍生 · 目标越界拒绝）
+  - **C2 内核消费样板**：`examples/embedded-kernel/`（`createRuntimeAssembly` 最小嵌入 + 插拔点注入演示）
+- **P1 契约套件**：`tests/contracts/member-skills.contract.ts`（M1–M4）· `tests/contracts/http-serve.contract.ts`（W1–W4）· `tests/contracts/p1-distribution.contract.ts`（D1–D5）——门禁 375 → **388**
 - **H5 握手死锁修复（host 接入治本 · v2.55.0）**：`family-server.entry.ts` CLI 模式改「stdin 首行配置 + 余量流直通 serveMcpStdio」（`readConfigFromStdin`/`boot` 重构——修复前 `readFileSync(0)` 读全 stdin 等 EOF，真实 host 全部握手死锁/立即退出）；`scripts/start-family-server.mjs` 常驻路径改 spawn + 管道直通 + 信号转发（修复前 spawnSync 注入后 stdin 即闭），运行器/装配件日志统一走 stderr（stdout 协议纯净性 H4 不破）；npm bin `yyc3-family-server` 改由包内资产自动装配配置（`config-loader.mjs` 随包分发——与仓内运行器共用 `scripts/lib/family-server-config.mjs` 共享件，杜绝双处漂移；`configs/` 随包）
 - **一键接入脚本（P0-A2）**：`scripts/install-family-mcp.mjs`——幂等注入 ZCode（`~/.zcode/cli/config.json` → `mcp.servers` + `environment` 键）/ Claude Desktop（`mcpServers` + `env` 键）· 改写前备份（`.backup-yyyc3-<时间戳>`）· 密钥零落盘（仅占位串）· 注入后真实握手验证；`runCli(argv, env)` 进程内可测 + `--check`（exit 0/2）判定面 + `--dry-run` 预演
 - **接入文档修正（P0-A1 + C3）**：ZCode 配置路径 `~/.zcode/settings.json`（实际不存在）→ `~/.zcode/cli/config.json` 的 `mcp.servers`；全局 bin 直调升首选形态（避开 npx preferOnline 冷启动 70s 实测坑）；接入指南新增 §1.8 一键接入 + 第三部分《开发者手册》（端口注入速查 / 新成员四步 CLI / 变更纪律）

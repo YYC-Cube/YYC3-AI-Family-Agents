@@ -1,13 +1,13 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-11-15T17:37:43.489Z",
-  "generatedAtCN": "2026/11/16 01:37:43",
+  "generatedAt": "2026-11-15T18:05:21.127Z",
+  "generatedAtCN": "2026/11/16 02:05:21",
   "gate": {
     "passed": true,
-    "totalPassed": 375,
+    "totalPassed": 388,
     "totalFailed": 0,
     "totalSkipped": 0,
-    "specs": 55
+    "specs": 58
   },
   "capabilities": {
     "skills": 45,
@@ -41,7 +41,7 @@
       "id": "治",
       "label": "治 · 治理",
       "green": true,
-      "passed": 166,
+      "passed": 179,
       "failed": 0
     },
     {
@@ -868,6 +868,48 @@
       "failed": 0,
       "skipped": 0,
       "total": 6,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/member-skills.contract.js",
+      "name": "成员技能视图契约（人格单一事实源 · 零漂移）",
+      "phase": "P1-B3",
+      "pillars": [
+        "治"
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "total": 4,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/http-serve.contract.js",
+      "name": "MCP streamable HTTP 传输契约（POST /mcp · 路由闸 · 容错 · 关闭）",
+      "phase": "P1-A3",
+      "pillars": [
+        "治"
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "total": 4,
+      "silent": false,
+      "ok": true
+    },
+    {
+      "file": "tests/contracts/p1-distribution.contract.js",
+      "name": "P1 分发面契约（插件装配 · 模板脚手架 · 内核样板）",
+      "phase": "P1-B4/C1/C2",
+      "pillars": [
+        "治"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "total": 5,
       "silent": false,
       "ok": true
     }

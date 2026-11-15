@@ -39,6 +39,14 @@ export function buildFamilyServerConfig(root, opts = {}) {
     },
   };
 
+  // HTTP 常驻传输（P1-A3）：YYC3_HTTP_PORT 配置即启用（与 stdio 并存，同一 handler）
+  if (process.env.YYC3_HTTP_PORT) {
+    config.httpServer = {
+      port: Number(process.env.YYC3_HTTP_PORT),
+      host: process.env.YYC3_HTTP_HOST ?? '127.0.0.1',
+    };
+  }
+
   // 计量持久化（M41 · 缺省启用 · YYC3_USAGE_PERSIST=0 关闭）：跨进程累计口径
   // （stdio 生命周期计数器随进程清零的结构性缺口由此补齐——观察窗判据量具）
   if (process.env.YYC3_USAGE_PERSIST !== '0') {

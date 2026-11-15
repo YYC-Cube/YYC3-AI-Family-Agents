@@ -228,9 +228,13 @@ for (const dir of pluginDirs) {
 }
 
 // 2) 分发副本（packaging/{slug}/ → docs/{slug}.skill）
+//    member-skills 为 B3 成员技能视图容器（分发走 gen-plugin 插件装配），不产生独立 .skill 副本。
 const packagingRoot = path.join(ROOT, PACKAGING_DIR);
 const copySlugs = existsSync(packagingRoot)
-  ? readdirSync(packagingRoot, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort()
+  ? readdirSync(packagingRoot, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && e.name !== 'member-skills')
+      .map((e) => e.name)
+      .sort()
   : [];
 for (const dir of copySlugs) {
   const files = collectFiles(ROOT, path.join(PACKAGING_DIR, dir));
