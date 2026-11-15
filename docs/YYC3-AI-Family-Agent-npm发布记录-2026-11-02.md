@@ -26,10 +26,18 @@ bd16ea6cfdfb…  ai-family-agent/yyc3-ai-family-agent-2.52.0.tgz
 
 | 包 | 版本 | 内容 | 发布日 |
 | --- | --- | --- | --- |
-| 双包 | **2.54.0**（当前 latest） | M41 计量持久化 + M41.5 serveMcpStdio host 接入形态 | 2026-11-11 |
+| 双包 | **2.55.0**（当前 latest） | **H5 握手死锁治本**（真实 host 三路径全通：bin 配置注入 + 首行配置/余量流 + 常驻进程保活）+ 外部编排降级兜底 + P0-A2 一键接入脚本 | 2026-11-16 |
+| 双包 | 2.54.0 | M41 计量持久化 + M41.5 serveMcpStdio host 接入形态 | 2026-11-11 |
 | 双包 | 2.52.0 | 首发（M31 装配） | 2026-11-02 |
 
 **token 轮转已完成**（2026-11-11 确认：classic 已换新并实测可用——旧双暴露 token 作废）；发布走本地鉴权（zsh 源劫持正常）。
+
+### 2.55.0 发布回执（2026-11-16）
+
+- **背景**：接入形态对真实 host 从未验证——npm bin 不注入配置 + entry `readFileSync(0)` 等 EOF + 运行器 spawnSync 后 stdin 即闭 + 常驻分支被 `main().then(process.exit)` 就绪即杀。修复后实测：initialize→三帧响应 **202ms** · 45 工具 · stdout 纯净 · 断开优雅退出 code=0。
+- **本版**：H5 修复（首行配置+余量流 / 常驻 Promise 不 settle / 运行器管道直通 / bin 包内配置装配 config-loader）+ 外部家人编排降级兜底 + A2 一键接入脚本（幂等·备份·零密钥·握手验证）。
+- **门禁**：375/375 全绿（53+2 套件 · H5/A2 双新契约）。
+- **digest**：`dist/SHA256SUMS.txt` 已重算（2.55.0 双 tarball + 金包）。
 
 ## 安装验证
 
