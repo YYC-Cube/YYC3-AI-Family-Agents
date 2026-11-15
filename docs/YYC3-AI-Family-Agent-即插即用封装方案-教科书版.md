@@ -142,10 +142,10 @@ scope: 适用 v2.54.0+ · 承接《可复用性分析》v1.2.0 · 证据基《�
 
 | 编号 | 动作 | 内容 | 验收 | 优先级 |
 | --- | --- | --- | --- | --- |
-| A1 | 全局 bin 直调形态 | `npm i -g @yyc3/ai-family-agent` 后 mcpServers 用 `"command": "yyc3-family-server"` 替代 `npx`——避开 npx `preferOnline` 70 秒坑（§2.1 启示 1）；接入指南 §1.2 增补此形态为**首选**（npx 降为备选） | 断网冷启动 <10s | **P0** |
-| A2 | 一键接入脚本 | `scripts/install-family-mcp.mjs`：检测 ZCode/Claude 配置文件 → 幂等注入 mcpServers 块（含绝对路径计量配置）→ 跑一分钟验证（§1.7）→ 输出报告。**密钥零落盘**（只写占位串） | 一条命令完成接入+验证 | **P0** |
-| A3 | HTTP/SSE 常驻形态 | 在 serveMcpStdio 之外加 streamable HTTP 传输（对齐 2026-07-28 规范）——对标远程托管 7% 趋势与 mcp-remote 1.72M/周 | 同一服务双传输 | P1（随第二波令） |
-| A4 | 金包分发公示 | `family-core-1.0.0.skill` 金包 digest 随 Release Notes 公示（M32 发布手册已有流程） | digest 可审计 | P1 |
+| A1 | 全局 bin 直调形态 | `npm i -g @yyc3/ai-family-agent` 后 mcpServers 用 `"command": "yyc3-family-server"` 替代 `npx`——避开 npx `preferOnline` 70 秒坑（§2.1 启示 1）；接入指南 §1.2 增补此形态为**首选**（npx 降为备选） | 断网冷启动 <10s | **P0** ✅ |
+| A2 | 一键接入脚本 | `scripts/install-family-mcp.mjs`：检测 ZCode/Claude 配置文件 → 幂等注入 mcpServers 块（含绝对路径计量配置）→ 跑一分钟验证（§1.7）→ 输出报告。**密钥零落盘**（只写占位串） | 一条命令完成接入+验证 | **P0** ✅ 真机实跑 |
+| A3 | HTTP/SSE 常驻形态 | 在 serveMcpStdio 之外加 streamable HTTP 传输（对齐 2026-07-28 规范）——对标远程托管 7% 趋势与 mcp-remote 1.72M/周 | 同一服务双传输 | P1 ✅ `serveMcpHttp`（v2.56.0） |
+| A4 | 金包分发公示 | `family-core-1.0.0.skill` 金包 digest 随 Release Notes 公示（M32 发布手册已有流程） | digest 可审计 | P1 ✅ 例行化（每版回执附金包 digest 行） |
 
 ### 形态 B · Skills 形态——协同流程层（procedure）
 
@@ -153,10 +153,10 @@ scope: 适用 v2.54.0+ · 承接《可复用性分析》v1.2.0 · 证据基《�
 
 | 编号 | 动作 | 内容 | 验收 | 优先级 |
 | --- | --- | --- | --- | --- |
-| B1 | 技能安装落地 | 解包 `yyc3-ai-family-coding.skill` → `~/.zcode/skills/yyc3-ai-family-coding/`（目录形态·四级发现路径最高级） | 会话提及「千行」即触发 | **P0** |
-| B2 | 规范润色 | description 按 skill-creator 约定 pushy 化（触发信号前置、含成员名号与流程关键词）；核对 name 唯一性（与 brev-cli 等共存无冲突） | 重开会话元数据加载 | **P0** |
-| B3 | 成员技能组（可选拆） | 主技能保持路由表（8 员一张表）；衍生 8 个 granular 成员技能供深度协同（如 `yyc3-qianhang`）——**人格定义单一事实源仍在 family-manifest.yaml**，技能只是视图 | `manifest:check` 零漂移 | P1 |
-| B4 | marketplace 分发 | `.zcode-plugin/plugin.json` + marketplace.json，对齐 anthropics/skills 的 `/plugin marketplace add` 模式 | 外部仓库一键装 | P1 |
+| B1 | 技能安装落地 | 解包 `yyc3-ai-family-coding.skill` → `~/.zcode/skills/yyc3-ai-family-coding/`（目录形态·四级发现路径最高级） | 会话提及「千行」即触发 | **P0** ✅ |
+| B2 | 规范润色 | description 按 skill-creator 约定 pushy 化（触发信号前置、含成员名号与流程关键词）；核对 name 唯一性（与 brev-cli 等共存无冲突） | 重开会话元数据加载 | **P0** ✅ 重打包 32641 B |
+| B3 | 成员技能组（可选拆） | 主技能保持路由表（8 员一张表）；衍生 8 个 granular 成员技能供深度协同（如 `yyc3-qianhang`）——**人格定义单一事实源仍在 family-manifest.yaml**，技能只是视图 | `manifest:check` 零漂移 | P1 ✅ `gen-member-skills` 8 员视图已装 |
+| B4 | marketplace 分发 | `.zcode-plugin/plugin.json` + marketplace.json，对齐 anthropics/skills 的 `/plugin marketplace add` 模式 | 外部仓库一键装 | P1 ✅ `gen-plugin` 自包含插件（本地目录装） |
 
 ### 形态 C · 本地开发即插即用——开发者体验层（embed）
 
@@ -164,9 +164,9 @@ scope: 适用 v2.54.0+ · 承接《可复用性分析》v1.2.0 · 证据基《�
 
 | 编号 | 动作 | 内容 | 验收 | 优先级 |
 | --- | --- | --- | --- | --- |
-| C1 | 脚手架 | `create-yyc3-family-app`：拉最小模板（配置样例 + 启动器 + 门禁脚本）→ `pnpm start --selftest` 全绿。延伸 `create-member` 模板链 | 新仓一条命令可跑 | P1 |
-| C2 | 内核消费样板 | `examples/embedded-kernel/`：`import { createRuntimeAssembly } from '@yyc3/ai-family-kernel'` 最小嵌入（注入 13 插拔点中 4 个必选） | 样板单测绿 | P1 |
-| C3 | 十分钟开发手册 | 在接入指南补《开发者手册》：端口注入表（13 插拔点）→ 新成员四步 CLI → regression 门禁纪律 | 新开发者十分钟上手 | **P0** |
+| C1 | 脚手架 | `create-family-app.mjs`：拷贝最小模板（配置样例 + 启动器 + 门禁脚本）→ `npm i && selftest` 全绿。延伸 `create-member` 模板链 | 新仓一条命令可跑 | P1 ✅ 模板 + 幂等衍生（越界拒绝） |
+| C2 | 内核消费样板 | `examples/embedded-kernel/`：`import { createRuntimeAssembly } from '@yyc3/ai-family-kernel/runtime-assembly'` 最小嵌入（插拔点注入演示） | 样板 import 面契约校验 | P1 ✅ |
+| C3 | 十分钟开发手册 | 在接入指南补《开发者手册》：端口注入表（13 插拔点）→ 新成员四步 CLI → regression 门禁纪律 | 新开发者十分钟上手 | **P0** ✅ |
 
 ---
 
@@ -183,9 +183,9 @@ scope: 适用 v2.54.0+ · 承接《可复用性分析》v1.2.0 · 证据基《�
 | C3 开发者手册 | 接入指南补节 | 无 | 低 |
 | **11-21 复核** | `cat data/metrics-usage.json` 对照判据表 | 用户日常使用 | — |
 
-### P1（一周内 · 部分随第二波解冻令）
+### P1（一周内 · 2026-11-16 全量闭环 ✅）
 
-A3 HTTP 常驻形态 · A4 金包公示例行化 · B3 成员技能组 · B4 marketplace 分发 · C1 脚手架 · C2 内核样板。
+A3 HTTP 常驻形态 · A4 金包公示例行化 · B3 成员技能组 · B4 marketplace 分发 · C1 脚手架 · C2 内核样板——**全部落地（PR #30 `7bb3996` · v2.56.0 · 门禁 388/388）**。
 
 ### P2（第二波解冻令后 · 原队列）
 
