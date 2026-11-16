@@ -1,5 +1,5 @@
 /**
- * 意图检测提示词契约（intent-detection.prompt）——千里·伯乐 prompts（P1-T5）。
+ * 意图检测提示词契约（intent-detection.prompt）——知遇·伯乐 prompts（P1-T5）。
  * 职责：CO-STAR 结构化意图检测模板 + 统一元数据（id/version/vars/outputSchema）。
  * 边界：仅提供模板常量、元数据与渲染函数；模型调用归 providers/llm-adapter。
  * 版本：以 PROMPT_META 为准，回写 presets/family-manifest.yaml（manifest:check 零漂移）；

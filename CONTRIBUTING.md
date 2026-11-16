@@ -52,7 +52,7 @@ pnpm regression      # 或：node scripts/run-regression.mjs
 ### 文档规范
 
 - YAML Front Matter 必填：`file` / `description` / `version` / `created` / `status`
-- 术语以家人注册表为准（如「千里·伯乐」）
+- 术语以家人注册表为准（如「知遇·伯乐」）
 - 引用代码使用可点击链接；敏感信息使用 `${ENV_VAR}` 或 `[REDACTED]`
 - 版本变更同步写入 [CHANGELOG.md](CHANGELOG.md) 与架构设计 `§8.3`
 

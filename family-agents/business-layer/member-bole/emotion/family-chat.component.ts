@@ -1,5 +1,5 @@
 /**
- * 家族消息组件（family-chat）——千里·伯乐 emotion。蓝色边框消息样式骨架。
+ * 家族消息组件（family-chat）——知遇·伯乐 emotion。蓝色边框消息样式骨架。
  * 自动生成自 presets/member-agent；纯 TS，不依赖 UI 框架。
  * 职责：描述家族消息气泡的样式 props（蓝色边框）与状态。
  * 边界：只提供样式描述；实际渲染归前端框架（TL6）。

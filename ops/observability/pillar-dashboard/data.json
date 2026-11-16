@@ -1,7 +1,7 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-11-15T18:05:21.127Z",
-  "generatedAtCN": "2026/11/16 02:05:21",
+  "generatedAt": "2026-11-16T03:29:50.986Z",
+  "generatedAtCN": "2026/11/16 11:29:50",
   "gate": {
     "passed": true,
     "totalPassed": 388,

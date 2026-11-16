@@ -1,5 +1,5 @@
 /**
- * 对话上下文管理（context-manager.service）——千里·伯乐 core。
+ * 对话上下文管理（context-manager.service）——知遇·伯乐 core。
  * 自动生成自 presets/member-agent；请补齐 TODO(infra) 与业务逻辑。
  * 职责：维护多轮对话上下文，输出可注入 LLM 的窗口内容。
  * 边界：上下文存储归 memory-framework working-context；本服务负责编排与裁剪。

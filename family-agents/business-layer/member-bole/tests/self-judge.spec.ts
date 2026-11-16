@@ -1,5 +1,5 @@
 /**
- * 千里·伯乐 · 自我判断层单测（骨架）。
+ * 知遇·伯乐 · 自我判断层单测（骨架）。
  * 自动生成自 presets/member-agent；运行方式（需先安装依赖）：`pnpm test`
  * 说明：vitest 风格 describe/it，无运行时依赖，仅示结构与意图。
  *
@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import { SelfJudge } from '@shared/self-judge-kit';
 import { createMemberSelfJudge, extractAssumptions } from '../self-judge/index.js';
 
-describe('千里·伯乐 self-judge（骨架）', () => {
+describe('知遇·伯乐 self-judge（骨架）', () => {
   it('高置信单一意图 → 不升级', () => {
     const judge = createMemberSelfJudge();
     const signal = judge.judge({

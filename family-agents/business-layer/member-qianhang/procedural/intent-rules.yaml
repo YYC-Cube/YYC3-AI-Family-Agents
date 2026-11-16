@@ -17,7 +17,7 @@ rules:
     route_to: "010301-03"        # 预见·先知
   - intent: recommendation
     keywords: [推荐, 建议, 适合, recommend]
-    route_to: "010301-04"        # 千里·伯乐
+    route_to: "010301-04"        # 知遇·伯乐
   - intent: creation
     keywords: [创作, 写, 生成, 设计, create, generate]
     route_to: "010301-08"        # 创想·灵韵

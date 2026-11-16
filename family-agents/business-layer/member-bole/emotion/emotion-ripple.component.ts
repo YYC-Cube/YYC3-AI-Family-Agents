@@ -1,5 +1,5 @@
 /**
- * 情感涟漪组件（emotion-ripple）——千里·伯乐 emotion。「海洋蓝波动」效果骨架。
+ * 情感涟漪组件（emotion-ripple）——知遇·伯乐 emotion。「海洋蓝波动」效果骨架。
  * 自动生成自 presets/member-agent；纯 TS，不依赖 UI 框架。
  * 职责：描述"海洋蓝波动"涟漪的 props 与触发条件。
  * 边界：只提供组件描述与工厂；实际渲染归前端框架（TL6）。

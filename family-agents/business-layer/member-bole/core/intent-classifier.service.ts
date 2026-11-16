@@ -1,5 +1,5 @@
 /**
- * 意图分类器（intent-classifier.service）——千里·伯乐 core。
+ * 意图分类器（intent-classifier.service）——知遇·伯乐 core。
  * 自动生成自 presets/member-agent；请补齐 TODO(infra) 与业务逻辑。
  * 职责：把用户文本分类为候选意图，并调用 self-judge 产出结构化判断信号。
  * 边界：分类逻辑（规则/LLM）可插拔；判断信号统一由 self-judge 产出。

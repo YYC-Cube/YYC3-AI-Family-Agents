@@ -1,5 +1,5 @@
 /**
- * OpenAI Provider —— 千里·伯乐 providers（转发 shared-core/llm-adapter）。
+ * OpenAI Provider —— 知遇·伯乐 providers（转发 shared-core/llm-adapter）。
  * 类型与实现集中在 shared-core，避免 8 份重复。
  * 密钥：环境变量 OPENAI_API_KEY（禁止硬编码）。
  */
