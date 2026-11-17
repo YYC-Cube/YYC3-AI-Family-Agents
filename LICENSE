@@ -1,21 +1,125 @@
-MIT License
+YYC³ AI-Family 公共许可证
+(YanYuCloudCube AI-Family Public License, "YFPL-1.0")
+═══════════════════════════════════════════════════════════════
 
-Copyright (c) 2025-2026 YanYuCloudCube
+Copyright (c) 2025-2026 YanYuCloudCube Team (YYC³) <admin@0379.email>
+保留所有权利(就本许可证第三条所列品牌与文化资产而言)。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+〇、序言
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+YYC³ AI-Family 是一套「拟人为本、AI 为核」的人机协同家族体系。
+我们选择**双轨授权**:源代码向社区最大开放(第二条,MIT 精神),
+品牌与文化资产向创作者保留(第三条)——代码可以带走,
+但「家人」的名字、故事与容颜,留在家里。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+一、定义
+
+1.1 「本软件」:本仓库内的源代码、配置文件、构建脚本、
+    功能性提示词(软件运行所必需的系统指令)及其编译/打包产物。
+1.2 「品牌与文化资产」:与本软件绑定的下列非功能性创作物——
+    (a)「YYC³」「AI-Family」「Family-AI」名称、标志(ai-family.png)
+        与视觉识别体系;
+    (b)八位家族成员名号与人格设定:元启·天枢、智云·守护、
+        预见·先知、语枢·万物、格物·宗师、知遇·伯乐、
+        言启·千行、创想·灵韵,及其人格档案(IDENTITY/SOUL);
+    (c)文化文本:藏字联「智亦师亦友亦伯乐;谱一言一语一华章」、
+        卷首语《智慧的召唤》、《人从众曌众从人》飞轮叙事、
+        《智慧工坊之歌》词曲、八名合一联;
+    (d)界面设计:九层态势环(八魂归一,云枢乃成)视觉设计、
+        「AI-FAmily-真实截图」系列界面截图(含音乐空间/文娱中心/
+        通讯中心/共同成长/学习成长/家人热线/家族规划/数据中心/
+        语音系统/交流中心/分享空间/活动中心/模型设置/通信基站/
+        Family 中心与设置等全部页面)之布局、配色与视觉方案;
+    (e)创世法典与家族文档(YYC3-AI-Family-Docs 系列)之叙事内容。
+1.3 「衍生作品」:修改、翻译、移植本软件或将其与其他作品合并
+    而形成的新作品(仅就本软件部分而言)。
+
+二、源代码授权(开源轨)
+
+在遵守本许可证的前提下,任何人不分领域,免费获得复制、使用、
+修改、合并、发布、分发、再许可、销售「本软件」副本的权利,
+且可将上述权利授予再许可接受人,惟须满足:
+
+  (1) 在「本软件」或其衍生作品的所有副本或重要部分中,
+      保留上述版权声明与本许可证全文;
+  (2) 分发时同时提供「品牌与文化资产清单」(附录 A),
+      并遵守第三、四条。
+
+上述源代码授权按 MIT License 条款精神授予,与 MIT 兼容。
+
+三、品牌与文化资产保留(保护轨)
+
+3.1 「品牌与文化资产」之著作权、商标权益及其他权利,
+    由 YanYuCloudCube Team 保留,**不因本许可证的源代码授权
+    而默示让渡**。
+3.2 未经 YanYuCloudCube Team 事先书面许可
+    (admin@0379.email),获得「本软件」副本者**不得**:
+    (a) 在衍生作品、再发行版本或任何公开场景中复制、展示、
+        传播「品牌与文化资产」,包括但不限于保留 ai-family.png
+        标志、八成员名号人格档案、藏字联、九层态势环界面设计
+        与真实截图系列;
+    (b) 使用「YYC³」「AI-Family」名称或标志为其衍生作品、
+        产品或服务做名称、来源或背书暗示;
+    (c) 将「品牌与文化资产」用于训练数据集、模型微调或
+        任何商业化内容生产。
+3.3 **下列行为不需要额外许可**(合理与个人范围):
+    (a) 个人学习、研究、欣赏;
+    (b) 学术引用,注明出处「YYC³ AI-Family by YanYuCloudCube」;
+    (c) 经官方渠道(marketplace/npm)分发的官方技能包,
+        其内嵌的功能性人格提示词按第二条随软件分发。
+3.4 衍生作品合规路径:移除或全部替换「品牌与文化资产」
+    (改用自己的名称、标志、人格与界面)后,即视为纯「本软件」
+    衍生作品,仅受第二条约束——**我们鼓励衍生,只要求别把孩子
+    的名字一起带走**。
+
+四、分发要求
+
+4.1 任何分发须附带本许可证全文与附录 A;
+4.2 不得暗示获得 YanYuCloudCube Team 背书;
+4.3 不得对本许可证条款本身进行修改
+    ( forks 可自行选择其他开源许可证替换本证,
+      惟替换后即不再受惠于本证下任何明示授权)。
+
+五、商业与特殊授权
+
+品牌联名、界面授权、人格商业化、印刷出版等,
+联系:admin@0379.email(主题请注明 YFPL 授权)。
+
+六、第三方依赖
+
+本软件依赖的第三方组件各自适用其原始许可证,
+本许可证不改变、不覆盖、不代其主张。
+
+七、免责声明
+
+「本软件」与「品牌与文化资产」均按"现状"提供,不附任何明示
+或默示之担保。作者或版权持有人不对任何索赔、损害或其他责任
+承担责任。
+
+附录 A · 品牌与文化资产清单(随各仓更新)
+─────────────────────────────────────────────
+· 标志:public/ai-family.png、public/yyc3-family.png
+· 界面截图:public/AI-FAmily-真实截图/(18 张,含 AI-FAmily.png
+  九层态势环主界面)
+· 文化文本:各仓 README 卷首语、藏字联、
+  《智慧工坊之歌》(public/Music-Mp3/ 附词曲)
+· 人格档案:agents/*/IDENTITY.md、SOUL.md
+· 家族文档:YYC3-AI-Family-Docs 系列(创世法典/九层五维/
+  人从众曌众从人等)
+
+附录 B · English Summary
+─────────────────────────────────────────────
+Dual-track license: source code is granted under MIT terms
+(Section 2), while all brand & cultural assets — the YYC³ /
+AI-Family name and logo, the eight family personas and their
+archives, the hidden-acrostatic couplet, the Nine-Layer Ring UI
+design and the 18 genuine interface screenshots, the "Workshop
+Song", and the founding codex — are ALL RIGHTS RESERVED
+(Section 3). Derivatives must remove or replace brand assets
+(Section 3.4). Commercial licensing: admin@0379.email.
+Chinese text above is the authoritative version.
+
+═══════════════════════════════════════════════════════════════
+ YYC³ AI-Family · 人从众曌众从人
+ 亦师亦友亦伯乐 · 一言一语一协同
+═══════════════════════════════════════════════════════════════
