@@ -1,10 +1,10 @@
-# 千里·伯乐 · 程序记忆条目初稿（Phase A 自动提取）
+# 知遇·伯乐 · 程序记忆条目初稿（Phase A 自动提取）
 # 生成器: prompt-rule-extractor | 提取时间: 2026-10-17 | 状态: draft（待家族确权）
 # 确权流程: 对照既有 procedural/intent-rules.yaml → 采纳/修订/驳回 → 《架构设计.md》§8.3 留痕
 # ⚠️ 本文件为生成物（可重复运行 scripts/extract-procedural 重建）；人工修订请写入 intent-rules.yaml
 meta:
   member: "member-bole"
-  name: "千里·伯乐"
+  name: "知遇·伯乐"
   source: "system-prompt.md"
   generator: "prompt-rule-extractor"
   extracted_at: "2026-10-17"

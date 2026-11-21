@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/agent-card.schema.json",
   "agentCard": {
-    "name": "千里·伯乐 (Bole)",
+    "name": "知遇·伯乐 (Bole)",
     "description": "YYC³ AI Family 首席推荐官 · 知遇之人 — 人才匹配与个性化推荐，负责画像构建与激励洞察。",
     "url": "https://matrix.yyc3.top/family/bole",
     "version": "1.1.0",

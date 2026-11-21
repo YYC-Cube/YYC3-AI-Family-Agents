@@ -8,6 +8,8 @@
  *   H2 容错：坏 JSON 行 → -32700 错误帧（服务不崩，后续请求照常）
  *   H3 host 断开：stdin close → 排空在途 → stop（进程退出路径由 main 持有）
  *   H4 就绪横幅走 stderr（stdout 协议纯净性）
+ *   H6 协议协商：client 请求版本原样回显（host 对改报他版不降级——ZCode 实测
+ *      协议断裂根因）；未知/缺失版本回锚定版本
  *
  * 运行：tsc 编译 + node（零依赖 harness，PassThrough 模拟 stdin/stdout）。
  */
@@ -116,6 +118,30 @@ describe('MCP stdio 服务循环（M41.5 · host 接入）', () => {
     console.error = origErr;
     expect(errChunks.join('\n')).toContain('MCP stdio');
     expect(outText.join('')).toBe(''); // 无请求即无 stdout 输出（横幅未污染协议流）
+    rl.close();
+    await server.stop();
+  });
+
+  it('H6 协议协商：client 请求版本原样回显 · 未知版本回锚定版本', async () => {
+    const server = await import('../../family-agents/family-server.entry.js').then((m) =>
+      m.startFamilyServer({ serverInfo: { name: 'yyc3-family', version: 'test' }, tools: TOOLS, manifestEntries: ENTRIES }),
+    );
+    const input = new PassThrough();
+    const frames = [];
+    const output = new PassThrough();
+    output.on('data', (c) => frames.push(...c.toString().split('\n').filter((l) => l.trim())));
+    const rl = serveMcpStdio(server, { input, output });
+    // ZCode 实测断裂场景：host 请求 2025-06-18 → 必须原样回显（host 对改报他版不降级）
+    input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18' } })}\n`);
+    // 未知版本 → 回本实现锚定版本（规范缺省语义）
+    input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'initialize', params: { protocolVersion: '1999-01-01' } })}\n`);
+    await sleep(300);
+    expect(frames.length).toBe(2);
+    const byId = new Map(frames.map((f) => [JSON.parse(f).id, JSON.parse(f)]));
+    expect(byId.get(1).result.protocolVersion).toBe('2025-06-18');
+    expect(byId.get(2).result.protocolVersion).toBe('2026-07-28');
+    input.end();
+    await sleep(200);
     rl.close();
     await server.stop();
   });

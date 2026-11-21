@@ -1,5 +1,5 @@
 /**
- * 查询 → API 映射（query-to-api.mapper）——千里·伯乐 nlq。
+ * 查询 → API 映射（query-to-api.mapper）——知遇·伯乐 nlq。
  * 自动生成自 presets/member-agent；请补齐 TODO(infra) 与业务逻辑。
  * 职责：把结构化 ParsedQuery 映射为下游家人/服务的显式 API 契约调用。
  * 边界：只做"结构 → API 契约"的映射；不发起真实请求（归 provider/adapter）。

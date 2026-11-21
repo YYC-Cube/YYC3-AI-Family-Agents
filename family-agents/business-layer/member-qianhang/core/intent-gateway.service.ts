@@ -16,7 +16,7 @@ import { ContextManagerService } from './context-manager.service.js';
 export type IntentType =
   | 'analysis' // → 语枢·万物
   | 'prediction' // → 预见·先知
-  | 'recommendation' // → 千里·伯乐
+  | 'recommendation' // → 知遇·伯乐
   | 'creation' // → 创想·灵韵
   | 'orchestration' // → 元启·天枢
   | 'chat'
@@ -98,7 +98,7 @@ function routeOf(intent: IntentType): string {
   const map: Record<IntentType, string> = {
     analysis: '010301-02', // 语枢·万物
     prediction: '010301-03', // 预见·先知
-    recommendation: '010301-04', // 千里·伯乐
+    recommendation: '010301-04', // 知遇·伯乐
     creation: '010301-08', // 创想·灵韵
     orchestration: '010301-05', // 元启·天枢
     chat: '010301-01',

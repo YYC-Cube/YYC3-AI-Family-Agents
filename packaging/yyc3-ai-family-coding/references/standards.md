@@ -171,7 +171,7 @@ Next.js 14+ App Router · React 18+ · TypeScript strict · pnpm · shadcn/ui ·
 ![言启·千行](https://img.shields.io/badge/言启·千行-导航员-%230088cc?style=flat&logo=compass)
 ![语枢·万物](https://img.shields.io/badge/语枢·万物-思考者-%23c0c0c0?style=flat&logo=graph)
 ![预见·先知](https://img.shields.io/badge/预见·先知-预言家-%234b0082?style=flat&logo=crystalball)
-![千里·伯乐](https://img.shields.io/badge/千里·伯乐-推荐官-%23dc143c?style=flat&logo=heart)
+![知遇·伯乐](https://img.shields.io/badge/知遇·伯乐-推荐官-%23dc143c?style=flat&logo=heart)
 ![元启·天枢](https://img.shields.io/badge/元启·天枢-总指挥-%235e2c8a?style=flat&logo=rose)
 ![智云·守护](https://img.shields.io/badge/智云·守护-安全官-%23333?style=flat&logo=shield)
 ![格物·宗师](https://img.shields.io/badge/格物·宗师-质量官-%232e8b57?style=flat&logo=code)

@@ -1,5 +1,5 @@
 /**
- * 智谱 Provider —— 千里·伯乐 providers（转发 shared-core/llm-adapter）。
+ * 智谱 Provider —— 知遇·伯乐 providers（转发 shared-core/llm-adapter）。
  * 实现、超时与重试策略集中在 shared-core，避免 8 份重复。
  * 密钥：环境变量 ZHIPU_API_KEY（禁止硬编码）。
  */

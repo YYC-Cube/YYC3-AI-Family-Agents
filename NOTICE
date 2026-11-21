@@ -1,0 +1,58 @@
+YYC³ AI-Family · NOTICE
+第三方组件与归属声明 / Third-Party Notices
+══════════════════════════════════════════════════════════════════════
+
+本文件是 YFPL-1.0 分轨许可的配套声明(LICENSE §5.4)。
+版本 v1.0.0 · 2026-11-18 · 适用于附录 B 所列全部 AI-Family 仓库。
+
+一、本项目的自有版权声明
+────────────────────────────────────────────────────────────────────
+Copyright (c) 2025-2026 言语(河南)智能科技有限公司
+(YanYu (Henan) Intelligent Technology Co., Ltd.) <admin@0379.email>
+
+注册商标:YANYUCLOUDCUBE(注册号 89467384-89467388,五类,
+专用权 2026-07-14 至 2036-07-13)。详见 TRADEMARK.md。
+
+二、第三方组件(按轨归属)
+────────────────────────────────────────────────────────────────────
+
+【主仓 · YYC3-AI-Family-Agent】
+· 本仓为纯文档/登记层,无运行时依赖;
+· `yyc3-skills-library/` 条目的实现回源 ~/.openclaw-autoclaw 托管池,
+  各原始技能的许可由其上游主张(本库仅做标准化重写与登记);
+· 引用的模型与工具(ACE-Step / MiniMax-Music3 / Qwen 系列 / MuseTalk /
+  FastMetal / Wan2.2 / LTX-2 等)各依其模型许可,本仓不分发权重。
+
+【TS 五支柱 · personal/YYC3-AI-FAmily-Agent】
+· 运行时零依赖(Node 标准库);开发依赖见 package.json,
+  各依其原证(MIT / Apache-2.0 / ISC 等)。
+
+【Python 运行时 · personal/YYC3-Family-AI-Agents】
+· 依赖清单见 requirements.txt / pyproject.toml,各依其原证。
+
+【桌面智枢 · personal/YYC3-AI-Family-Agent-HUB】
+· Electron / React / Vite / Tailwind / shadcn 生态,各依其原证;
+· 字体:Orbitron (SIL Open Font License 1.1);
+· 图标:lucide-react (ISC)。
+
+三、外部规范与生态引用
+────────────────────────────────────────────────────────────────────
+· Model Context Protocol (MCP) — Anthropic,开放规范;
+· Agent Skills / SKILL.md 格式 — Anthropic 提出的开放标准(agentskills.io);
+· Creative Commons CC BY 4.0 文本 — creativecommons.org;
+· 商标档案:YANYUCLOUDCUBE/YanYuCloudCube/YYC3-品牌商标-域名文档/。
+
+四、字体与图像
+────────────────────────────────────────────────────────────────────
+· 文档与界面使用的第三方字体各依其 OFL/Apache 许可;
+· 轨三品牌图像(ai-family.png / 真实截图 18 张)为本项目自有资产,
+  不适用任何第三方许可,权利保留(见 TRADEMARK.md)。
+
+五、声明效力
+────────────────────────────────────────────────────────────────────
+本 NOTICE 仅作归属声明,不修改任何许可证条款。
+如发现遗漏的第三方归属,请联系 admin@0379.email 更正。
+
+══════════════════════════════════════════════════════════════════════
+ YYC³ AI-Family · 人从众曌众从人 · 亦师亦友亦伯乐 · 一言一语一协同
+══════════════════════════════════════════════════════════════════════

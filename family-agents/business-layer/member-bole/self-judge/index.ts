@@ -1,5 +1,5 @@
 /**
- * 千里·伯乐 · 自我判断层（self-judge）——「自」支柱实例化。
+ * 知遇·伯乐 · 自我判断层（self-judge）——「自」支柱实例化。
  * 自动生成自 presets/member-agent。
  *
  * ⚠️ 红线：自我判断不得脱离外部世界状态，必须与
@@ -10,7 +10,7 @@
 
 import { SelfJudge, type Assumption } from '@shared/self-judge-kit';
 
-/** 千里·伯乐 专属判断配置（tauLow 可按家人职责调整）。 */
+/** 知遇·伯乐 专属判断配置（tauLow 可按家人职责调整）。 */
 export const MEMBER_JUDGMENT_CONFIG = {
   tauLow: 0.6,
   tauHigh: 0.85,

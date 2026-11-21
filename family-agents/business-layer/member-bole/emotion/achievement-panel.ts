@@ -1,5 +1,5 @@
 /**
- * 成就面板（achievement-panel）——千里·伯乐 emotion。「心心相印」成就触发骨架。
+ * 成就面板（achievement-panel）——知遇·伯乐 emotion。「心心相印」成就触发骨架。
  * 自动生成自 presets/member-agent；纯 TS，不依赖 UI 框架。
  * 职责：描述成就定义与触发条件。
  * 边界：只提供描述与判定函数；持久化归记忆框架。

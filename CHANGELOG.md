@@ -10,6 +10,7 @@
 
 ### Added
 
+- **H6 协议协商修复（v2.57.0）**：`mcp-adapter/server/protocol.ts` initialize 原样回显 client 请求版本（支持集 2026-07-28 / 2025-11-25 / 2025-06-18 / 2024-11-05）——修复 ZCode host 报「Server's protocol version is not supported: 2026-07-28」的接入断裂（host 对服务端改报他版不降级兼容，实测必须协商一致）；未知/缺失版本回本实现锚定版本（规范缺省语义）；契约 H6 入 `mcp-stdio-serve`
 - **P1 封装深化全量（v2.56.0）**：
   - **B3 成员技能组**：`scripts/gen-member-skills.mjs`（`pnpm member-skills`）——由 `agent.yaml`（身份）+ `family-manifest.yaml`（技能归属 owner 编号 + delegation 委托矩阵）派生 8 员 granular 技能视图 `packaging/member-skills/<slug>/SKILL.md`（主技能=路由，成员技能=深度视角）；人格单一事实源不变，产物零手改（`--check` 字节级零漂移）
   - **B4 marketplace 分发**：`scripts/gen-plugin.mjs`（`pnpm plugin:assemble`）装配自包含 ZCode 插件目录 `dist/yyc3-family-plugin/`（`.zcode-plugin/plugin.json` 组件清单 9 技能 · `marketplace.json` · 技能组件镜像）——本地目录一键装（Settings → Plugin Management → Discover → +）

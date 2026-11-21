@@ -1,5 +1,5 @@
 /**
- * 意图处理总入口（intent-gateway.service）——千里·伯乐 core。
+ * 意图处理总入口（intent-gateway.service）——知遇·伯乐 core。
  * 自动生成自 presets/member-agent；请补齐 TODO(infra) 与业务逻辑。
  *
  * TODO(infra): 接入 family-communication-bus / llm-adapter。

@@ -1,5 +1,5 @@
 /**
- * 自然语言查询解析服务（query-parser.service）——千里·伯乐 nlq。
+ * 自然语言查询解析服务（query-parser.service）——知遇·伯乐 nlq。
  * 自动生成自 presets/member-agent；请补齐 TODO(infra) 与业务逻辑。
  * 职责：把用户自然语言查询解析为结构化 Query AST（实体/指标/时间/过滤）。
  * 边界：只做"语言 → 结构"的解析；结构 → API 的映射归 query-to-api.mapper。
