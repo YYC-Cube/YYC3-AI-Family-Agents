@@ -16,6 +16,9 @@ import type {
 /** 本实现锚定的 MCP 规范版本（2026-07-28：无状态核心 + 可缓存列表）。 */
 export const MCP_PROTOCOL_VERSION = '2026-07-28';
 
+/** 支持回显的协议版本集（H6 协商：实现面为跨版本稳定子集——initialize/ping/tools/list/tools/call 语义一致）。 */
+export const MCP_SUPPORTED_PROTOCOL_VERSIONS: readonly string[] = ['2026-07-28', '2025-11-25', '2025-06-18', '2024-11-05'];
+
 /** MCP 工具描述符（tools/list 单项）。 */
 export interface McpToolDescriptor {
   /** 工具名：MCP 规范要求 `^[a-zA-Z0-9_-]+$`（家族 id 的 `.` 由部署侧映射为 `__`）。 */
@@ -215,8 +218,17 @@ export function createMcpRequestHandler(options: McpServerOptions): McpRequestHa
         isRequest ? JSON.stringify({ jsonrpc: '2.0', id, result }) : null;
 
       switch (method) {
-        case 'initialize':
-          return respond(initializeResult);
+        case 'initialize': {
+          // H6 协议协商：client 请求版本在支持集内则**原样回显**——host（如 ZCode）对
+          // 「服务端改报他版」不降级兼容（实测报 protocol version not supported）；
+          // 请求缺失或未知版本回本实现锚定版本（规范缺省语义）。
+          const requested = (params as { protocolVersion?: string } | undefined)?.protocolVersion;
+          const negotiated =
+            requested && MCP_SUPPORTED_PROTOCOL_VERSIONS.includes(requested)
+              ? requested
+              : initializeResult.protocolVersion;
+          return respond({ ...initializeResult, protocolVersion: negotiated });
+        }
         case 'ping':
           return respond({});
         case 'tools/list':
