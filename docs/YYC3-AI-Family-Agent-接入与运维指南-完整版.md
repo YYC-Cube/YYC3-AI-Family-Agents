@@ -204,6 +204,8 @@ cd ../ai-family-agent    && npm publish --access public
 | --- | --- | --- |
 | host 无 `yyc3-family` 工具 | bin 未拉起 / npx 失败 | `npx -y @yyc3/ai-family-agent@latest --selftest` 单跑看 stderr |
 | 握手挂起：发 initialize 无响应帧 | **2.54.0 及以前的真实 host 死锁**（entry 读全 stdin 等 EOF） | **升级 ≥2.55.0**（H5 治本：首行配置+余量流直通；实测握手 202ms）· 勿用 2.54.0 接 host |
+| host 报 protocol version not supported | **2.56.0 及以前硬编码 2026-07-28**，host 请求旧版且不降级兼容 | **升级 ≥2.57.0**（H6 协商：原样回显 client 请求版本） |
+| host 报 CONNECTION_CLOSED（node:net 异常） | **2.57.0 及以前 /metrics EADDRINUSE 未捕获**（旧实例未退/多开占 9464 → 新实例启动即崩） | **升级 ≥2.58.0**（H7 降级不崩：放弃 /metrics 照常服务）+ `lsof -i :9464` 清旧进程 |
 | LLM 步骤 isError：ECONNREFUSED | 本地网关/上游掉线（如 svl2 维护） | 探活 `/v1/models`；恢复后重跑 golden（BASELINE diff） |
 | LLM isError 429（智谱 1113） | 云 key 余额不足 | 预期内（已切本地）——勿充值续云，走 local 档 |
 | LLM isError 403 invalid | 网关 key 失效 | 换网关侧签发 key 或占位钥（免 key 路由） |
