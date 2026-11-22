@@ -10,6 +10,7 @@
 
 ### Added
 
+- **H7 /metrics 端口占用降级（v2.58.0）**：`family-server.entry.ts` startMetricsServer 绑定失败（EADDRINUSE——旧实例未退/多开占端口）时**降级不崩**——放弃 /metrics 端点照常服务并告警。ZCode 实测：未捕获时新实例启动即崩 → host 报 CONNECTION_CLOSED（node:net UVException）；契约 H7 入 `mcp-stdio-serve`（端口占用下握手可用 + metricsServer 降级断言）
 - **H6 协议协商修复（v2.57.0）**：`mcp-adapter/server/protocol.ts` initialize 原样回显 client 请求版本（支持集 2026-07-28 / 2025-11-25 / 2025-06-18 / 2024-11-05）——修复 ZCode host 报「Server's protocol version is not supported: 2026-07-28」的接入断裂（host 对服务端改报他版不降级兼容，实测必须协商一致）；未知/缺失版本回本实现锚定版本（规范缺省语义）；契约 H6 入 `mcp-stdio-serve`
 - **P1 封装深化全量（v2.56.0）**：
   - **B3 成员技能组**：`scripts/gen-member-skills.mjs`（`pnpm member-skills`）——由 `agent.yaml`（身份）+ `family-manifest.yaml`（技能归属 owner 编号 + delegation 委托矩阵）派生 8 员 granular 技能视图 `packaging/member-skills/<slug>/SKILL.md`（主技能=路由，成员技能=深度视角）；人格单一事实源不变，产物零手改（`--check` 字节级零漂移）
