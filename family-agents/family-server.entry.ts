@@ -634,9 +634,18 @@ export async function startFamilyServer(config: FamilyServerConfig): Promise<Fam
     metrics,
   });
 
-  const metricsServer = config.metricsServer
-    ? await startMetricsServer({ metrics, ...config.metricsServer })
-    : undefined;
+  let metricsServer: MetricsServerHandle | undefined;
+  if (config.metricsServer) {
+    try {
+      metricsServer = await startMetricsServer({ metrics, ...config.metricsServer });
+    } catch (e) {
+      // H7 降级不崩：/metrics 绑定失败（EADDRINUSE——旧实例未退/多开占端口等）时照常服务，
+      // 仅放弃 metrics 端点并告警。ZCode 实测：未捕获时新实例启动即崩 → host 报 CONNECTION_CLOSED。
+      console.error(
+        `⚠️ /metrics 端点不可用（${e instanceof Error ? e.message : String(e)}）——家族服务照常启动（降级不崩）`,
+      );
+    }
+  }
 
   let stopped = false;
   return {
