@@ -44,6 +44,7 @@ if (__localShim) {
 }
 
 import { PassThrough } from 'node:stream';
+import http from 'node:http';
 import { serveMcpStdio } from '../../family-agents/family-server.entry.js';
 
 const ENTRIES = [
@@ -144,6 +145,35 @@ describe('MCP stdio 服务循环（M41.5 · host 接入）', () => {
     await sleep(200);
     rl.close();
     await server.stop();
+  });
+
+  it('H7 端口占用降级：/metrics 绑定失败不崩（照常服务）', async () => {
+    // 先占用一个端口（模拟旧实例未退/多开——ZCode 实测 CONNECTION_CLOSED 根因）
+    const blocker = http.createServer(() => {});
+    await new Promise((r) => blocker.listen(0, '127.0.0.1', r));
+    const blockedPort = blocker.address().port;
+    const server = await import('../../family-agents/family-server.entry.js').then((m) =>
+      m.startFamilyServer({
+        serverInfo: { name: 'yyc3-family', version: 'test' },
+        tools: TOOLS,
+        manifestEntries: ENTRIES,
+        metricsServer: { port: blockedPort },
+      }),
+    );
+    expect(server.metricsServer).toBeFalsy(); // 降级：放弃 /metrics 端点，不崩
+    const input = new PassThrough();
+    const frames = [];
+    const output = new PassThrough();
+    output.on('data', (c) => frames.push(...c.toString().split('\n').filter((l) => l.trim())));
+    const rl = serveMcpStdio(server, { input, output });
+    input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} })}\n`);
+    await sleep(300);
+    expect(frames.length).toBe(1); // 服务照常：握手可用
+    input.end();
+    await sleep(200);
+    rl.close();
+    await server.stop();
+    await new Promise((r) => blocker.close(r));
   });
 });
 
