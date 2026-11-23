@@ -250,6 +250,7 @@ function baseDispatch(
     return executeSkillWithLlm(entry, (ctx.args ?? {}) as Record<string, unknown>, {
       runner: llmRunner,
       metrics,
+      scenario: scenarioTag,
     }).then((result) => {
       if (llmUsage && metrics) {
         const delta = Math.max(0, llmUsage.totalTokens - usageBefore);

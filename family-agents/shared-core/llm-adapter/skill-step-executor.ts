@@ -17,10 +17,11 @@ import {
 } from '../../../architecture-kernel/05-持续学习引擎/skill-consolidation/skill-executor.js';
 import type { ChatMessage, CompletionRequest } from './types.js';
 
-/** 单步执行 runner：收步骤提示词，回文本（通常为 JSON）。 */
+/** 单步执行 runner：收步骤提示词，回文本（通常为 JSON）。ctx 为用量分桶标签（M41 补全：技能/场景分口径）。 */
 export type LlmStepRunner = (
   messages: readonly ChatMessage[],
   step: { readonly order: number; readonly text: string },
+  ctx?: { readonly skillId?: string; readonly scenario?: string },
 ) => Promise<string>;
 
 /** provider 最小结构（ZhiPu / OpenAI provider 结构兼容；usage 缺省视为不可计量）。 */
@@ -158,9 +159,10 @@ export function createLlmStepRunner(
   maxTokens = 1024,
   meter?: LlmUsageCounter,
 ): LlmStepRunner {
-  return (messages) =>
+  return (messages, _step, ctx) =>
     provider.complete({ model, messages, temperature: 0, maxTokens }).then((r) => {
-      if (r.usage) meter?.record(r.usage);
+      // M41 补全：ctx 携带技能/场景标签时按分桶记录（判据成员/场景覆盖的量具）；缺省维持 totals-only
+      if (r.usage) meter?.record(r.usage, ctx ? { skillId: ctx.skillId ?? '', scenario: ctx.scenario ?? '' } : undefined);
       return r.text;
     });
 }
@@ -198,7 +200,7 @@ export interface LlmSkillExecutionResult extends SkillExecutionResult {
 export async function executeSkillWithLlm(
   entry: ExecutableSkillEntry,
   input: Readonly<Record<string, unknown>>,
-  options: { readonly runner: LlmStepRunner; readonly metrics?: FamilyMetrics },
+  options: { readonly runner: LlmStepRunner; readonly metrics?: FamilyMetrics; readonly scenario?: string },
 ): Promise<LlmSkillExecutionResult> {
   const base = executeManifestSkill(entry, input);
   if (!base.inputOk) throw new Error(`输入契约不满足（${entry.id}）：${base.inputViolations.join('；')}`);
@@ -222,7 +224,11 @@ export async function executeSkillWithLlm(
         content: `输入：${JSON.stringify(input)}\n已完成步骤产物：${JSON.stringify(artifacts)}`,
       },
     ];
-    const text = await options.runner(messages, { order: step.order, text: step.text });
+    const text = await options.runner(
+      messages,
+      { order: step.order, text: step.text },
+      { skillId: entry.id, scenario: options.scenario },
+    );
     artifacts.push(extractStepJson(text));
     donePlan.push({ ...step, status: 'done' });
   }

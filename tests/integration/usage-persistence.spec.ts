@@ -141,6 +141,28 @@ describe('计量持久化（M41 · 跨进程累计口径）', () => {
     expect(fs.existsSync(path.join(dir, 'metrics-usage.json'))).toBeFalsy();
     fs.rmSync(dir, { recursive: true, force: true });
   });
+
+  it('U6 分桶记录：runner ctx 标签（skillId/scenario）→ buckets 落盘（判据成员/场景覆盖量具）', async () => {
+    const { createLlmStepRunner } = await import('../../family-agents/shared-core/llm-adapter/skill-step-executor.js');
+    const meter = new LlmUsageCounter();
+    const fakeProvider = {
+      complete: () => Promise.resolve({ text: '{"x":1}', usage: { promptTokens: 10, completionTokens: 5 } }),
+    };
+    const runner = createLlmStepRunner(fakeProvider, 'test-model', 1024, meter);
+    await runner([{ role: 'user', content: 'p' }], { order: 1, text: 's' }, { skillId: 'qianhang.intent-detection', scenario: 'llm-assisted' });
+    await runner([{ role: 'user', content: 'p' }], { order: 1, text: 's' }, { skillId: 'thinker.root-cause', scenario: 'llm-assisted' });
+    const snap = meter.snapshot();
+    expect(snap.calls).toBe(2);
+    expect(snap.buckets).toHaveLength(2);
+    const bucket = snap.buckets.find((b) => b.skillId === 'qianhang.intent-detection');
+    expect(bucket).toBeTruthy();
+    expect(bucket.scenario).toBe('llm-assisted');
+    expect(bucket.calls).toBe(1);
+    // 无 ctx 调用仍仅计 totals（向后兼容）
+    await runner([{ role: 'user', content: 'p' }], { order: 1, text: 's' });
+    expect(meter.snapshot().calls).toBe(3);
+    expect(meter.snapshot().buckets).toHaveLength(2);
+  });
 });
 
 (async () => {
