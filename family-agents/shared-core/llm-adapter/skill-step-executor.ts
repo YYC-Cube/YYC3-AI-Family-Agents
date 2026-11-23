@@ -234,7 +234,9 @@ export async function executeSkillWithLlm(
   }
 
   const final = artifacts[artifacts.length - 1] ?? {};
-  const output: Record<string, unknown> = {};
+  // G9 · 纯描述技能（无 io 契约 · P3-T1② 约定）未声明输出字段——末步产物**原样透出**，
+  // 真实 host 调用可见模型结果（此前 output 恒空为可用性缺口）；有 io 契约仍按字段抽取。
+  const output: Record<string, unknown> = entry.io ? {} : { ...final };
   const outputViolations: string[] = [];
   for (const field of entry.io?.output ?? []) {
     const value = final[field];
@@ -244,8 +246,9 @@ export async function executeSkillWithLlm(
       outputViolations.push(`输出字段未填充：${field}`);
     }
   }
-  // M19 观测增强：步骤数与填充率自动上报（metrics 注入即接线）
-  const fields = entry.io?.output?.length ?? 0;
+  // M19 观测增强：步骤数与填充率自动上报（metrics 注入即接线）；
+  // 纯描述技能按透出字段数计（全透出 = 满填充）
+  const fields = entry.io?.output?.length ?? Object.keys(output).length;
   options.metrics?.recordLlmExecution(entry.id, donePlan.length, fields - outputViolations.length, fields);
 
   return { ...base, mode: 'llm-assisted', plan: donePlan, output, outputViolations };
