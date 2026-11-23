@@ -8,6 +8,6 @@
     "selftest": "yyc3-family-server --selftest"
   },
   "dependencies": {
-    "@yyc3/ai-family-agent": "^2.56.0"
+    "@yyc3/ai-family-agent": "^2.57.0"
   }
 }
