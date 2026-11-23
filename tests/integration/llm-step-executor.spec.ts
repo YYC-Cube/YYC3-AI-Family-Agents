@@ -92,6 +92,16 @@ describe('LLM 技能步骤执行器（P6-C · M16 · 语义臂）', () => {
     expect(r.outputViolations.join(';')).toContain('输出字段未填充：escalation');
   });
 
+  it('G9 纯描述技能（无 io 契约 · P3-T1②）：末步产物原样透出（真实 host 可见结果）', async () => {
+    const pureEntry = { id: 'thinker.root-cause', version: '1.0.0', steps: ['汇聚证据', '定位路径', '输出根因与置信度'] };
+    const runner = async (_m, step) =>
+      step.order === 3 ? '```json\n{"rootCause":"供给收缩","confidence":0.8}\n```' : '{"mid":true}';
+    const r = await executeSkillWithLlm(pureEntry, {}, { runner });
+    expect(r.output.rootCause).toBe('供给收缩');
+    expect(r.output.confidence).toBe(0.8);
+    expect(r.outputViolations).toHaveLength(0);
+  });
+
   it('G4 契约先行：输入契约违反直接抛错，runner 不被调用', async () => {
     let called = 0;
     const runner = async () => {
