@@ -114,6 +114,10 @@ export function runCli(argv) {
   const { files, skills, version } = assemblePlugin(root, outDir);
 
   let drifted = 0;
+  // 装配前清空输出目录（孤儿清理：改名/移除的技能组件不得残留——审核发现 stale 组件与新版并存）
+  if (!checkOnly) {
+    fs.rmSync(outDir, { recursive: true, force: true });
+  }
   for (const [rel, content] of files) {
     const abs = path.join(outDir, rel);
     if (checkOnly) {

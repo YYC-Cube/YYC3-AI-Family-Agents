@@ -69,4 +69,4 @@ family_regression_spec_passed{spec="tests/contracts/stdio-host-handshake.contrac
 family_regression_spec_passed{spec="tests/contracts/install-family-mcp.contract.js"} 6
 family_regression_spec_passed{spec="tests/contracts/member-skills.contract.js"} 4
 family_regression_spec_passed{spec="tests/contracts/http-serve.contract.js"} 4
-family_regression_spec_passed{spec="tests/contracts/p1-distribution.contract.js"} 5
+family_regression_spec_passed{spec="tests/contracts/p1-distribution.contract.js"} 6

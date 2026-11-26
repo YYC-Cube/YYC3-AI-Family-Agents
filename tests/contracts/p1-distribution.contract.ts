@@ -97,6 +97,19 @@ const TESTS = [
       }
     },
   },
+  {
+    name: 'D6 孤儿清理：装配清空输出目录（改名/移除组件不残留）',
+    fn: async () => {
+      const mod = await import(GEN_PLUGIN_URL);
+      // 预置孤儿组件（模拟历史改名残留——审核曾发现 yyc3-bole/yyc3-grace 与新版并存）
+      const stale = path.join(PLUGIN_OUT, 'yyc3-stale-skill', 'SKILL.md');
+      fs.mkdirSync(path.dirname(stale), { recursive: true });
+      fs.writeFileSync(stale, 'stale');
+      assertEq(mod.runCli(['--out', PLUGIN_OUT]), 0, '装配 exit 0');
+      assert(!fs.existsSync(stale), '孤儿组件已清理');
+      assertEq(mod.runCli(['--check', '--out', PLUGIN_OUT]), 0, '装配后零漂移');
+    },
+  },
 ];
 
 (async () => {
