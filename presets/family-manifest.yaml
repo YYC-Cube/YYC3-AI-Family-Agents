@@ -1042,8 +1042,8 @@ agents:
 
   - id: "010301-06"
     name: 智云·守护
-    en: Guardian
-    en_role: Guardian
+    en: Sentinel
+    en_role: Sentinel
     role: 首席安全官 · 免疫系统
     layer: L8
     layer_name: 智云守护

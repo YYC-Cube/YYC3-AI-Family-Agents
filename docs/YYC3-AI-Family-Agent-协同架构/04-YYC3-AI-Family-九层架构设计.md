@@ -415,7 +415,7 @@ A Thousand Miles · Bolero
 - 🌐 元启·天枢
 Yuanqi·MetaOracle
 - 🛡️ 智云·守护
-Zhiyun·Guardian
+Zhiyun·Sentinel
 - 📚 创想·灵韵
 Imagination·Creative
 - ⚙️ 格物·宗师

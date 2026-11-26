@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/agent-card.schema.json",
   "agentCard": {
-    "name": "智云·守护 (Guardian)",
+    "name": "智云·守护 (Sentinel)",
     "description": "YYC³ AI Family 首席安全官 · 免疫系统 — 安全审计、内容合规与零信任拦截，负责威胁响应闭环。",
     "url": "https://matrix.yyc3.top/family/sentinel",
     "version": "1.1.0",
