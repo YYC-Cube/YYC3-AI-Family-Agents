@@ -63,7 +63,7 @@ let seq = 0;
 function publishTask(bus, traceId, overrides = {}) {
   seq += 1;
   return bus.publish({
-    key: { traceId, agentId: 'grandmaster', seq },
+    key: { traceId, agentId: 'master', seq },
     topic: 'task.executed',
     mode: 'broadcast',
     payload: {
@@ -346,14 +346,14 @@ describe('可观测性数据面（P0 指标采集）', () => {
     const metrics = new FamilyMetrics();
     metrics.recordSkillLoaded('shared.a2a-delegate');
     metrics.recordSkillLoaded('shared.a2a-delegate');
-    metrics.recordSkillLoaded('qianhang.intent-detection');
+    metrics.recordSkillLoaded('navigator.intent-detection');
     metrics.recordMcpToolCall('ok');
     metrics.recordMcpToolCall('ok');
     metrics.recordMcpToolCall('error');
     metrics.recordPluginDenied('family-core');
 
     expect(metrics.capabilitySkillsLoaded.value({ skill: 'shared.a2a-delegate' })).toBe(2);
-    expect(metrics.capabilitySkillsLoaded.value({ skill: 'qianhang.intent-detection' })).toBe(1);
+    expect(metrics.capabilitySkillsLoaded.value({ skill: 'navigator.intent-detection' })).toBe(1);
     expect(metrics.capabilityMcpToolCalls.value({ result: 'ok' })).toBe(2);
     expect(metrics.capabilityMcpToolCalls.value({ result: 'error' })).toBe(1);
     expect(metrics.capabilityPluginDenied.value({ plugin: 'family-core' })).toBe(1);

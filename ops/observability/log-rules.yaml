@@ -4,7 +4,7 @@ format: json                      # 结构化 JSON 输出，禁止纯文本散�
 
 required_fields:                  # 必填字段：缺任一视为不合格日志（CI/巡检可校验）
   trace_id: "全链路追踪 ID（透传请求头 x-yyc3-trace-id）"
-  agent_id: "产生日志的家人 Agent 标识（如 qianhang / tianshu / bole）"
+  agent_id: "产生日志的家人 Agent 标识（如 navigator / meta-oracle / bolero）"
   layer: "所属层级（L1-L9 或 kernel / bus / governance）"
   level: "日志级别（debug / info / warn / error）"
 

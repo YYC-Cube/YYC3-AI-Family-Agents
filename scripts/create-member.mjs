@@ -8,7 +8,7 @@
  *     **逐字节零漂移**比对 + 孤儿扫描（T6 生成/校验范式）；
  *   - --out-dir：隔离输出（契约测试用，缺省 family-agents/）。
  *
- * 零漂移范围：7 位非千行家人（member-qianhang 为已接线参考实现——
+ * 零漂移范围：7 位非千行家人（member-navigator 为已接线参考实现——
  * 系统提示词/记忆绑定/程序规则/e2e 基准为手工增强，不参与模板校验）。
  * 白名单：procedural/rules-draft.yaml（学习管线产物，不入模板）。
  *
@@ -129,7 +129,7 @@ function paramsFromAgentYaml(yamlText) {
   };
 }
 
-const CHECK_EXCLUDE_MEMBERS = ['member-qianhang']; // 已接线参考实现（手工增强）
+const CHECK_EXCLUDE_MEMBERS = ['member-navigator']; // 已接线参考实现（手工增强）
 // 演进文件白名单：生成后按家人定制（内容自由 · 必须存在；质量由专项契约守——
 // prompts 由 P1-T5 提示词契约守质，rules-draft 为学习管线产物）；
 // E2a 起支持成员限定条目 `member-xxx/<rel>`（裂变产物的 CO-STAR 定制段）

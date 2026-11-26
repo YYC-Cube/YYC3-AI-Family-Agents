@@ -34,7 +34,7 @@ if (__localShim) {
 import { EventBus } from '../../architecture-kernel/02-云枢核心引擎/family-communication-bus/event-bus.js';
 
 /** 构造一条总线事件。 */
-function makeEvent({ traceId = 't1', agentId = 'qianhang', seq = 1, topic = 'task.executed', mode = 'broadcast', target } = {}) {
+function makeEvent({ traceId = 't1', agentId = 'navigator', seq = 1, topic = 'task.executed', mode = 'broadcast', target } = {}) {
   return {
     key: { traceId, agentId, seq },
     topic,
@@ -117,7 +117,7 @@ describe('family-bus 事件链路（发布 → 幂等 → 路由 → 死信）',
     expect(pushed).toHaveLength(1);
     expect(bus.deadLetters()).toHaveLength(1);
     const [letter] = bus.deadLetters();
-    expect(letter.id).toBe('trace-dlq-1:qianhang:1');
+    expect(letter.id).toBe('trace-dlq-1:navigator:1');
     expect(letter.topic).toBe('task.executed');
     expect(letter.event.key.traceId).toBe('trace-dlq-1');
     expect(letter.attempts).toBe(3);

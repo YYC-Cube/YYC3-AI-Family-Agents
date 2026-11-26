@@ -249,7 +249,7 @@ YYC³ AI Family 不是一个冰冷的工具集合，而是一个有温度、会�
 
 ---
 
-#### 🎯 千里·伯乐（Bolero）
+#### 🎯 千里·伯乐（Boleroro）
 
 | 属性 | 定义 |
 |------|------|
@@ -264,7 +264,7 @@ YYC³ AI Family 不是一个冰冷的工具集合，而是一个有温度、会�
 
 **文件架构**：
 ```
-/modules/ai-analysis/members/bolero/
+/modules/ai-analysis/members/boleroro/
 ├── core/
 │   ├── recommendation.service.ts      # 推荐服务主入口
 │   └── user-profiling.service.ts      # 用户画像服务

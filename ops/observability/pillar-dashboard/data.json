@@ -1,7 +1,7 @@
 {
   "schema": "yyc3.pillar-dashboard/v1",
-  "generatedAt": "2026-11-23T16:27:11.527Z",
-  "generatedAtCN": "2026/11/24 00:27:11",
+  "generatedAt": "2026-11-26T02:02:25.293Z",
+  "generatedAtCN": "2026/11/26 10:02:25",
   "gate": {
     "passed": true,
     "totalPassed": 392,
@@ -386,7 +386,7 @@
       "ok": true
     },
     {
-      "file": "tests/e2e/qianhang-intent-e2e.spec.js",
+      "file": "tests/e2e/navigator-intent-e2e.spec.js",
       "name": "千行意图端到端",
       "phase": "e2e",
       "pillars": [

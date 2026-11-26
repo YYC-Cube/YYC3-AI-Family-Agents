@@ -148,10 +148,10 @@ describe('渐进披露检索（P3-T4）', () => {
   });
 
   it('match 先查索引：命中千行意图检测，结果不含 steps/when/examples', () => {
-    const latin = INDEX_ONLY.match('qianhang intent');
-    globalThis.expect(latin[0].id).toBe('qianhang.intent-detection');
+    const latin = INDEX_ONLY.match('navigator intent');
+    globalThis.expect(latin[0].id).toBe('navigator.intent-detection');
     const cjk = INDEX_ONLY.match('意图检测');
-    globalThis.expect(cjk.some((e) => e.id === 'qianhang.intent-detection')).toBe(true);
+    globalThis.expect(cjk.some((e) => e.id === 'navigator.intent-detection')).toBe(true);
     for (const hit of [...latin, ...cjk]) {
       if ('steps' in hit || 'when' in hit || 'examples' in hit) throw new Error(`match 结果泄露正文：${hit.id}`);
     }
@@ -172,8 +172,8 @@ describe('渐进披露检索（P3-T4）', () => {
   it('两阶段闭环：索引命中 → 正文延迟加载（findByLogicalId 前后对比）', () => {
     const registry = new SkillRegistry();
     registry.loadIndex(INDEX.entries);
-    const hit = registry.match('qianhang intent')[0];
-    globalThis.expect(hit.id).toBe('qianhang.intent-detection');
+    const hit = registry.match('navigator intent')[0];
+    globalThis.expect(hit.id).toBe('navigator.intent-detection');
     // 正文未加载：索引命中不可直接取全量定义
     globalThis.expect(registry.findByLogicalId(hit.id) === undefined).toBe(true);
     // 装载正文（真实清单 45 条，P2 激活 a2a-delegate）后，命中 id 可解析出全量定义（含 steps 容器）

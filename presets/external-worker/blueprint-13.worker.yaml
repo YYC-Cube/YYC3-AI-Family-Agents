@@ -15,6 +15,6 @@ worker:
   capabilities:
     - shared.self-judge
     - shared.memory-retrieve
-    - qianhang.nlq-to-api
+    - navigator.nlq-to-api
   capabilitiesRef:
     manifest: presets/family-manifest.yaml

@@ -22,7 +22,7 @@ const OBSERVE_DEFS = report.policies;
 const ENFORCE_DEFS = OBSERVE_DEFS.map((p) => (p.id === 'security.zero-trust' ? { ...p, mode: 'enforce' } : p));
 
 function reqOf(action, resource) {
-  return { traceId: `trace-${action}-${resource ?? '-'}`, actor: 'tianshu', action, resource: resource ?? 'model.input' };
+  return { traceId: `trace-${action}-${resource ?? '-'}`, actor: 'meta-oracle', action, resource: resource ?? 'model.input' };
 }
 
 function buildBinder(defs, deps = {}) {
@@ -70,7 +70,7 @@ describe('安全策略映射（P2-T4 · observe 默认 / enforce 显式）', () 
   it('observe 默认：命中 allow-with-audit + 审计链留痕（verify 防篡改）', () => {
     const audit = new ComplianceAudit();
     const binder = buildBinder(OBSERVE_DEFS, { audit });
-    const d = binder.evaluate(reqOf('tool.invoke', 'qianhang.nlq-to-api'));
+    const d = binder.evaluate(reqOf('tool.invoke', 'navigator.nlq-to-api'));
     globalThis.expect(d.decision).toBe('allow-with-audit');
     // match 取首个 scope 命中（注册序 = YAML 序：zero-trust 先于 injection-detect）
     globalThis.expect(d.policyId).toBe('security.zero-trust');
@@ -99,7 +99,7 @@ describe('安全策略映射（P2-T4 · observe 默认 / enforce 显式）', () 
 
   it('无命中 allow（default-allow）；scope 维度外不误拦', () => {
     const binder = buildBinder(OBSERVE_DEFS, {});
-    const allow = binder.evaluate({ traceId: 't0', actor: 'grace', action: 'memory.write', resource: 'episodic' });
+    const allow = binder.evaluate({ traceId: 't0', actor: 'creative', action: 'memory.write', resource: 'episodic' });
     globalThis.expect(allow.decision).toBe('allow');
     globalThis.expect(allow.policyId).toBe('default-allow');
     // content-filter 只看 resources=model.input；tool.invoke/resource=tool.x 不触发它

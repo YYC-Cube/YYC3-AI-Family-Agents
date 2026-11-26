@@ -76,7 +76,7 @@ export interface LearningLoopOptions {
   readonly onPromoted?: (promoted: readonly SkillDefinition[]) => void;
   /**
    * 统一 id 解析钩子（P3-T3）：把固化模式映射到统一命名空间 logicalId
-   * （如 `learned.qianhang.intent-detection`，见 skill-consolidation/skill-id.ts）。
+   * （如 `learned.navigator.intent-detection`，见 skill-consolidation/skill-id.ts）。
    * 缺省不设置——技能仅携带 FNV 内部主键，读取侧按归并规则查询。
    */
   readonly logicalIdResolver?: (pattern: PatternTriplet) => string | undefined;

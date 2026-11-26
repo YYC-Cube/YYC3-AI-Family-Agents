@@ -58,7 +58,7 @@ import { MemoryOrchestratorImpl } from '../../family-agents/shared-core/memory-f
 
 /** 达门禁的模式样例。 */
 const strongPattern = {
-  condition: 'grandmaster · quality-review',
+  condition: 'master · quality-review',
   strategy: 'sast→lint',
   outcome: '任务成功率 100%（3/3 溯源轨迹）',
   supportingTraces: ['t1', 't2', 't3'],
@@ -196,7 +196,7 @@ describe('Phase E 知识更新 · 语义差异 / 偏好 / 规则演化 / 参数�
         {
           event: {
             traceId: `tr-k5-${i}`,
-            agent: 'grandmaster',
+            agent: 'master',
             taskType: 'quality-review',
             steps: [
               { order: 1, action: 'scan', tool: 'sast', ok: true },

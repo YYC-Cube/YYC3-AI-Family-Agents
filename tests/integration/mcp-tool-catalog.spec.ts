@@ -125,7 +125,7 @@ describe('MCP 工具目录（P4-T5）', () => {
         throw new Error(`未准入工具出现在列表：${tool.name}`);
       }
     }
-    const hiddenName = 'qianhang__intent_detection';
+    const hiddenName = 'navigator__intent_detection';
     if (list.result.tools.some((t) => t.name === hiddenName)) throw new Error(`未准入工具泄漏：${hiddenName}`);
     const denied = toolsCall(h, hiddenName, {});
     globalThis.expect(denied.error.code).toBe(-32602);
@@ -193,7 +193,7 @@ describe('MCP 工具目录（P4-T5）', () => {
     globalThis.expect(admitted.result.isError).toBe(false);
     globalThis.expect(allowlist.auditRecords.length).toBe(0);
 
-    const observed = toolsCall(h, 'qianhang__intent_detection', {});
+    const observed = toolsCall(h, 'navigator__intent_detection', {});
     globalThis.expect(observed.result.isError).toBe(false);
     globalThis.expect(allowlist.observedCount).toBe(1);
     globalThis.expect(allowlist.auditRecords.length).toBe(1);
@@ -205,7 +205,7 @@ describe('MCP 工具目录（P4-T5）', () => {
     const allowlist = new CapabilityAllowlist({ allowed: ['family-core'], mode: 'enforce' });
     const h = handler({ policy: allowlistPolicy(allowlist) });
 
-    const denied = toolsCall(h, 'qianhang__intent_detection', {});
+    const denied = toolsCall(h, 'navigator__intent_detection', {});
     globalThis.expect(denied.result.isError).toBe(true);
     if (!String(textOf(denied)).includes('enforce 拒绝')) throw new Error(`拒绝原因缺失：${textOf(denied)}`);
     globalThis.expect(allowlist.rejectedCount).toBe(1);

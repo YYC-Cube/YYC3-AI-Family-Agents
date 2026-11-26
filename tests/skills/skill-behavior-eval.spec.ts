@@ -192,8 +192,8 @@ describe('技能行为评测（P3-T5 · observe）', () => {
   });
 
   it('确定性：同 case 重复评测结果逐字段相等（纯函数无隐含状态）', () => {
-    const skill = registry.findByLogicalId('qianhang.intent-detection');
-    const c = GOLDEN.cases.find((x) => x.id === 'qianhang.intent-detection');
+    const skill = registry.findByLogicalId('navigator.intent-detection');
+    const c = GOLDEN.cases.find((x) => x.id === 'navigator.intent-detection');
     const a = evaluateSkillCase(skill, { skillId: c.id, ok: true }, c);
     const b = evaluateSkillCase(skill, { skillId: c.id, ok: true }, c);
     globalThis.expect(JSON.stringify(a)).toBe(JSON.stringify(b));

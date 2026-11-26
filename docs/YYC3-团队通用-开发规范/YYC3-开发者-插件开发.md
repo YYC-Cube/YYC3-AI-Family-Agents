@@ -323,14 +323,14 @@ export const mySkill = defineSkill(
 
 | 家人 ID | 角色领域 |
 |---------|----------|
-| `qianhang` | 自然语言导航、意图识别 |
+| `navigator` | 自然语言导航、意图识别 |
 | `thinker` | 数据分析、逻辑推理 |
 | `prophet` | 预测建模、趋势分析 |
-| `bole` | 个性化推荐、用户画像 |
-| `tianshu` | 全局调度、资源编排 |
-| `guardian` | 安全检测、威胁响应 |
-| `grandmaster` | 代码审查、架构分析 |
-| `grace` | 创意生成、多模态创作 |
+| `bolero` | 个性化推荐、用户画像 |
+| `meta-oracle` | 全局调度、资源编排 |
+| `sentinel` | 安全检测、威胁响应 |
+| `master` | 代码审查、架构分析 |
+| `creative` | 创意生成、多模态创作 |
 
 ### 8.3 NVIDIA 技能桥接
 

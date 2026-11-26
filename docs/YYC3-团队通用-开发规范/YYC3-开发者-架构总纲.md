@@ -299,14 +299,14 @@ const theme = getTheme();
 
 | 家人名 | ID | 角色 | 主题色 |
 |--------|-----|------|--------|
-| 千航·引路人 | `qianhang` | 自然语言导航 | `#8b5cf6` |
+| 千航·引路人 | `navigator` | 自然语言导航 | `#8b5cf6` |
 | 思辨·智库 | `thinker` | 数据洞察分析 | `#06b6d4` |
 | 预见·先知 | `prophet` | 趋势预测 | `#10b981` |
-| 千里·伯乐 | `bole` | 个性化推荐 | `#f59e0b` |
-| 元启·天枢 | `tianshu` | 全局调度 | `#ec4899` |
-| 守望·哨兵 | `guardian` | 安全响应 | `#ef4444` |
-| 方圆·宗师 | `grandmaster` | 代码审查 | `#6366f1` |
-| 语枢·万物 | `grace` | 创意生成 | `#14b8a6` |
+| 千里·伯乐 | `bolero` | 个性化推荐 | `#f59e0b` |
+| 元启·天枢 | `meta-oracle` | 全局调度 | `#ec4899` |
+| 守望·哨兵 | `sentinel` | 安全响应 | `#ef4444` |
+| 方圆·宗师 | `master` | 代码审查 | `#6366f1` |
+| 语枢·万物 | `creative` | 创意生成 | `#14b8a6` |
 
 ### 8.3 FamilySkill 契约
 
@@ -319,7 +319,7 @@ const mySkill = defineSkill(
     id: "my-skill",
     name: "示例技能",
     description: "技能描述",
-    family: "grandmaster",        // 归属家人
+    family: "master",        // 归属家人
     version: "1.0.0",
     tags: ["analysis"],
   },

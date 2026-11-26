@@ -105,13 +105,13 @@ category: report
 | -- | ---- | ---- | ---- | ---- |
 | — | `index.ts`、`types.ts`、`layer-registry.ts` | 统一入口 / 核心类型 / 注册中心 | ✅ | M29 接线 |
 | 1 | `layer-1-foundation/*` | 公共基础设施能力底座（配置/日志/观测/存储探针） | ✅ | M29 接线（真实探针归部署侧） |
-| 2 | `layer-2-bole/*` | 推荐能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 2 | `layer-2-bolero/*` | 推荐能力底座 | ✅ | M29 接线（真实探针归部署侧） |
 | 3 | `layer-3-prophet/*` | 预测能力底座 | ✅ | M29 接线（真实探针归部署侧） |
 | 4 | `layer-4-thinker/*` | 分析能力底座（数据分析标准化工作流） | ✅ | M29 接线（真实探针归部署侧） |
 | 5 | `layer-5-navigator/*` | 入口网关能力底座（意图/NLU + self-judge） | ✅ | M29 接线（真实探针归部署侧） |
 | 6 | `layer-6-creative/*` | 创意能力底座 | ✅ | M29 接线（真实探针归部署侧） |
 | 7 | `layer-7-master/*` | 质量能力底座 | ✅ | M29 接线（真实探针归部署侧） |
-| 8 | `layer-8-guardian/*` | 安全能力底座 | ✅ | M29 接线（真实探针归部署侧） |
+| 8 | `layer-8-sentinel/*` | 安全能力底座 | ✅ | M29 接线（真实探针归部署侧） |
 | 9 | `layer-9-meta-oracle/*` | 全局调度能力底座 | ✅ | M29 接线（真实探针归部署侧） |
 
 > 每层均为 `*-capability.ts` + `index.ts` 两件套，共 9×2 + 2 = 20 个文件。
@@ -202,12 +202,12 @@ category: report
 
 | 家人 | 层级 | 文件数 | 未接线 | 已接线 |
 | ---- | ---- | ------ | ------ | ------ |
-| 元启·天枢 `member-tianshu` | core-layer | 13 | 13 | 0 |
-| 格物·宗师 `member-grandmaster` | core-layer | 13 | 12 | **1**（`self-judge/index.ts`，2 处引用） |
-| 智云·守护 `member-guardian` | core-layer | 13 | 13 | 0 |
-| 创想·灵韵 `member-grace` | core-layer | 13 | 13 | 0 |
-| 言启·千行 `member-qianhang` | business-layer | 13 | 9 | **4**（`self-judge` + `intent-classifier` / `intent-gateway` / `context-manager`） |
-| 千里·伯乐 `member-bole` | business-layer | 13 | 12 | **1**（`emotion/achievement-panel.ts`） |
+| 元启·天枢 `member-meta-oracle` | core-layer | 13 | 13 | 0 |
+| 格物·宗师 `member-master` | core-layer | 13 | 12 | **1**（`self-judge/index.ts`，2 处引用） |
+| 智云·守护 `member-sentinel` | core-layer | 13 | 13 | 0 |
+| 创想·灵韵 `member-creative` | core-layer | 13 | 13 | 0 |
+| 言启·千行 `member-navigator` | business-layer | 13 | 9 | **4**（`self-judge` + `intent-classifier` / `intent-gateway` / `context-manager`） |
+| 千里·伯乐 `member-bolero` | business-layer | 13 | 12 | **1**（`emotion/achievement-panel.ts`） |
 | 语枢·万物 `member-thinker` | business-layer | 13 | 13 | 0 |
 | 预见·先知 `member-prophet` | business-layer | 13 | 13 | 0 |
 
@@ -309,7 +309,7 @@ category: report
 
 - P0 验收（v1.2.0）针对「可观测数据面」，其告警与指标均基于**已接线**模块（当前门禁 97 例全绿）
 - 未接线模块**不计入**已交付能力；路线图状态以本文与 `§8.3` 为准
-- `qianhang-intent-e2e` 已由跳过转为 **4 例真实断言（v2.11.0）**；provider 与意图链路均已接线
+- `navigator-intent-e2e` 已由跳过转为 **4 例真实断言（v2.11.0）**；provider 与意图链路均已接线
 - `event-bus` 已补 **重试 + 死信队列（DLQ，v2.12.0）**，门禁显式跳过归零
 - LLM 实答 UAT（v2.13.0）为本地门控的真实开放平台抽检，**不入门禁清单**、不计入接线统计；密钥类调用与 hermetic 门禁隔离
 
@@ -351,7 +351,7 @@ category: report
 | v1.30.0 | 2026-10-30 | **部署侧装配合流（M28 · 学习闭环进服务进程）**：`family-server.entry.ts` 新增 `learning` 配置——嵌入内核 `createRuntimeAssembly`：`learningDispatch` 每次分派发布 `task.executed`（异步感知，失败轨迹 completed=false → failure 负样本）· 调度闸 `usageMeter` 自动接 `llmUsage` 计数器 · `skillRegistry` 接服务注册表（promoted 技能 `learned.*` 归并 id 可查；instrumentSkillRegistry 只包 loadFromManifest，落位不污染 skills_loaded 口径）；缺省零侵入；新例 A9–A11；门禁 315 → **318/318**（44 套件 · 入口 44 · 治 114）；包 2.40.0；统计 309/149/156 **维持**（零新增文件） |
 | v1.31.0 | 2026-10-30 | **九层底座全接线（M29 · P9-a · A 类清零）**：`LayerProbe` 注入式探针端口（9 层能力类构造器注入，缺省恒 ok / 抛错判 down）+ `layer-registry.ts` 新增 `NineLayerRegistry`（L1–L9 注册 / 自描述 / healthAll 并行聚合 · 单层异常隔离）+ 装配层 `nineLayer` 选项（probes 注入 + `reportLayerHealth` 态势对接——`layer-L1..L9` 服务态 → global-status-center 最坏态推导）；新套件 `nine-layer.spec.ts` 5 例（治）；门禁 318 → **323/323**（**45 套件 · 入口 45** · 治 119）；包 2.41.0；统计 309/149/156 → **311/175/136**（kernel 已接线 73 → 94，**A 类 20 → 0 清零**；§三未接线 58 → 38） |
 | v1.32.0 | 2026-10-30 | **npm 双包打包落地（M31 · 复用路线 R1/R2）**：`scripts/pack-npm.mjs`（`pnpm pack:npm`）确定性装配 `@yyc3/ai-family-kernel`（内核 116 源 + 31 vendor · exports 8 子路径 · barrel 仅入包）与 `@yyc3/ai-family-agent`（MCP Server · bin `yyc3-family-server` · 154 产物 · presets/assets 入包）；`@shared` 类型子树 vendor 化（self-judge-kit + memory-framework 纯相对闭包）· 源期别名重写（NodeNext 下 paths 不可靠）· 两包零运行时依赖 + 版本随根（红线断言）；新契约套件 `npm-pack.contract.ts` 4 例（治）；门禁 325 → **329/329**（**46 套件 · 入口 46** · 治 125）；包 2.43.0；统计 311/175/136 → **312/176/136**（tests +1 入口） |
-| v1.33.0 | 2026-10-30 | **家人模板脚手架 CLI 化（M33 · 复用路线 R4）**：`scripts/create-member.mjs`（`pnpm member:create` / `member:check`，presets/member-agent 模板 + 12 占位符）——check 模式按各家人 agent.yaml 反解参数重生成、与 committed 树逐字节零漂移 + 孤儿扫描（演进文件白名单：prompts ×2 按家人定制 · rules-draft 学习产物）；presets 4 个陈旧骨架模板追平演进现实（P1-T5 提示词 + llm-adapter 转发）；member-qianhang 为已接线参考豁免；新契约套件 `member-template.contract.ts` 4 例（治）；门禁 330 → **334/334**（**47 套件 · 入口 47** · 治 130）；包 2.45.0；统计 312/176/136 → **313/177/136**（tests +1 入口） |
+| v1.33.0 | 2026-10-30 | **家人模板脚手架 CLI 化（M33 · 复用路线 R4）**：`scripts/create-member.mjs`（`pnpm member:create` / `member:check`，presets/member-agent 模板 + 12 占位符）——check 模式按各家人 agent.yaml 反解参数重生成、与 committed 树逐字节零漂移 + 孤儿扫描（演进文件白名单：prompts ×2 按家人定制 · rules-draft 学习产物）；presets 4 个陈旧骨架模板追平演进现实（P1-T5 提示词 + llm-adapter 转发）；member-navigator 为已接线参考豁免；新契约套件 `member-template.contract.ts` 4 例（治）；门禁 330 → **334/334**（**47 套件 · 入口 47** · 治 130）；包 2.45.0；统计 312/176/136 → **313/177/136**（tests +1 入口） |
 | v1.34.0 | 2026-10-30 | **外部 Worker 模板 + uat:external 例行化（M34 · 复用路线 R5 本地落地）**：`scripts/create-worker.mjs`（`pnpm worker:create` / `worker:check`）——blueprint-13 参照实现反向参数化（worker.py + 实例契约双模板零漂移）；`run-external-uats.mjs` 增 `EXT_WORKER_AUTOSTART=1`（仅回环 + 实例 `runtime.script`：端点不可达自动拉起 python3 参照 worker · 8s 就绪探测 · 退出回收；非回环安全跳过）；实例契约增 `runtime.script` 字段；新契约套件 `worker-template.contract.ts` 4 例（治 · **W4 例行化 e2e 首次把本地 worker 链路纳入门禁覆盖**）；门禁 334 → **338/338**（**48 套件 · 入口 48** · 治 131）；包 2.46.0；统计 313/177/136 → **314/178/136**（tests +1 入口） |
 | v1.35.0 | 2026-10-31 | **场景画像层 ProfileRegistry（M37 · E4a · 解冻第一波）**：`shared-core/profile-registry.ts`（三级画像 + 换档 tier/style + `llm-assisted@<profileId>` 分口径标签 · 运行时零依赖）+ 八家人业务域卡（presets/profiles/domains/ ×8 · prompt_anchors 即 E1b 题源）+ `check-profiles.mjs`（人格红线 owner 校验）+ family-server 换档联动（profiles/profileResolver 注入 · 计量按画像分口径）+ 四库 DomainPack 映射表入 docs；换档演示双例过门禁；新套件 `profile-registry.spec.ts` 5 例（治）；门禁 343 → **348/348**（**49 套件 · 入口 49** · 治 136）；包 2.49.0；统计 314/178/136 → **316/180/136**（agents +1 · tests +1） |
 | v1.36.0 | 2026-10-31 | **golden 三卷家族自测 SOP（M38 · E1b · 解冻第一波）**：三卷 92 题入册（结构化 30 · 业务域 32 题源=E4a 八域卡 · 消费画像 30）+ 判分器先自测（grader.ts 数值等价容错 + 契约 G1-G4 入 CI）+ `pnpm uat:llm --eval` 对比模式（BASELINE diff · 报告入 docs）；基线实跑：表观 48/92（42 题网关上游故障）· **真实判分口径 96%**（卷一满分）——网关恢复重跑刷新；CONTRIBUTING + 装配指导增「候选模型上线前必跑」条款；门禁 348 → **352/352**（**50 套件 · 入口 50** · 治 140）；包 2.50.0；统计 316/180/136 → **318/182/136**（grader + 契约入口） |

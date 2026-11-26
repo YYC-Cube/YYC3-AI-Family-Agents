@@ -64,11 +64,11 @@ describe('家族编排套件（P8-a · M26 · C 类第二批）', () => {
       steps: [
         { id: 's1', stage: 'execute', owner: 'thinker', goal: '分析' },
         { id: 's2', stage: 'execute', owner: 'prophet', goal: '预测' },
-        { id: 's3', stage: 'review', owner: 'grandmaster', goal: '复盘' },
+        { id: 's3', stage: 'review', owner: 'master', goal: '复盘' },
       ],
     };
     const res = await orchestrator.dispatch(plan);
-    expect(res.dispatched.join(',')).toBe('thinker,grandmaster');
+    expect(res.dispatched.join(',')).toBe('thinker,master');
     expect(res.failed.join(',')).toBe('prophet');
     expect(seen.every((s) => s.traceId === 't-dispatch')).toBeTruthy();
   });
@@ -77,12 +77,12 @@ describe('家族编排套件（P8-a · M26 · C 类第二批）', () => {
     const orchestrator = new CloudPivotOrchestrator({
       verifier: { allow: (_plan, confidence) => confidence >= 0.6 },
     });
-    const plan = { traceId: 't-v', intentId: 'i', steps: [{ id: 's1', stage: 'clarify', owner: 'qianhang', goal: '澄清' }] };
+    const plan = { traceId: 't-v', intentId: 'i', steps: [{ id: 's1', stage: 'clarify', owner: 'navigator', goal: '澄清' }] };
     const blocked = await orchestrator.dispatch(plan, 0.3);
     expect(blocked.dispatched).toHaveLength(0);
-    expect(blocked.failed.join(',')).toBe('qianhang');
+    expect(blocked.failed.join(',')).toBe('navigator');
     const allowed = await orchestrator.dispatch(plan, 0.9);
-    expect(allowed.dispatched.join(',')).toBe('qianhang');
+    expect(allowed.dispatched.join(',')).toBe('navigator');
     // 无端口缺省：仅产出承接清单（既有语义）
     const legacy = new CloudPivotOrchestrator();
     const legacyRes = await legacy.dispatch(plan);
@@ -116,24 +116,24 @@ describe('家族编排套件（P8-a · M26 · C 类第二批）', () => {
     let clock = 1_000;
     const delivered = [];
     const phone = new PhoneSystem(() => clock, { deliver: async (m) => delivered.push(m) });
-    phone.register({ id: 'c1', name: '元启', agent: 'tianshu', hotline: '9001' });
-    phone.register({ id: 'c2', name: '言启', agent: 'qianhang' });
+    phone.register({ id: 'c1', name: '元启', agent: 'meta-oracle', hotline: '9001' });
+    phone.register({ id: 'c2', name: '言启', agent: 'navigator' });
     expect(phone.directory()).toHaveLength(2);
-    expect(phone.contactByHotline('9001').agent).toBe('tianshu');
+    expect(phone.contactByHotline('9001').agent).toBe('meta-oracle');
     expect(phone.contactByHotline('0000')).toBe(undefined);
 
-    const call = await phone.call('qianhang', 'tianshu');
+    const call = await phone.call('navigator', 'meta-oracle');
     clock = 1_650;
     const ended = phone.endCall(call.id, 'answered');
     expect(ended.durationMs).toBe(650);
     expect(ended.outcome).toBe('answered');
     expect(phone.callLog()).toHaveLength(1);
 
-    await phone.sendDirect({ id: 'm1', from: 'qianhang', to: 'tianshu', content: '任务已派发', at: 2_000 });
+    await phone.sendDirect({ id: 'm1', from: 'navigator', to: 'meta-oracle', content: '任务已派发', at: 2_000 });
     expect(delivered).toHaveLength(1); // 端口投递成功
-    expect(phone.inboxOf('tianshu')).toHaveLength(1);
-    expect(phone.outboxOf('qianhang')).toHaveLength(1);
-    expect(phone.inboxOf('qianhang')).toHaveLength(0);
+    expect(phone.inboxOf('meta-oracle')).toHaveLength(1);
+    expect(phone.outboxOf('navigator')).toHaveLength(1);
+    expect(phone.inboxOf('navigator')).toHaveLength(0);
 
     // 投递失败：不落信箱、如实上抛
     const failing = new PhoneSystem(() => 1, { deliver: async () => { throw new Error('总线不可达'); } });

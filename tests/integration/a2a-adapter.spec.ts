@@ -15,18 +15,18 @@ import {
 } from '../../architecture-kernel/a2a-adapter/index.js';
 
 const TIANSHU_CARD = {
-  name: '元启·天枢 (TianShu)',
+  name: '元启·天枢 (MetaOracle)',
   description: 'YYC³ AI Family 总指挥 · 决策中枢',
-  url: 'https://matrix.yyc3.top/family/tianshu',
+  url: 'https://matrix.yyc3.top/family/meta-oracle',
   version: '1.1.0',
   skills: [{ id: 'shared.self-judge', name: '结构化自判断', description: '产出置信度' }],
 };
 const QIANHANG_CARD = {
-  name: '语枢·千行 (QianHang)',
+  name: '语枢·千行 (Navigator)',
   description: 'YYC³ AI Family 交互执行 · 对话界面',
-  url: 'https://matrix.yyc3.top/family/qianhang',
+  url: 'https://matrix.yyc3.top/family/navigator',
   version: '1.1.0',
-  skills: [{ id: 'qianhang.nlq-to-api', name: 'NLQ 转 API', description: '自然语言转查询' }],
+  skills: [{ id: 'navigator.nlq-to-api', name: 'NLQ 转 API', description: '自然语言转查询' }],
 };
 
 function makeDirectory() {
@@ -65,14 +65,14 @@ if (__localShim) {
 
 describe('A2A 适配层（P2-T2 · 纯内存 stub）', () => {
   it('card 发现：well-known 映射 + 注册表 discover/findByCapability/list', () => {
-    globalThis.expect(wellKnownPath('https://matrix.yyc3.top/family/tianshu/')).toBe(
-      'https://matrix.yyc3.top/family/tianshu/.well-known/agent-card.json',
+    globalThis.expect(wellKnownPath('https://matrix.yyc3.top/family/meta-oracle/')).toBe(
+      'https://matrix.yyc3.top/family/meta-oracle/.well-known/agent-card.json',
     );
     const dir = makeDirectory();
     globalThis.expect(dir.size).toBe(2);
-    globalThis.expect(slugOf(dir.discover('qianhang'))).toBe('qianhang');
-    const byCap = dir.findByCapability('qianhang.nlq-to-api');
-    globalThis.expect(byCap?.url.includes('/qianhang')).toBeTruthy();
+    globalThis.expect(slugOf(dir.discover('navigator'))).toBe('navigator');
+    const byCap = dir.findByCapability('navigator.nlq-to-api');
+    globalThis.expect(byCap?.url.includes('/navigator')).toBeTruthy();
     globalThis.expect(dir.findByCapability('nobody.none')).toBeFalsy();
     globalThis.expect(dir.list().length).toBe(2);
   });
@@ -89,15 +89,15 @@ describe('A2A 适配层（P2-T2 · 纯内存 stub）', () => {
         },
       },
     });
-    const result = await client.delegate({ skillId: 'qianhang.nlq-to-api', input: { q: '上月销量' }, traceId: 'trace-42' });
+    const result = await client.delegate({ skillId: 'navigator.nlq-to-api', input: { q: '上月销量' }, traceId: 'trace-42' });
     globalThis.expect(result.ok).toBeTruthy();
-    globalThis.expect(result.slug).toBe('qianhang');
+    globalThis.expect(result.slug).toBe('navigator');
     globalThis.expect(result.task.taskId).toBe('task-1');
     globalThis.expect(result.task.state).toBe('completed');
     globalThis.expect(result.traceId).toBe('trace-42');
     globalThis.expect(captured.body.method).toBe(A2A_METHOD);
     globalThis.expect(captured.body.params.traceId).toBe('trace-42');
-    globalThis.expect(captured.body.params.skillId).toBe('qianhang.nlq-to-api');
+    globalThis.expect(captured.body.params.skillId).toBe('navigator.nlq-to-api');
     globalThis.expect(client.deadLetters().length).toBe(0);
   });
 
@@ -114,13 +114,13 @@ describe('A2A 适配层（P2-T2 · 纯内存 stub）', () => {
       },
     });
     const w3c = '4bf92f3577b34da6a3ce929d0e0e4736';
-    await client.delegate({ skillId: 'qianhang.nlq-to-api', input: {}, traceId: w3c });
+    await client.delegate({ skillId: 'navigator.nlq-to-api', input: {}, traceId: w3c });
     const tp = String(captured.body.params.traceparent ?? '');
     globalThis.expect(tp.startsWith(`00-${w3c}-`)).toBeTruthy();
     globalThis.expect(/^[0-9a-f]{16}$/.test(tp.split('-')[2] ?? '')).toBeTruthy();
     globalThis.expect(tp.endsWith('-01')).toBeTruthy();
 
-    await client.delegate({ skillId: 'qianhang.nlq-to-api', input: {}, traceId: 'trace-42' });
+    await client.delegate({ skillId: 'navigator.nlq-to-api', input: {}, traceId: 'trace-42' });
     globalThis.expect(captured.body.params.traceparent).toBe(undefined);
   });
 
@@ -137,7 +137,7 @@ describe('A2A 适配层（P2-T2 · 纯内存 stub）', () => {
     globalThis.expect(client.deadLetters().length).toBe(1);
     globalThis.expect(letters.length).toBe(1);
     globalThis.expect(client.deadLetters()[0].topic).toBe('a2a.delegate.failed');
-    globalThis.expect(client.deadLetters()[0].slug).toBe('tianshu');
+    globalThis.expect(client.deadLetters()[0].slug).toBe('meta-oracle');
   });
 
   it('非法响应：非 JSON 体 / 上游 error 均 DLQ（不抛出、不归一成功）', async () => {

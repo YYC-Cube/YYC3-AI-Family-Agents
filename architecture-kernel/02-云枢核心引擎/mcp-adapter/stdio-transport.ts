@@ -38,7 +38,7 @@ export class StdioMcpTransport implements McpTransport {
   private readonly stderrHandlers = new Set<McpStderrHandler>();
   private readonly requestTimeoutMs: number;
   private readonly maxLineBytes: number;
-  private readonly shutdownGraceMs: number;
+  private readonly shutdownCreativeMs: number;
   private readonly exited: Promise<void>;
   private buffer = '';
   private seq = 0;
@@ -48,7 +48,7 @@ export class StdioMcpTransport implements McpTransport {
   constructor(options: StdioTransportOptions) {
     this.requestTimeoutMs = Math.max(1, options.requestTimeoutMs ?? 5_000);
     this.maxLineBytes = Math.max(1_024, options.maxLineBytes ?? 1_048_576);
-    this.shutdownGraceMs = Math.max(0, options.shutdownGraceMs ?? 1_000);
+    this.shutdownCreativeMs = Math.max(0, options.shutdownCreativeMs ?? 1_000);
 
     this.child = spawn(options.command, [...(options.args ?? [])], {
       cwd: options.cwd,
@@ -121,8 +121,8 @@ export class StdioMcpTransport implements McpTransport {
     this.rejectAll(new Error('MCP 传输已关闭'));
 
     this.child.stdin.end();
-    const grace = new Promise<void>((resolve) => setTimeout(resolve, this.shutdownGraceMs));
-    await Promise.race([this.exited, grace]);
+    const creative = new Promise<void>((resolve) => setTimeout(resolve, this.shutdownCreativeMs));
+    await Promise.race([this.exited, creative]);
 
     if (this.child.exitCode === null && !this.child.killed) this.child.kill('SIGTERM');
     this.closed = true;

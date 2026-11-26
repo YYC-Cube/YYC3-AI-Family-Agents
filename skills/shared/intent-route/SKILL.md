@@ -20,7 +20,7 @@ owner: shared
 | 版本 | 1.0.0 |
 | 支柱 | 自 · 学 |
 | 标签 | `intent` `routing` |
-| 实现锚点（kernel） | `family-agents/business-layer/member-qianhang/core/intent-classifier.service.ts` |
+| 实现锚点（kernel） | `family-agents/business-layer/member-navigator/core/intent-classifier.service.ts` |
 
 ## 步骤（steps）
 

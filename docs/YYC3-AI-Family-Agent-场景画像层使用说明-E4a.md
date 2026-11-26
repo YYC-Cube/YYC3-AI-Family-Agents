@@ -28,13 +28,13 @@
 | 域卡 id | owner | 业务域 | tier |
 | --- | --- | --- | --- |
 | investor-briefing | thinker（语枢·万物） | hotel-investment | reasoning |
-| intent-routing | qianhang（言启·千行） | ops-daily | speed |
-| talent-matching | bole（千里·伯乐） | talent-recommendation | flagship |
+| intent-routing | navigator（言启·千行） | ops-daily | speed |
+| talent-matching | bolero（千里·伯乐） | talent-recommendation | flagship |
 | trend-forecast | prophet（预见·先知） | spend-forecast | reasoning |
-| brand-content | grace（创想·灵韵） | brand-marketing | flagship |
-| quality-audit | grandmaster（格物·宗师） | quality-gate | reasoning |
-| compliance-scan | guardian（智云·守护） | security-compliance | speed |
-| ops-decision | tianshu（元启·天枢） | ops-arbitration | reasoning |
+| brand-content | creative（创想·灵韵） | brand-marketing | flagship |
+| quality-audit | master（格物·宗师） | quality-gate | reasoning |
+| compliance-scan | sentinel（智云·守护） | security-compliance | speed |
+| ops-decision | meta-oracle（元启·天枢） | ops-arbitration | reasoning |
 
 每卡 `prompt_anchors` 即该家人业务域的转译要点（千行结构化转译范式基准）——**E1b golden 业务卷直接以此为题源**（两卡交扣点）。
 
@@ -44,10 +44,10 @@
 
 | DomainPack（四库） | 映射画像 | 首批落点 |
 | --- | --- | --- |
-| 营销域包 | `brand-content`（grace） | 品牌投放/内容运营场景 |
-| 知识中枢域包 | `quality-audit` + `intent-routing`（grandmaster/qianhang） | 知识问答与质检场景 |
-| 短剧域包 | `brand-content` 派生场景位（暂挂 grace） | 内容生产场景 |
-| 电商域包（样板） | `talent-matching` 邻域（bole 推荐范式复用） | 商品/商家匹配场景 |
+| 营销域包 | `brand-content`（creative） | 品牌投放/内容运营场景 |
+| 知识中枢域包 | `quality-audit` + `intent-routing`（master/navigator） | 知识问答与质检场景 |
+| 短剧域包 | `brand-content` 派生场景位（暂挂 creative） | 内容生产场景 |
+| 电商域包（样板） | `talent-matching` 邻域（bolero 推荐范式复用） | 商品/商家匹配场景 |
 
 > 映射原则：域包提供技能与知识引用，画像提供档位与风格——二者以 `profileId` 关联；域包加载侧（部署）负责把域包内场景登记为对应画像的 scenario。
 

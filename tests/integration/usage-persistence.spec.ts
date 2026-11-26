@@ -52,9 +52,9 @@ import {
 } from '../../family-agents/family-server.entry.js';
 
 const ENTRIES = [
-  { id: 'qianhang.intent-detection', name: '意图识别', description: 'd', scope: 'dedicated', owner: '02', version: '1.0.0' },
+  { id: 'navigator.intent-detection', name: '意图识别', description: 'd', scope: 'dedicated', owner: '02', version: '1.0.0' },
 ];
-const TOOLS = [{ name: 'qianhang__intent_detection', description: 'd', inputSchema: {} }];
+const TOOLS = [{ name: 'navigator__intent_detection', description: 'd', inputSchema: {} }];
 const SERVER_INFO = { name: 'yyc3-family', version: 'test' };
 
 describe('计量持久化（M41 · 跨进程累计口径）', () => {
@@ -95,7 +95,7 @@ describe('计量持久化（M41 · 跨进程累计口径）', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yyc3-usage-u3-'));
     const file = path.join(dir, 'metrics-usage.json');
     const seed = new LlmUsageCounter();
-    seed.record({ promptTokens: 300, completionTokens: 100 }, { skillId: 'qianhang.intent-detection', scenario: 'llm-assisted' });
+    seed.record({ promptTokens: 300, completionTokens: 100 }, { skillId: 'navigator.intent-detection', scenario: 'llm-assisted' });
     saveUsageSnapshot(file, seed.snapshot());
     const server = await startFamilyServer({
       serverInfo: SERVER_INFO,
@@ -105,8 +105,8 @@ describe('计量持久化（M41 · 跨进程累计口径）', () => {
     });
     expect(server.llmUsage.snapshot().totalTokens).toBe(400); // 启动恢复基线
     const text = server.metrics.render();
-    expect(text).toContain('family_llm_usage_tokens_total{agent_id="unknown",scenario="llm-assisted",skill_id="qianhang.intent-detection"} 400');
-    expect(text).toContain('family_llm_usage_calls_total{agent_id="unknown",scenario="llm-assisted",skill_id="qianhang.intent-detection"} 1');
+    expect(text).toContain('family_llm_usage_tokens_total{agent_id="unknown",scenario="llm-assisted",skill_id="navigator.intent-detection"} 400');
+    expect(text).toContain('family_llm_usage_calls_total{agent_id="unknown",scenario="llm-assisted",skill_id="navigator.intent-detection"} 1');
     await server.stop();
     fs.rmSync(dir, { recursive: true, force: true });
   });
@@ -149,12 +149,12 @@ describe('计量持久化（M41 · 跨进程累计口径）', () => {
       complete: () => Promise.resolve({ text: '{"x":1}', usage: { promptTokens: 10, completionTokens: 5 } }),
     };
     const runner = createLlmStepRunner(fakeProvider, 'test-model', 1024, meter);
-    await runner([{ role: 'user', content: 'p' }], { order: 1, text: 's' }, { skillId: 'qianhang.intent-detection', scenario: 'llm-assisted' });
+    await runner([{ role: 'user', content: 'p' }], { order: 1, text: 's' }, { skillId: 'navigator.intent-detection', scenario: 'llm-assisted' });
     await runner([{ role: 'user', content: 'p' }], { order: 1, text: 's' }, { skillId: 'thinker.root-cause', scenario: 'llm-assisted' });
     const snap = meter.snapshot();
     expect(snap.calls).toBe(2);
     expect(snap.buckets).toHaveLength(2);
-    const bucket = snap.buckets.find((b) => b.skillId === 'qianhang.intent-detection');
+    const bucket = snap.buckets.find((b) => b.skillId === 'navigator.intent-detection');
     expect(bucket).toBeTruthy();
     expect(bucket.scenario).toBe('llm-assisted');
     expect(bucket.calls).toBe(1);

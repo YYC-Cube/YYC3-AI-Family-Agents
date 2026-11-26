@@ -12,7 +12,7 @@
  *
  * 用法：
  *   node scripts/create-worker.mjs create --id worker-x --name "<名称>" --port 3140 \
- *     --skills shared.self-judge,qianhang.nlq-to-api [--token-env WORKER_X_TOKEN] \
+ *     --skills shared.self-judge,navigator.nlq-to-api [--token-env WORKER_X_TOKEN] \
  *     [--timeout 5000] [--fallback rule-default] [--root <dir>]
  *   node scripts/create-worker.mjs check
  *
@@ -29,7 +29,7 @@ const REFERENCE_DIR = path.join(ROOT, 'workers', 'blueprint-13');
 const REFERENCE_PY = path.join(REFERENCE_DIR, 'worker.py');
 const REFERENCE_YAML = path.join(ROOT, 'presets', 'external-worker', 'blueprint-13.worker.yaml');
 const FAMILY_SLUGS = new Set([
-  'tianshu', 'qianhang', 'thinker', 'prophet', 'bole', 'guardian', 'grandmaster', 'grace',
+  'meta-oracle', 'navigator', 'thinker', 'prophet', 'bolero', 'sentinel', 'master', 'creative',
 ]);
 
 /** 反解 blueprint-13 → 模板（占位符化），再正向参数化（R4 同源范式）。 */

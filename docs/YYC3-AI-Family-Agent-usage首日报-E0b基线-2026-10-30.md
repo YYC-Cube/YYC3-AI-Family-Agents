@@ -16,7 +16,7 @@
 
 | 场景 | 数据 | 说明 |
 | --- | --- | --- |
-| **本地网关（Tailscale :10086 · nemotron-3.5-super-vl）** | **uat:llm 5/5 · selftest 3 技能 5/5 字段填充 · 累计 3290 tokens** | **E0a live 验收通过（2026-10-31）**；三维计数器真值：family_llm_usage_tokens_total{skill_id="bole.achievement-insight"} 667 等 |
+| **本地网关（Tailscale :10086 · nemotron-3.5-super-vl）** | **uat:llm 5/5 · selftest 3 技能 5/5 字段填充 · 累计 3290 tokens** | **E0a live 验收通过（2026-10-31）**；三维计数器真值：family_llm_usage_tokens_total{skill_id="bolero.achievement-insight"} 667 等 |
 | zhipu 云（glm-4-flash） | 0 tokens（key 429 余额不足，未再触碰） | 云通道停用中——**云账单零新增实证** |
 | 本地桩（契约测试） | 单测级 45 tokens / 3 次（分桶断言） | llm-provider.spec E0c-3 |
 

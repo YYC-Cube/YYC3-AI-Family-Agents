@@ -63,7 +63,7 @@ const TESTS = [
     fn: async () => {
       const mod = await import(SCRIPT_URL);
       assertEq(mod.runCli(['--check']), 0, 'check 通过（当前产物与源一致）');
-      const target = path.join(process.cwd(), 'packaging', 'member-skills', 'qianhang', 'SKILL.md');
+      const target = path.join(process.cwd(), 'packaging', 'member-skills', 'navigator', 'SKILL.md');
       const original = fs.readFileSync(target, 'utf8');
       fs.writeFileSync(target, `${original}\n<!-- tampered -->\n`);
       try {

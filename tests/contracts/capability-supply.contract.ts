@@ -41,7 +41,7 @@ const supply = extractJson(probe.stdout ?? '');
 function manifestSkillIds() {
   const yaml = readFileSync(path.join(ROOT, 'presets/family-manifest.yaml'), 'utf8');
   const section = yaml.slice(yaml.indexOf('\nskills:\n'), yaml.indexOf('\nprompts:\n'));
-  return [...section.matchAll(/- id: ([a-z0-9]+\.[a-z0-9-]+)\n\s+version: "/g)].map((m) => m[1]);
+  return [...section.matchAll(/- id: ([a-z0-9][a-z0-9-]*\.[a-z0-9-]+)\n\s+version: "/g)].map((m) => m[1]);
 }
 
 /** 从清单技能段抽取 planned 技能 id（status: planned 紧随 id 块）。 */
@@ -49,7 +49,7 @@ function manifestPlannedIds() {
   const yaml = readFileSync(path.join(ROOT, 'presets/family-manifest.yaml'), 'utf8');
   const section = yaml.slice(yaml.indexOf('\nskills:\n'), yaml.indexOf('\nprompts:\n'));
   const ids = [];
-  const re = /- id: ([a-z0-9]+\.[a-z0-9-]+)(?:(?!- id:)[\s\S])*?status: planned/g;
+  const re = /- id: ([a-z0-9][a-z0-9-]*\.[a-z0-9-]+)(?:(?!- id:)[\s\S])*?status: planned/g;
   for (const m of section.matchAll(re)) ids.push(m[1]);
   return ids;
 }
@@ -105,11 +105,11 @@ describe('能力供给契约（P3-T6）', () => {
     const planned = manifestPlannedIds();
     globalThis.expect(planned.length).toBe(0);
     globalThis.expect(supply.activeSkills).toBe(45);
-    // 映射规则抽查：与 mcp-server 契约锚点 qianhang__intent_detection 对齐
-    const sample = manifestSkillIds().find((id) => id === 'qianhang.intent-detection');
-    if (!sample) throw new Error('清单缺少锚点技能 qianhang.intent-detection');
+    // 映射规则抽查：与 mcp-server 契约锚点 navigator__intent_detection 对齐
+    const sample = manifestSkillIds().find((id) => id === 'navigator.intent-detection');
+    if (!sample) throw new Error('清单缺少锚点技能 navigator.intent-detection');
     const mcpName = sample.replace('.', '__').replace(/-/g, '_');
-    globalThis.expect(mcpName).toBe('qianhang__intent_detection');
+    globalThis.expect(mcpName).toBe('navigator__intent_detection');
     globalThis.expect(supply.toolNames.includes(mcpName)).toBeTruthy();
   });
 

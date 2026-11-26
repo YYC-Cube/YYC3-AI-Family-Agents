@@ -94,13 +94,13 @@ describe('准入治理（P4-T3）', () => {
 
   it('审计留痕：未准入调用写入 ComplianceAudit（字段完整 + 链完整性）', () => {
     const gate = new CapabilityAllowlist({ allowed: [] });
-    gate.admit(call('rogue-pack', 'trace-audit', 'tianshu'));
+    gate.admit(call('rogue-pack', 'trace-audit', 'meta-oracle'));
 
     const records = gate.auditRecords;
     expect(records.length).toBe(1);
     const r = records[0];
     expect(r.traceId).toBe('trace-audit');
-    expect(r.actor).toBe('tianshu');
+    expect(r.actor).toBe('meta-oracle');
     expect(r.action).toBe(DEFAULT_ADMISSION_ACTION);
     expect(r.resource).toBe('rogue-pack');
     expect(r.decision.decision).toBe('allow-with-audit');

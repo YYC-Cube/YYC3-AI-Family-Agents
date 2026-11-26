@@ -47,7 +47,7 @@ const VALID_WORKER = `worker:
   timeout_ms: 5000
   fallback: rule-default
   capabilities:
-    - qianhang.nlq-to-api
+    - navigator.nlq-to-api
     - shared.llm-invoke
   capabilitiesRef:
     manifest: presets/family-manifest.yaml
@@ -106,7 +106,7 @@ describe('外部 Worker 契约（P2-T1）', () => {
 
   it('自造能力名被拒绝（manifest 未声明 → 「不得自造」）', () => {
     const tmp = makeTempRoot();
-    writeWorker(tmp, VALID_WORKER.replace('qianhang.nlq-to-api', 'worker-13.super-codegen'));
+    writeWorker(tmp, VALID_WORKER.replace('navigator.nlq-to-api', 'worker-13.super-codegen'));
     const out = extractJson(run(['--json', '--root', tmp]).stdout);
     globalThis.expect(out.ok).toBeFalsy();
     const msg = out.errors.join('\n');
@@ -132,7 +132,7 @@ describe('外部 Worker 契约（P2-T1）', () => {
 
   it('worker.id 与八家人 slug 冲突被拒绝（命名空间隔离）', () => {
     const tmp = makeTempRoot();
-    writeWorker(tmp, VALID_WORKER.replace('id: blueprint-13', 'id: qianhang'));
+    writeWorker(tmp, VALID_WORKER.replace('id: blueprint-13', 'id: navigator'));
     const out = extractJson(run(['--json', '--root', tmp]).stdout);
     globalThis.expect(out.ok).toBeFalsy();
     if (!out.errors.join('\n').includes('八家人 slug')) throw new Error(`未拦截家人 slug 冲突：${out.errors.join('\n')}`);

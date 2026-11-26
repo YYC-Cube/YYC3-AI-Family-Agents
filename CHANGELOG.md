@@ -10,6 +10,7 @@
 
 ### Added
 
+- **角色命名全维度对齐图示定义（v2.61.0 · breaking rename）**：6 员 slug 同步权威图示——`qianhang→navigator` · `bole→bolero` · `tianshu→meta-oracle` · `guardian→sentinel` · `grandmaster→master` · `grace→creative`（thinker/prophet 不变；名号 知遇·伯乐 等已对齐）。范围：374 文件内容 + 18 目录（family-agents/skills/packaging）+ 内核九层目录（layer-2-bolero/layer-8-sentinel 等）+ 测试/契约/现行文档全同步；技能 id 前缀正则放宽连字符（`meta-oracle.*` 合规）——schema/校验器/契约提取器五处同步；golden 样例按 id 重排；旧 agent-cards 清理。门禁 392/392 全绿。
 - **G9 纯描述技能结果透出（v2.60.0）**：`executeSkillWithLlm` 对无 io 契约技能（24 条纯描述 · P3-T1② 约定）**末步产物原样透出**——修复真实 host 调用可见性缺口（此前 output 恒空：真机复测 5 调用中 quality-gate/root-cause 稳定空输出；根因=契约设计如此而非模型缺陷，评估归因已修正）；有 io 契约仍按字段抽取；M19 填充率按透出字段计；契约 G9 入 llm-step-executor
 - **M41 分桶补全（v2.59.0）**：`LlmStepRunner` 增加 ctx 标签参数——`createLlmStepRunner` 在 ctx 提供时按 `skillId/scenario` 分桶记录，`executeSkillWithLlm` 透传 `entry.id` 与画像分口径 `scenarioTag`。修复：真实 host 流量（实测 1149 调用/733K tokens）下 buckets 恒空——判据「≥6 成员单员 ≥30 / ≥2 场景各 ≥60」此前**无法核验**；修复后成员/场景覆盖可计算。契约 U6（分桶落盘 + 无 ctx 向后兼容）
 - **H7 /metrics 端口占用降级（v2.58.0）**：`family-server.entry.ts` startMetricsServer 绑定失败（EADDRINUSE——旧实例未退/多开占端口）时**降级不崩**——放弃 /metrics 端点照常服务并告警。ZCode 实测：未捕获时新实例启动即崩 → host 报 CONNECTION_CLOSED（node:net UVException）；契约 H7 入 `mcp-stdio-serve`（端口占用下握手可用 + metricsServer 降级断言）

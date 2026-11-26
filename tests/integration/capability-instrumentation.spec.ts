@@ -52,7 +52,7 @@ import {
 /** 内联清单条目（3 条：2 active + 1 planned；不读 presets，保持 hermetic）。 */
 const ENTRIES = [
   { id: 'shared.a2a-delegate', name: 'A2A 委托', description: '外部家人任务委托', scope: 'shared' },
-  { id: 'qianhang.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '02' },
+  { id: 'navigator.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '02' },
   { id: 'shared.reserved-skill', name: '预留技能', description: '未实装', scope: 'shared', status: 'planned' },
 ];
 
@@ -70,7 +70,7 @@ describe('能力供给生产端接线（§6.3）', () => {
     expect(result.skippedPlanned[0]).toBe('shared.reserved-skill');
 
     expect(metrics.capabilitySkillsLoaded.value({ skill: 'shared.a2a-delegate' })).toBe(1);
-    expect(metrics.capabilitySkillsLoaded.value({ skill: 'qianhang.intent-detection' })).toBe(1);
+    expect(metrics.capabilitySkillsLoaded.value({ skill: 'navigator.intent-detection' })).toBe(1);
     // planned 条目跳过不记：不产生样本行（不污染默认口径）
     expect(metrics.capabilitySkillsLoaded.value({ skill: 'shared.reserved-skill' })).toBe(0);
     expect(metrics.render().includes('shared.reserved-skill')).toBe(false);
@@ -83,7 +83,7 @@ describe('能力供给生产端接线（§6.3）', () => {
     registry.loadFromManifest(ENTRIES);
     // Proxy 透传：装载后的定义经 get / latest 正常可达（引用语义不变）
     expect(registry.get('shared.a2a-delegate', '0.0.0').id).toBe('shared.a2a-delegate');
-    expect(registry.latest('qianhang.intent-detection').status).toBe('active');
+    expect(registry.latest('navigator.intent-detection').status).toBe('active');
     expect(registry.list()).toHaveLength(2);
 
     // 幂等重载：注册表仍是 2 条（同版本覆盖），指标按「加载次数」口径累计为 2

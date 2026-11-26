@@ -4,10 +4,10 @@
   "count": 45,
   "entries": [
     {
-      "id": "bole.achievement-insight",
+      "id": "bolero.achievement-insight",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "bole",
+      "owner": "bolero",
       "description": "成就面板数据解读与激励建议",
       "tags": [
         "achievement",
@@ -15,10 +15,10 @@
       ]
     },
     {
-      "id": "bole.persona-profile",
+      "id": "bolero.persona-profile",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "bole",
+      "owner": "bolero",
       "description": "角色、偏好与行为特征的结构化画像",
       "tags": [
         "persona",
@@ -26,10 +26,10 @@
       ]
     },
     {
-      "id": "bole.personalize",
+      "id": "bolero.personalize",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "bole",
+      "owner": "bolero",
       "description": "基于画像与行为的对象/内容推荐",
       "tags": [
         "recommendation",
@@ -37,10 +37,10 @@
       ]
     },
     {
-      "id": "bole.talent-match",
+      "id": "bolero.talent-match",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "bole",
+      "owner": "bolero",
       "description": "岗位画像与人选能力匹配度评分",
       "tags": [
         "talent",
@@ -48,10 +48,10 @@
       ]
     },
     {
-      "id": "grace.copywriting",
+      "id": "creative.copywriting",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grace",
+      "owner": "creative",
       "description": "面向不同受众的文案撰写与润色",
       "tags": [
         "copywriting",
@@ -59,10 +59,10 @@
       ]
     },
     {
-      "id": "grace.ideation",
+      "id": "creative.ideation",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grace",
+      "owner": "creative",
       "description": "多方向创意发散与可行性初筛",
       "tags": [
         "ideation",
@@ -70,10 +70,10 @@
       ]
     },
     {
-      "id": "grace.marketing-content",
+      "id": "creative.marketing-content",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grace",
+      "owner": "creative",
       "description": "营销主题、渠道话术与节奏编排",
       "tags": [
         "marketing",
@@ -81,10 +81,10 @@
       ]
     },
     {
-      "id": "grace.style-direction",
+      "id": "creative.style-direction",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grace",
+      "owner": "creative",
       "description": "品牌调性、版式与视觉呈现建议",
       "tags": [
         "style",
@@ -92,10 +92,10 @@
       ]
     },
     {
-      "id": "grandmaster.knowledge-distill",
+      "id": "master.knowledge-distill",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grandmaster",
+      "owner": "master",
       "description": "把复盘结论蒸馏为可复用程序记忆条目",
       "tags": [
         "distill",
@@ -103,10 +103,10 @@
       ]
     },
     {
-      "id": "grandmaster.quality-gate",
+      "id": "master.quality-gate",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grandmaster",
+      "owner": "master",
       "description": "按标准/规范/数据化三档校验产出质量",
       "tags": [
         "quality",
@@ -114,10 +114,10 @@
       ]
     },
     {
-      "id": "grandmaster.regression-guard",
+      "id": "master.regression-guard",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grandmaster",
+      "owner": "master",
       "description": "变更前后的基线对比与退化拦截",
       "tags": [
         "regression",
@@ -125,10 +125,10 @@
       ]
     },
     {
-      "id": "grandmaster.retrospective",
+      "id": "master.retrospective",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "grandmaster",
+      "owner": "master",
       "description": "事件复盘、责任归位与改进项跟踪",
       "tags": [
         "retrospective",
@@ -136,49 +136,92 @@
       ]
     },
     {
-      "id": "guardian.content-filter",
+      "id": "meta-oracle.conflict-arbitration",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "guardian",
-      "description": "输入输出内容的安全与合规拦截",
+      "owner": "meta-oracle",
+      "description": "跨家人结论冲突时的裁决与算力/预算再分配",
       "tags": [
-        "content",
-        "filter",
-        "safety"
+        "arbitration",
+        "scheduling"
       ]
     },
     {
-      "id": "guardian.incident-response",
+      "id": "meta-oracle.global-oversight",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "guardian",
-      "description": "威胁等级判定、隔离与上报闭环",
+      "owner": "meta-oracle",
+      "description": "全局状态中心巡视、告警收敛与升级上报",
       "tags": [
-        "incident",
-        "response"
+        "status",
+        "alerting"
       ]
     },
     {
-      "id": "guardian.security-audit",
+      "id": "meta-oracle.strategy-orchestration",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "guardian",
-      "description": "权限、访问与数据流的合规审计与取证",
+      "owner": "meta-oracle",
+      "description": "全局最优导向的策略编排，平衡风险与长期价值",
       "tags": [
-        "security",
-        "audit",
-        "compliance"
+        "strategy",
+        "orchestration"
       ]
     },
     {
-      "id": "guardian.zero-trust",
+      "id": "meta-oracle.task-decomposition",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "guardian",
-      "description": "每次调用均校验身份、权限与来源可信度",
+      "owner": "meta-oracle",
+      "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
       "tags": [
-        "zero-trust",
-        "auth"
+        "decomposition",
+        "cageref",
+        "dispatch"
+      ]
+    },
+    {
+      "id": "navigator.ambiguity-clarify",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "navigator",
+      "description": "候选间隔过小时登记假设并生成澄清提问",
+      "tags": [
+        "clarify",
+        "assumption"
+      ]
+    },
+    {
+      "id": "navigator.context-session",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "navigator",
+      "description": "多轮会话状态维护与跨家人上下文传递",
+      "tags": [
+        "context",
+        "session"
+      ]
+    },
+    {
+      "id": "navigator.intent-detection",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "navigator",
+      "description": "六类意图闭集识别，输出意图/置信度/理由",
+      "tags": [
+        "intent",
+        "classification"
+      ]
+    },
+    {
+      "id": "navigator.nlq-to-api",
+      "version": "1.0.0",
+      "scope": "dedicated",
+      "owner": "navigator",
+      "description": "把管理者的自然语言转译为结构化查询参数",
+      "tags": [
+        "nlq",
+        "mapping"
       ]
     },
     {
@@ -226,47 +269,49 @@
       ]
     },
     {
-      "id": "qianhang.ambiguity-clarify",
+      "id": "sentinel.content-filter",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "qianhang",
-      "description": "候选间隔过小时登记假设并生成澄清提问",
+      "owner": "sentinel",
+      "description": "输入输出内容的安全与合规拦截",
       "tags": [
-        "clarify",
-        "assumption"
+        "content",
+        "filter",
+        "safety"
       ]
     },
     {
-      "id": "qianhang.context-session",
+      "id": "sentinel.incident-response",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "qianhang",
-      "description": "多轮会话状态维护与跨家人上下文传递",
+      "owner": "sentinel",
+      "description": "威胁等级判定、隔离与上报闭环",
       "tags": [
-        "context",
-        "session"
+        "incident",
+        "response"
       ]
     },
     {
-      "id": "qianhang.intent-detection",
+      "id": "sentinel.security-audit",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "qianhang",
-      "description": "六类意图闭集识别，输出意图/置信度/理由",
+      "owner": "sentinel",
+      "description": "权限、访问与数据流的合规审计与取证",
       "tags": [
-        "intent",
-        "classification"
+        "security",
+        "audit",
+        "compliance"
       ]
     },
     {
-      "id": "qianhang.nlq-to-api",
+      "id": "sentinel.zero-trust",
       "version": "1.0.0",
       "scope": "dedicated",
-      "owner": "qianhang",
-      "description": "把管理者的自然语言转译为结构化查询参数",
+      "owner": "sentinel",
+      "description": "每次调用均校验身份、权限与来源可信度",
       "tags": [
-        "nlq",
-        "mapping"
+        "zero-trust",
+        "auth"
       ]
     },
     {
@@ -459,51 +504,6 @@
       "tags": [
         "root-cause",
         "diagnosis"
-      ]
-    },
-    {
-      "id": "tianshu.conflict-arbitration",
-      "version": "1.0.0",
-      "scope": "dedicated",
-      "owner": "tianshu",
-      "description": "跨家人结论冲突时的裁决与算力/预算再分配",
-      "tags": [
-        "arbitration",
-        "scheduling"
-      ]
-    },
-    {
-      "id": "tianshu.global-oversight",
-      "version": "1.0.0",
-      "scope": "dedicated",
-      "owner": "tianshu",
-      "description": "全局状态中心巡视、告警收敛与升级上报",
-      "tags": [
-        "status",
-        "alerting"
-      ]
-    },
-    {
-      "id": "tianshu.strategy-orchestration",
-      "version": "1.0.0",
-      "scope": "dedicated",
-      "owner": "tianshu",
-      "description": "全局最优导向的策略编排，平衡风险与长期价值",
-      "tags": [
-        "strategy",
-        "orchestration"
-      ]
-    },
-    {
-      "id": "tianshu.task-decomposition",
-      "version": "1.0.0",
-      "scope": "dedicated",
-      "owner": "tianshu",
-      "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
-      "tags": [
-        "decomposition",
-        "cageref",
-        "dispatch"
       ]
     }
   ]
