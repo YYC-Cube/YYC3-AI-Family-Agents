@@ -1,7 +1,7 @@
 # 业务域卡 · 智云·守护（E4a · 安全合规域画像）
 id: compliance-scan
 domain: security-compliance
-owner: guardian
+owner: sentinel
 scenario: routine-scan
 preferences:
   tier: speed

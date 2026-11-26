@@ -6,7 +6,7 @@
 #       端点 / 能力引用 / 鉴权方式 / 超时 / 降级策略。
 # 规则：
 #   1. capabilities 只能引用 presets/family-manifest.yaml 的技能 id
-#      （如 qianhang.nlq-to-api），不得自造能力名（校验：
+#      （如 navigator.nlq-to-api），不得自造能力名（校验：
 #      node scripts/check-external-worker.mjs --file <实例.yaml>）。
 #   2. 鉴权令牌一律走环境变量名引用（token_env），契约文件不落值。
 #   3. 实例文件命名：presets/external-worker/{worker-id}.worker.yaml

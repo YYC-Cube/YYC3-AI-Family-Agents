@@ -2,7 +2,7 @@
 
 本目录是 YYC³ AI Family **新家人代码骨架的规范模板**（canonical template）。
 `scripts/create-member.sh` 会把它复制到 `family-agents/<group>/<id>/`，去除 `.tpl`
-后缀并替换占位符，从而一键生成与示例家人 `member-qianhang`（言启·千行）同构的目录。
+后缀并替换占位符，从而一键生成与示例家人 `member-navigator`（言启·千行）同构的目录。
 
 ## 目录结构（模板 = 示例家人的标准形状）
 
@@ -40,10 +40,10 @@ presets/member-agent/
 
 | 占位符 | 来源参数 | 说明 | 示例 |
 | --- | --- | --- | --- |
-| `{{MEMBER_ID}}` | `--id` | 家人目录名，必须以 `member-` 开头 | `member-qianhang` |
+| `{{MEMBER_ID}}` | `--id` | 家人目录名，必须以 `member-` 开头 | `member-navigator` |
 | `{{MEMBER_NUMBER}}` | `--number` | 家族编号后两位（两位数字） | `01` |
 | `{{MEMBER_NAME}}` | `--name` | 中文名号 | `言启·千行` |
-| `{{MEMBER_EN_NAME}}` | `--en-name` | 英文名 | `QianHang` |
+| `{{MEMBER_EN_NAME}}` | `--en-name` | 英文名 | `Navigator` |
 | `{{MEMBER_ROLE}}` | `--role` | 角色 | `首席导航员 · 意图之门` |
 | `{{MEMBER_LAYER}}` | `--layer` | 能力分层 L2..L9 | `L5` |
 | `{{MEMBER_HOTLINE}}` | `--hotline`（可选） | 专属热线 | `0379-0106` |
@@ -57,9 +57,9 @@ presets/member-agent/
 
 ```bash
 bash scripts/create-member.sh \
-  --id member-qianhang \
+  --id member-navigator \
   --name 言启·千行 \
-  --en-name QianHang \
+  --en-name Navigator \
   --role 首席导航员 · 意图之门 \
   --layer L5 \
   --number 01 \

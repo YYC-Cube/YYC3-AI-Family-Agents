@@ -1,7 +1,7 @@
 /**
  * 统一技能 id 帮助器（skill-id）—— P3-T3。
  * 职责：打通三套技能表示的 id 命名空间——
- *   ① manifest 契约：`{owner-slug}.{skill-slug}`（如 `qianhang.intent-detection`，
+ *   ① manifest 契约：`{owner-slug}.{skill-slug}`（如 `navigator.intent-detection`，
  *      正则与 presets/family-manifest.yaml 校验一致）；
  *   ② 运行时注册（procedural-memory SkillRegistry）：直接复用 manifest id；
  *   ③ 学习引擎沉淀（SkillStore）：内部主键保留 FNV `skill-xxxxxxxx`（已落盘数据不动，
@@ -26,7 +26,7 @@ export function manifestSkillId(ownerSlug: string, skillSlug: string): string {
   return id;
 }
 
-/** 学习沉淀 id：`learned.` + 规范 id（如 `learned.qianhang.intent-detection`）。 */
+/** 学习沉淀 id：`learned.` + 规范 id（如 `learned.navigator.intent-detection`）。 */
 export function learnedSkillId(ownerSlug: string, skillSlug: string): string {
   return `${LEARNED_PREFIX}.${manifestSkillId(ownerSlug, skillSlug)}`;
 }

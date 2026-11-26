@@ -20,7 +20,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DOMAINS_DIR = path.join(ROOT, 'presets', 'profiles', 'domains');
 
 const FAMILY_SLUGS = new Set([
-  'tianshu', 'qianhang', 'thinker', 'prophet', 'bole', 'guardian', 'grandmaster', 'grace',
+  'meta-oracle', 'navigator', 'thinker', 'prophet', 'bolero', 'sentinel', 'master', 'creative',
 ]);
 const TIERS = new Set(['reasoning', 'flagship', 'speed']);
 const REQUIRED = ['id', 'domain', 'owner', 'preferences', 'prompt_anchors'];

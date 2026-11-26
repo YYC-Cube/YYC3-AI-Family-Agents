@@ -141,7 +141,7 @@ export function validateManifest(root, manifest) {
     }
     if (byId.has(skill.id)) errors.push(`技能 id 重复：${skill.id}`);
     byId.set(skill.id, skill);
-    if (!/^[a-z0-9]+\.[a-z0-9-]+$/.test(skill.id)) errors.push(`技能 id 命名不合规：${skill.id}`);
+    if (!/^[a-z0-9][a-z0-9-]*\.[a-z0-9-]+$/.test(skill.id)) errors.push(`技能 id 命名不合规：${skill.id}`);
     if (!/^\d+\.\d+\.\d+$/.test(skill.version ?? '')) {
       errors.push(`技能 ${skill.id} 缺少语义化 version（P3-T1：技能可版本化方可漂移校验与回滚）`);
     }
@@ -290,11 +290,11 @@ export function validateManifest(root, manifest) {
     }
     if (promptIds.has(entry.id)) errors.push(`提示词 id 重复：${entry.id}`);
     promptIds.add(entry.id);
-    if (!/^[a-z0-9]+\.[a-z0-9-]+$/.test(entry.id)) errors.push(`提示词 id 命名不合规：${entry.id}`);
+    if (!/^[a-z0-9][a-z0-9-]*\.[a-z0-9-]+$/.test(entry.id)) errors.push(`提示词 id 命名不合规：${entry.id}`);
     if (!agentById.has(entry.owner)) errors.push(`提示词 ${entry.id} 的 owner 未知：${entry.owner}`);
     if (!/^\d+\.\d+\.\d+$/.test(entry.version ?? '')) errors.push(`提示词 ${entry.id} 版本号不合规：${entry.version}`);
     const file = entry.file ?? '';
-    if (!/^family-agents\/(business|core)-layer\/member-[a-z]+\/prompts\/[a-z0-9-]+\.prompt\.ts$/.test(file)) {
+    if (!/^family-agents\/(business|core)-layer\/member-[a-z0-9-]+\/prompts\/[a-z0-9-]+\.prompt\.ts$/.test(file)) {
       errors.push(`提示词 ${entry.id} 文件路径不合规：${file}`);
       continue;
     }

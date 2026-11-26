@@ -51,7 +51,7 @@ if (__localShim) {
 
 import { ZhiPuProvider } from '@shared/llm-adapter/zhipu-provider.js';
 import { OpenAiProvider } from '@shared/llm-adapter/openai-provider.js';
-import { IntentClassifierService } from '@members/business-layer/member-qianhang/core/intent-classifier.service.js';
+import { IntentClassifierService } from '@members/business-layer/member-navigator/core/intent-classifier.service.js';
 
 // ---------- 门控与配置 ----------
 

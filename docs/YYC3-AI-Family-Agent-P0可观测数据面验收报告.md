@@ -72,7 +72,7 @@ category: report
 | 14 | 抓取配置（v2.7.1） | [prometheus.yml](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/ops/observability/prometheus.yml) —— 运行时 / Pushgateway / 自身三作业 | ops/observability |
 | 15 | 指标推送（v2.7.1） | [push-metrics.mjs](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/scripts/push-metrics.mjs) + CI 步骤 | scripts / CI |
 | 16 | 愈链路装配（v2.7.2） | [degradation-controller.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/architecture-kernel/07-自愈中心/degradation-controller/degradation-controller.ts) `onStateChange` + `runtime-assembly.handleSignal` | 07 / 08 |
-| 17 | 测试迁移（v2.7.2） | [self-judge-kit.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/unit/self-judge-kit.spec.ts) / [family-bus.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/integration/family-bus.spec.ts) / [pillars.contract.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/pillar-contracts/pillars.contract.ts) / [qianhang-intent-e2e.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/e2e/qianhang-intent-e2e.spec.ts) | tests |
+| 17 | 测试迁移（v2.7.2） | [self-judge-kit.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/unit/self-judge-kit.spec.ts) / [family-bus.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/integration/family-bus.spec.ts) / [pillars.contract.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/pillar-contracts/pillars.contract.ts) / [navigator-intent-e2e.spec.ts](file:///Users/yanyu/YANYUCLOUDCUBE/YanYuCloudCube/YYC3-AI-Family-Agent/YYC3-AI-Family-Agent-编程体系/tests/e2e/navigator-intent-e2e.spec.ts) | tests |
 
 ### 2.2 不在本次范围
 
@@ -176,7 +176,7 @@ category: report
 | knowledge-evolution | 5/5 | 知 / 学 |
 | assembly-e2e | 6/6 | 学 / 愈 |
 | metrics-observability | 8/8 | 学 / 愈 |
-| qianhang-intent-e2e | 0/4（跳过 4：链路未实现） | — |
+| navigator-intent-e2e | 0/4（跳过 4：链路未实现） | — |
 | pillars.contract | 5/5 | 五支柱契约 |
 
 **五支柱汇总（跨支柱计数）**：🟢 自 16 · 🟢 知 25 · 🟢 学 37 · 🟢 治 18 · 🟢 愈 23
@@ -282,7 +282,7 @@ family_regression_spec_passed{spec="tests/integration/metrics-observability.spec
 
 **后续（按价值排序，非阻断）**
 
-6. 千行意图链路（P1 llm-adapter + 规则融合）：解锁 `qianhang-intent-e2e` 的 4 个跳过用例
+6. 千行意图链路（P1 llm-adapter + 规则融合）：解锁 `navigator-intent-e2e` 的 4 个跳过用例
 7. `EventBus` 重试 / 死信队列实现（解锁 family-bus 的 DLQ 跳过用例）
 8. Histogram exemplars（L7）与 Git 基线初始化（L8）
 
@@ -390,7 +390,7 @@ body: # HELP family_regression_gate_failed_total ...
 | self-judge-kit | **3/3 真实断言** | 低置信升级（0.445 < 0.6 → escalation）、校准误差门禁（良好 0.1 / 漂移 0.5）、检索 400ms 落 `le="0.5"` 桶 |
 | family-bus | **4/4 通过 + 1 跳过** | 发布订阅 traceId、幂等去重（同键 3 发 1 收）、幂等粒度（seq 不同 2 收）、点对点路由；DLQ 显式跳过 |
 | pillars.contract | **5/5 真实校验** | 自：低置信升级；知：写入→检索 traceId 贯通；学：零退化放行且退化拦截；治：审计链验真且篡改断链；愈：回滚 healed + 契约达成 |
-| qianhang-intent-e2e | **0/4 + 4 跳过** | 链路未实现（`IntentGatewayService.handle` 骨架），4 步均输出跳过原因，不再静默 |
+| navigator-intent-e2e | **0/4 + 4 跳过** | 链路未实现（`IntentGatewayService.handle` 骨架），4 步均输出跳过原因，不再静默 |
 
 **回归脚本配套**
 

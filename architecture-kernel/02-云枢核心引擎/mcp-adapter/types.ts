@@ -67,5 +67,5 @@ export interface StdioTransportOptions {
   /** 单行上限（字节），默认 1 MiB；超限视为协议错误并重置缓冲。 */
   readonly maxLineBytes?: number;
   /** 关闭时等待子进程退出的宽限期（毫秒），默认 1000。 */
-  readonly shutdownGraceMs?: number;
+  readonly shutdownCreativeMs?: number;
 }

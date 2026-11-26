@@ -11,7 +11,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 
 const ROOT = process.cwd();
 const CARD_DIR = `${ROOT}/assets/agent-cards`;
-const SLUGS = ['tianshu', 'qianhang', 'thinker', 'prophet', 'bole', 'guardian', 'grandmaster', 'grace'];
+const SLUGS = ['meta-oracle', 'navigator', 'thinker', 'prophet', 'bolero', 'sentinel', 'master', 'creative'];
 
 function extractJson(text) {
   const start = text.indexOf('{');

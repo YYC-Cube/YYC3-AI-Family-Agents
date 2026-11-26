@@ -165,8 +165,8 @@ describe('技能生命周期（P8-a · M25 · 固化/淘汰/退化）', () => {
     expect('sourcePattern' in draft).toBeFalsy(); // 内核专有字段不外带
     expect('useCount' in draft).toBeFalsy();
     expect('createdAt' in draft).toBeFalsy();
-    const explicit = consolidatedSkillForRegistry({ ...def, logicalId: 'learned.qianhang.demo' });
-    expect(explicit.logicalId).toBe('learned.qianhang.demo'); // 显式声明优先
+    const explicit = consolidatedSkillForRegistry({ ...def, logicalId: 'learned.navigator.demo' });
+    expect(explicit.logicalId).toBe('learned.navigator.demo'); // 显式声明优先
   });
 
   it('F7 merger→registry 装配位：周期晋升技能经适配注册进 SkillRegistry 可查', () => {
@@ -174,7 +174,7 @@ describe('技能生命周期（P8-a · M25 · 固化/淘汰/退化）', () => {
     const a = createRuntimeAssembly({ store: new InMemorySkillStore(), skillRegistry: registry });
     const traj = (i) => ({
       traceId: `t-${i}`,
-      agent: 'qianhang',
+      agent: 'navigator',
       taskType: '经营分析',
       steps: [{ order: 1, action: '取数', ok: true }],
       startedAt: i,
@@ -200,7 +200,7 @@ describe('技能生命周期（P8-a · M25 · 固化/淘汰/退化）', () => {
     const a = createRuntimeAssembly({
       store: new InMemorySkillStore(),
       skillRegistry: registry,
-      learning: { logicalIdResolver: () => 'learned.qianhang.demo' },
+      learning: { logicalIdResolver: () => 'learned.navigator.demo' },
     });
     const feed = () => {
       seq += 1;
@@ -208,7 +208,7 @@ describe('技能生命周期（P8-a · M25 · 固化/淘汰/退化）', () => {
         [1, 2, 3].map((i) => ({
           event: {
             traceId: `x-${seq}-${i}`,
-            agent: 'qianhang',
+            agent: 'navigator',
             taskType: '经营分析',
             steps: [{ order: 1, action: '取数', ok: true }],
             startedAt: i,
@@ -225,7 +225,7 @@ describe('技能生命周期（P8-a · M25 · 固化/淘汰/退化）', () => {
     const report2 = a.loop.runCycle({ minSamples: 2, minSuccessRate: 0.5 });
     expect(report2.promoted).toHaveLength(1);
     expect(report2.promoted[0].version).toBe('1.1.0'); // versioner minor 递增
-    const found = registry.findByLogicalId('learned.qianhang.demo'); // latest 归最新
+    const found = registry.findByLogicalId('learned.navigator.demo'); // latest 归最新
     expect(found.version).toBe('1.1.0');
     expect(registry.get(found.id, '1.0.0')).toBeTruthy(); // 注册表多版本共存
     expect(registry.get(found.id, '1.1.0')).toBeTruthy();

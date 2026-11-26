@@ -402,26 +402,26 @@
 
 - Layer-04 AI智能层：
 
-Imagination·Grace
+Imagination·Creative
 
 - 🧠 言启·千行
-Yanqi·QianHang
+Yanqi·Navigator
 - 💡 语枢·万物
 Language Hub · All Things
 - 🔮 预见·先知
 Foresee · Prophet
 - 👤 千里·伯乐
-A Thousand Miles · Bole
+A Thousand Miles · Bolero
 - 🌐 元启·天枢
-Yuanqi·TianShu
+Yuanqi·MetaOracle
 - 🛡️ 智云·守护
 Zhiyun·Guardian
 - 📚 创想·灵韵
-Imagination·Grace
+Imagination·Creative
 - ⚙️ 格物·宗师
-Ge Wu · Grandmaster
+Ge Wu · Master
 - 👤 Family 中心
-Imagination·Grace
+Imagination·Creative
 
 - Layer-09 系统设置层：
   - ⚙️ 系统配置（System Configuration）

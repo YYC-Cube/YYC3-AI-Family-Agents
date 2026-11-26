@@ -68,7 +68,7 @@ function item(signature, opts = {}) {
   return {
     event: {
       traceId: id,
-      agent: opts.agent ?? 'grandmaster',
+      agent: opts.agent ?? 'master',
       taskType: opts.taskType ?? 'quality-judgment',
       steps: signature.map((tool, i) => ({ order: i + 1, action: `step-${i + 1}`, tool, ok: true })),
       startedAt: seq * 10,
@@ -76,7 +76,7 @@ function item(signature, opts = {}) {
       completed: opts.completed ?? true,
       judgment:
         opts.confidence !== undefined
-          ? { agent: opts.agent ?? 'grandmaster', confidence: opts.confidence, uncertaintySources: [], assumptions: [], escalation: 'none' }
+          ? { agent: opts.agent ?? 'master', confidence: opts.confidence, uncertaintySources: [], assumptions: [], escalation: 'none' }
           : undefined,
     },
     goldenPass: opts.goldenPass,
@@ -146,7 +146,7 @@ describe('Phase C · 经验回流闭环（learning-loop）', () => {
     expect(report.promoted[0].status).toBe('active');
     expect(report.rolledBack).toHaveLength(0);
     // 固化技能的 when/steps 溯源自模式三元组
-    expect(report.promoted[0].when[0]).toContain('grandmaster');
+    expect(report.promoted[0].when[0]).toContain('master');
     expect(report.promoted[0].steps).toHaveLength(2);
     expect(store.activeSkills()).toHaveLength(1);
   });

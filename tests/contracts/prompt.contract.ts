@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 
 const ROOT = process.cwd();
 const SCRIPT = 'scripts/check-prompts.mjs';
-const INTENT_FILE = 'family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts';
-const QUERY_FILE = 'family-agents/business-layer/member-qianhang/prompts/query-parsing.prompt.ts';
+const INTENT_FILE = 'family-agents/business-layer/member-navigator/prompts/intent-detection.prompt.ts';
+const QUERY_FILE = 'family-agents/business-layer/member-navigator/prompts/query-parsing.prompt.ts';
 
 /** 从混合输出中提取 JSON（构建环境可能注入调试日志）。 */
 function extractJson(text) {
@@ -110,8 +110,8 @@ describe('提示词契约（P1-T5）', () => {
 
   it('outputSchema 放行合法样本（含 timeRange 对象/空双态）', () => {
     const byId = new Map(report.prompts.map((p) => [p.id, p]));
-    const intent = byId.get('qianhang.intent-detection').outputSchema;
-    const query = byId.get('qianhang.query-parsing').outputSchema;
+    const intent = byId.get('navigator.intent-detection').outputSchema;
+    const query = byId.get('navigator.query-parsing').outputSchema;
     globalThis.expect(miniValidate(intent, { intent: 'analysis', confidence: 0.92, reason: '含分析意图词' }).length).toBe(0);
     globalThis.expect(
       miniValidate(query, { entities: ['华东区'], metrics: ['退货率'], timeRange: null, filters: [], confidence: 0.8 }).length,
@@ -124,7 +124,7 @@ describe('提示词契约（P1-T5）', () => {
 
   it('outputSchema 拦截非法样本（置信度越界 + 额外字段）', () => {
     const byId = new Map(report.prompts.map((p) => [p.id, p]));
-    const intent = byId.get('qianhang.intent-detection').outputSchema;
+    const intent = byId.get('navigator.intent-detection').outputSchema;
     if (miniValidate(intent, { intent: 'analysis', confidence: 1.5, reason: '越界' }).length === 0) {
       throw new Error('置信度 1.5 未被拦截');
     }
@@ -141,8 +141,8 @@ describe('提示词契约（P1-T5）', () => {
         throw new Error(`${id} vars=${JSON.stringify(p.vars)} 期望 ${JSON.stringify(names)}`);
       }
     };
-    expectVars('qianhang.intent-detection', ['USER_TEXT', 'INTENT_TYPES', 'SESSION_ID']);
-    expectVars('qianhang.query-parsing', ['USER_TEXT', 'SCHEMA_HINT', 'LOCALE']);
+    expectVars('navigator.intent-detection', ['USER_TEXT', 'INTENT_TYPES', 'SESSION_ID']);
+    expectVars('navigator.query-parsing', ['USER_TEXT', 'SCHEMA_HINT', 'LOCALE']);
   });
 });
 

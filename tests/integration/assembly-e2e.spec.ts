@@ -57,7 +57,7 @@ let seq = 0;
 function publishTask(bus, traceId, overrides = {}) {
   seq += 1;
   return bus.publish({
-    key: { traceId, agentId: 'grandmaster', seq },
+    key: { traceId, agentId: 'master', seq },
     topic: 'task.executed',
     mode: 'broadcast',
     payload: {
@@ -175,7 +175,7 @@ describe('装配层端到端冒烟（infra-1～4 闭环）', () => {
       const asm = createRuntimeAssembly({ skillStoreDir: dir });
       const duplicate = () =>
         asm.bus.publish({
-          key: { traceId: 'trace-a5', agentId: 'grandmaster', seq: 42 },
+          key: { traceId: 'trace-a5', agentId: 'master', seq: 42 },
           topic: 'task.executed',
           mode: 'broadcast',
           payload: {

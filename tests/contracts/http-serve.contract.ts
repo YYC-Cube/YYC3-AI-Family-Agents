@@ -43,9 +43,9 @@ if (__localShim) {
 import http from 'node:http';
 
 const ENTRIES = [
-  { id: 'qianhang.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '010301-01', version: '1.0.0' },
+  { id: 'navigator.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '010301-01', version: '1.0.0' },
 ];
-const TOOLS = [{ name: 'qianhang__intent_detection', description: '意图识别', inputSchema: {} }];
+const TOOLS = [{ name: 'navigator__intent_detection', description: '意图识别', inputSchema: {} }];
 
 function request(url, payload) {
   return new Promise((resolve, reject) => {

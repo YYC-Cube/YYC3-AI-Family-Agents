@@ -133,8 +133,8 @@ YYC³ 的「免疫系统」与「首席安全官」。智云·守护主动学习
 
 ```
 ☎️ 专属热线：0379-0207
-📧 家族邮箱：guardian@yanyucloud.com
-🏠 家族主页：https://matrix.yyc3.top/family/guardian
+📧 家族邮箱：sentinel@yanyucloud.com
+🏠 家族主页：https://matrix.yyc3.top/family/sentinel
 
 协同对象：
   ├── 元启·天枢 → 上报安全告警，接收应急调度指令

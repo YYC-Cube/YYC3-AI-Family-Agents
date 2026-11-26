@@ -9,7 +9,7 @@ import { createMcpRequestHandler, MCP_PROTOCOL_VERSION, parseTraceparent } from 
 
 const TOOLS = [
   {
-    name: 'qianhang__intent_detection',
+    name: 'navigator__intent_detection',
     description: '六类意图闭集识别（家族 id `.` → `__` 映射示例）',
     inputSchema: { type: 'object', required: ['USER_TEXT'], properties: { USER_TEXT: { type: 'string' } } },
   },
@@ -65,7 +65,7 @@ describe('MCP 服务端协议语义（P3-MCP）', () => {
     const res = JSON.parse(handler.handle('{"jsonrpc":"2.0","id":"a-2","method":"tools/list"}'));
     globalThis.expect(res.id).toBe('a-2');
     globalThis.expect(res.result.tools.length).toBe(2);
-    globalThis.expect(res.result.tools[0].name).toBe('qianhang__intent_detection');
+    globalThis.expect(res.result.tools[0].name).toBe('navigator__intent_detection');
     globalThis.expect(res.result.tools[0].inputSchema.required[0]).toBe('USER_TEXT');
     for (const t of res.result.tools) globalThis.expect(t.name).toMatch(/^[a-zA-Z0-9_-]+$/);
   });

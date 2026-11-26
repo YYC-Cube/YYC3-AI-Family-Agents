@@ -57,7 +57,7 @@ const PROFILE = (over = {}) => ({
 const DAILY = PROFILE({
   id: 'intent-routing',
   domain: 'ops-daily',
-  owner: 'qianhang',
+  owner: 'navigator',
   preferences: { tier: 'speed', outputStyle: '对话流' },
 });
 

@@ -27,8 +27,8 @@ usage() {
     [--group business-layer|core-layer] [--hotline <号>] [--color <#hex>] [--motto <座右铭>]
 
 示例:
-  bash scripts/create-member.sh --id member-qianhang --name 言启·千行 \
-    --en-name QianHang --role "首席导航员 · 意图之门" --layer L5 --number 01 \
+  bash scripts/create-member.sh --id member-navigator --name 言启·千行 \
+    --en-name Navigator --role "首席导航员 · 意图之门" --layer L5 --number 01 \
     --hotline 0379-0106 --color "#0088cc"
 USAGE
 }

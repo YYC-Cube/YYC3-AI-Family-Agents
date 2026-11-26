@@ -45,7 +45,7 @@ const SPECS = [
   { file: 'tests/integration/skill-id-unification.spec.js', pillars: ['知', '学'], phase: 'P3-T3', name: '统一技能 id 与加载器' },
   { file: 'tests/integration/skill-progressive-disclosure.spec.js', pillars: ['知', '学'], phase: 'P3-T4', name: '渐进披露检索' },
   { file: 'tests/skills/skill-behavior-eval.spec.js', pillars: ['知', '学'], phase: 'P3-T5', name: '技能行为评测（observe）' },
-  { file: 'tests/e2e/qianhang-intent-e2e.spec.js', pillars: ['自', '学'], phase: 'e2e', name: '千行意图端到端' },
+  { file: 'tests/e2e/navigator-intent-e2e.spec.js', pillars: ['自', '学'], phase: 'e2e', name: '千行意图端到端' },
   // UAT（tests/uat/llm-live-uat.spec.ts）刻意不进本清单：密钥类真实调用只走 `pnpm uat:llm` 本地门控，
   // 保持回归门禁 hermetic 与「跳过 0」口径。
   { file: 'tests/pillar-contracts/pillars.contract.js', pillars: [], phase: '契约', name: '五支柱契约' },

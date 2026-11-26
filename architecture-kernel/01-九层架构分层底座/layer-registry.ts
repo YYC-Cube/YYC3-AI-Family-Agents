@@ -15,13 +15,13 @@ import type {
   LayerProbe,
 } from './types.js';
 import { FoundationCapability } from './layer-1-foundation/foundation-capability.js';
-import { BoleCapability } from './layer-2-bole/bole-capability.js';
+import { BoleroCapability } from './layer-2-bolero/bolero-capability.js';
 import { ProphetCapability } from './layer-3-prophet/prophet-capability.js';
 import { ThinkerCapability } from './layer-4-thinker/thinker-capability.js';
 import { NavigatorCapability } from './layer-5-navigator/navigator-capability.js';
 import { CreativeCapability } from './layer-6-creative/creative-capability.js';
 import { MasterCapability } from './layer-7-master/master-capability.js';
-import { GuardianCapability } from './layer-8-guardian/guardian-capability.js';
+import { SentinelCapability } from './layer-8-sentinel/sentinel-capability.js';
 import { MetaOracleCapability } from './layer-9-meta-oracle/meta-oracle-capability.js';
 
 /** 单层健康报告（健康聚合行）。 */
@@ -84,13 +84,13 @@ export class NineLayerRegistry {
     const registry = new NineLayerRegistry();
     const defaults: readonly LayerCapability[] = [
       new FoundationCapability(probes.L1),
-      new BoleCapability(probes.L2),
+      new BoleroCapability(probes.L2),
       new ProphetCapability(probes.L3),
       new ThinkerCapability(probes.L4),
       new NavigatorCapability(probes.L5),
       new CreativeCapability(probes.L6),
       new MasterCapability(probes.L7),
-      new GuardianCapability(probes.L8),
+      new SentinelCapability(probes.L8),
       new MetaOracleCapability(probes.L9),
     ];
     for (const capability of defaults) registry.register(capability);

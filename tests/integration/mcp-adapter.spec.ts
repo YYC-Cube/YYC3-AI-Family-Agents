@@ -155,7 +155,7 @@ describe('MCP 适配层（P1-T3）', () => {
       command: process.execPath,
       args: ['-e', CHILD_SCRIPT],
       requestTimeoutMs: 3000,
-      shutdownGraceMs: 300,
+      shutdownCreativeMs: 300,
     });
     const messages = [];
     const errors = [];
@@ -180,7 +180,7 @@ describe('MCP 适配层（P1-T3）', () => {
       command: process.execPath,
       args: ['-e', CHILD_SCRIPT],
       requestTimeoutMs: 3000,
-      shutdownGraceMs: 300,
+      shutdownCreativeMs: 300,
     });
     const errors = [];
     transport.onError((error) => errors.push(error));

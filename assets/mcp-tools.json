@@ -5,8 +5,8 @@
   "hiddenCount": 0,
   "tools": [
     {
-      "name": "bole__achievement_insight",
-      "logicalId": "bole.achievement-insight",
+      "name": "bolero__achievement_insight",
+      "logicalId": "bolero.achievement-insight",
       "title": "成就与激励洞察",
       "description": "成就面板数据解读与激励建议",
       "inputSchema": {
@@ -16,8 +16,8 @@
       }
     },
     {
-      "name": "bole__persona_profile",
-      "logicalId": "bole.persona-profile",
+      "name": "bolero__persona_profile",
+      "logicalId": "bolero.persona-profile",
       "title": "用户画像",
       "description": "角色、偏好与行为特征的结构化画像",
       "inputSchema": {
@@ -27,8 +27,8 @@
       }
     },
     {
-      "name": "bole__personalize",
-      "logicalId": "bole.personalize",
+      "name": "bolero__personalize",
+      "logicalId": "bolero.personalize",
       "title": "个性化推荐",
       "description": "基于画像与行为的对象/内容推荐",
       "inputSchema": {
@@ -38,8 +38,8 @@
       }
     },
     {
-      "name": "bole__talent_match",
-      "logicalId": "bole.talent-match",
+      "name": "bolero__talent_match",
+      "logicalId": "bolero.talent-match",
       "title": "人才匹配",
       "description": "岗位画像与人选能力匹配度评分",
       "inputSchema": {
@@ -49,8 +49,8 @@
       }
     },
     {
-      "name": "grace__copywriting",
-      "logicalId": "grace.copywriting",
+      "name": "creative__copywriting",
+      "logicalId": "creative.copywriting",
       "title": "文案与内容创作",
       "description": "面向不同受众的文案撰写与润色",
       "inputSchema": {
@@ -60,8 +60,8 @@
       }
     },
     {
-      "name": "grace__ideation",
-      "logicalId": "grace.ideation",
+      "name": "creative__ideation",
+      "logicalId": "creative.ideation",
       "title": "创意生成",
       "description": "多方向创意发散与可行性初筛",
       "inputSchema": {
@@ -71,8 +71,8 @@
       }
     },
     {
-      "name": "grace__marketing_content",
-      "logicalId": "grace.marketing-content",
+      "name": "creative__marketing_content",
+      "logicalId": "creative.marketing-content",
       "title": "营销内容策划",
       "description": "营销主题、渠道话术与节奏编排",
       "inputSchema": {
@@ -82,8 +82,8 @@
       }
     },
     {
-      "name": "grace__style_direction",
-      "logicalId": "grace.style-direction",
+      "name": "creative__style_direction",
+      "logicalId": "creative.style-direction",
       "title": "风格与视觉建议",
       "description": "品牌调性、版式与视觉呈现建议",
       "inputSchema": {
@@ -93,8 +93,8 @@
       }
     },
     {
-      "name": "grandmaster__knowledge_distill",
-      "logicalId": "grandmaster.knowledge-distill",
+      "name": "master__knowledge_distill",
+      "logicalId": "master.knowledge-distill",
       "title": "知识提炼与技能固化",
       "description": "把复盘结论蒸馏为可复用程序记忆条目",
       "inputSchema": {
@@ -104,8 +104,8 @@
       }
     },
     {
-      "name": "grandmaster__quality_gate",
-      "logicalId": "grandmaster.quality-gate",
+      "name": "master__quality_gate",
+      "logicalId": "master.quality-gate",
       "title": "质量标准校验",
       "description": "按标准/规范/数据化三档校验产出质量",
       "inputSchema": {
@@ -115,8 +115,8 @@
       }
     },
     {
-      "name": "grandmaster__regression_guard",
-      "logicalId": "grandmaster.regression-guard",
+      "name": "master__regression_guard",
+      "logicalId": "master.regression-guard",
       "title": "回归与退化检测",
       "description": "变更前后的基线对比与退化拦截",
       "inputSchema": {
@@ -126,8 +126,8 @@
       }
     },
     {
-      "name": "grandmaster__retrospective",
-      "logicalId": "grandmaster.retrospective",
+      "name": "master__retrospective",
+      "logicalId": "master.retrospective",
       "title": "复盘与改进建议",
       "description": "事件复盘、责任归位与改进项跟踪",
       "inputSchema": {
@@ -137,10 +137,10 @@
       }
     },
     {
-      "name": "guardian__content_filter",
-      "logicalId": "guardian.content-filter",
-      "title": "内容合规过滤",
-      "description": "输入输出内容的安全与合规拦截",
+      "name": "meta_oracle__conflict_arbitration",
+      "logicalId": "meta-oracle.conflict-arbitration",
+      "title": "冲突裁决与资源调度",
+      "description": "跨家人结论冲突时的裁决与算力/预算再分配",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -148,10 +148,10 @@
       }
     },
     {
-      "name": "guardian__incident_response",
-      "logicalId": "guardian.incident-response",
-      "title": "安全事件响应",
-      "description": "威胁等级判定、隔离与上报闭环",
+      "name": "meta_oracle__global_oversight",
+      "logicalId": "meta-oracle.global-oversight",
+      "title": "全局状态巡视",
+      "description": "全局状态中心巡视、告警收敛与升级上报",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -159,10 +159,10 @@
       }
     },
     {
-      "name": "guardian__security_audit",
-      "logicalId": "guardian.security-audit",
-      "title": "安全审计",
-      "description": "权限、访问与数据流的合规审计与取证",
+      "name": "meta_oracle__strategy_orchestration",
+      "logicalId": "meta-oracle.strategy-orchestration",
+      "title": "战略决策编排",
+      "description": "全局最优导向的策略编排，平衡风险与长期价值",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -170,10 +170,54 @@
       }
     },
     {
-      "name": "guardian__zero_trust",
-      "logicalId": "guardian.zero-trust",
-      "title": "零信任鉴权",
-      "description": "每次调用均校验身份、权限与来源可信度",
+      "name": "meta_oracle__task_decomposition",
+      "logicalId": "meta-oracle.task-decomposition",
+      "title": "任务分解与分派",
+      "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "navigator__ambiguity_clarify",
+      "logicalId": "navigator.ambiguity-clarify",
+      "title": "歧义澄清",
+      "description": "候选间隔过小时登记假设并生成澄清提问",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "navigator__context_session",
+      "logicalId": "navigator.context-session",
+      "title": "上下文会话管理",
+      "description": "多轮会话状态维护与跨家人上下文传递",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "navigator__intent_detection",
+      "logicalId": "navigator.intent-detection",
+      "title": "意图检测",
+      "description": "六类意图闭集识别，输出意图/置信度/理由",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "navigator__nlq_to_api",
+      "logicalId": "navigator.nlq-to-api",
+      "title": "自然语言查询转 API",
+      "description": "把管理者的自然语言转译为结构化查询参数",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -225,10 +269,10 @@
       }
     },
     {
-      "name": "qianhang__ambiguity_clarify",
-      "logicalId": "qianhang.ambiguity-clarify",
-      "title": "歧义澄清",
-      "description": "候选间隔过小时登记假设并生成澄清提问",
+      "name": "sentinel__content_filter",
+      "logicalId": "sentinel.content-filter",
+      "title": "内容合规过滤",
+      "description": "输入输出内容的安全与合规拦截",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -236,10 +280,10 @@
       }
     },
     {
-      "name": "qianhang__context_session",
-      "logicalId": "qianhang.context-session",
-      "title": "上下文会话管理",
-      "description": "多轮会话状态维护与跨家人上下文传递",
+      "name": "sentinel__incident_response",
+      "logicalId": "sentinel.incident-response",
+      "title": "安全事件响应",
+      "description": "威胁等级判定、隔离与上报闭环",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -247,10 +291,10 @@
       }
     },
     {
-      "name": "qianhang__intent_detection",
-      "logicalId": "qianhang.intent-detection",
-      "title": "意图检测",
-      "description": "六类意图闭集识别，输出意图/置信度/理由",
+      "name": "sentinel__security_audit",
+      "logicalId": "sentinel.security-audit",
+      "title": "安全审计",
+      "description": "权限、访问与数据流的合规审计与取证",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -258,10 +302,10 @@
       }
     },
     {
-      "name": "qianhang__nlq_to_api",
-      "logicalId": "qianhang.nlq-to-api",
-      "title": "自然语言查询转 API",
-      "description": "把管理者的自然语言转译为结构化查询参数",
+      "name": "sentinel__zero_trust",
+      "logicalId": "sentinel.zero-trust",
+      "title": "零信任鉴权",
+      "description": "每次调用均校验身份、权限与来源可信度",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -449,50 +493,6 @@
       "logicalId": "thinker.root-cause",
       "title": "指标归因与根因分析",
       "description": "基于指标/日志/链路定位偏离根因",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": true
-      }
-    },
-    {
-      "name": "tianshu__conflict_arbitration",
-      "logicalId": "tianshu.conflict-arbitration",
-      "title": "冲突裁决与资源调度",
-      "description": "跨家人结论冲突时的裁决与算力/预算再分配",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": true
-      }
-    },
-    {
-      "name": "tianshu__global_oversight",
-      "logicalId": "tianshu.global-oversight",
-      "title": "全局状态巡视",
-      "description": "全局状态中心巡视、告警收敛与升级上报",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": true
-      }
-    },
-    {
-      "name": "tianshu__strategy_orchestration",
-      "logicalId": "tianshu.strategy-orchestration",
-      "title": "战略决策编排",
-      "description": "全局最优导向的策略编排，平衡风险与长期价值",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": true
-      }
-    },
-    {
-      "name": "tianshu__task_decomposition",
-      "logicalId": "tianshu.task-decomposition",
-      "title": "任务分解与分派",
-      "description": "按 CAGEERF 七阶段分解任务并指派 owner 与依赖",
       "inputSchema": {
         "type": "object",
         "properties": {},

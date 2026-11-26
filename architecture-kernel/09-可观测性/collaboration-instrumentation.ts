@@ -2,7 +2,7 @@
  * 协同度生产端接线（collaboration-instrumentation）—— P1-T4b（v2.15.0 增量）。
  * 职责：把 P1-T4 注册的 4 项人机协同度指标（family_collaboration_*）接到四个生产链路：
  *   clarification → 千行澄清：IntentGatewayService.handle 每请求记账；
- *                   命中 = intent 为 unknown 或置信度 < τ_low（对齐 qianhang.clarify-ambiguity 规则）
+ *                   命中 = intent 为 unknown 或置信度 < τ_low（对齐 navigator.clarify-ambiguity 规则）
  *   human-confirm → self-judge escalation：EscalationPolicy.decide 每次决策记账；
  *                   命中 = escalation === 'human-confirm'（安全护栏强制人工终审）
  *   trace         → 审计链：ComplianceAudit.append 每条决策记账；

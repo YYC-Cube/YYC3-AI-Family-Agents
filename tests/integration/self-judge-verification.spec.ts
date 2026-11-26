@@ -56,10 +56,10 @@ if (__localShim) {
 import {
   createQianhangSelfJudge,
   judgeIntent,
-} from '@members/business-layer/member-qianhang/self-judge/index.js';
+} from '@members/business-layer/member-navigator/self-judge/index.js';
 import {
   createMemberSelfJudge
-} from '@members/core-layer/member-grandmaster/self-judge/index.js';
+} from '@members/core-layer/member-master/self-judge/index.js';
 import type { Candidate, JudgmentSignal } from '@shared/self-judge-kit';
 import { ConfidenceCalibrator } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/confidence-calibrator.js';
 import { CrossValidator } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/cross-validator.js';
@@ -105,8 +105,8 @@ function buildGateway() {
   return new VerificationGateway({ groundTruth: gt, crossValidator: xv });
 }
 
-const qianhang = createQianhangSelfJudge();
-const grandmaster = createMemberSelfJudge();
+const navigator = createQianhangSelfJudge();
+const master = createMemberSelfJudge();
 
 /** 千行意图判定 → 自评信号（__topLabel 仅供测试读取自评标签）。 */
 function qhSignal(text: string, top: string, topScore: number, second: string, secondScore: number): JudgmentSignal {
@@ -114,8 +114,8 @@ function qhSignal(text: string, top: string, topScore: number, second: string, s
     { label: top, score: topScore },
     { label: second, score: secondScore },
   ];
-  return judgeIntent(qianhang, {
-    agent: 'qianhang',
+  return judgeIntent(navigator, {
+    agent: 'navigator',
     taskType: 'intent-classification',
     text,
     candidates,
@@ -207,8 +207,8 @@ describe('Phase B · 自评-外验闭环（verification-gateway）', () => {
     const gw = buildGateway();
     const buildId = nextTrace('b');
     buildHealthy.set(buildId, false); // 真实世界：构建失败
-    const sig = grandmaster.judge({
-      agent: 'grandmaster',
+    const sig = master.judge({
+      agent: 'master',
       taskType: 'quality-judgment',
       candidates: [
         { label: 'passed', score: 0.88 },
@@ -219,7 +219,7 @@ describe('Phase B · 自评-外验闭环（verification-gateway）', () => {
     expect(sig.escalation).toBe('none'); // 自评高置信、未升级
     const rec = await gw.adjudicate(sig, {
       traceId: buildId,
-      agent: 'grandmaster',
+      agent: 'master',
       claim: `quality:passed@${buildId}`,
     });
     expect(rec.mirageSuspected).toBe(true); // 海市蜃楼被捕获
@@ -236,7 +236,7 @@ describe('Phase B · 自评-外验闭环（verification-gateway）', () => {
     (sig as any).__topLabel = 'analysis';
     const rec = await gw.adjudicate(sig, {
       traceId,
-      agent: 'qianhang',
+      agent: 'navigator',
       claim: `intent:analysis@${traceId}`,
     });
     expect(rec.groundTruth.verified).toBe(false);
@@ -261,27 +261,27 @@ describe('Phase B · 自评-外验闭环（verification-gateway）', () => {
     // 1 例宗师质量判定（真值证实）
     const bId = nextTrace('b');
     buildHealthy.set(bId, true);
-    const gmOk = grandmaster.judge({
-      agent: 'grandmaster',
+    const gmOk = master.judge({
+      agent: 'master',
       taskType: 'quality-judgment',
       candidates: [
         { label: 'passed', score: 0.9 },
         { label: 'failed', score: 0.05 },
       ],
     });
-    await gw.adjudicate(gmOk, { traceId: bId, agent: 'grandmaster', claim: `quality:passed@${bId}` });
+    await gw.adjudicate(gmOk, { traceId: bId, agent: 'master', claim: `quality:passed@${bId}` });
     // 1 例海市蜃楼（真值驳斥）
     const bBad = nextTrace('b');
     buildHealthy.set(bBad, false);
-    const gmBad = grandmaster.judge({
-      agent: 'grandmaster',
+    const gmBad = master.judge({
+      agent: 'master',
       taskType: 'quality-judgment',
       candidates: [
         { label: 'passed', score: 0.88 },
         { label: 'failed', score: 0.05 },
       ],
     });
-    await gw.adjudicate(gmBad, { traceId: bBad, agent: 'grandmaster', claim: `quality:passed@${bBad}` });
+    await gw.adjudicate(gmBad, { traceId: bBad, agent: 'master', claim: `quality:passed@${bBad}` });
 
     const snap = gw.metrics.snapshot();
     // G1：一致率 = 12 例自评未升级（含 1 例海市蜃楼）中 11 例被证实
