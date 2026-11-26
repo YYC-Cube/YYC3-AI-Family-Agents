@@ -8,7 +8,7 @@
 
 /** 查询解析元数据契约（严格 JSON，供 scripts/check-prompts.mjs 零依赖提取）。 */
 export const PROMPT_META = {
-  "id": "bole.query-parsing",
+  "id": "bolero.query-parsing",
   "version": "1.0.0",
   "status": "production",
   "framework": "co-star",

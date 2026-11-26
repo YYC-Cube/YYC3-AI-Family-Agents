@@ -13,7 +13,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(os.environ.get("WORKER_PORT", "3130"))
 TOKEN = os.environ.get("WORKER_13_TOKEN", "")
-SKILLS = ["shared.self-judge", "shared.memory-retrieve", "qianhang.nlq-to-api"]
+SKILLS = ["shared.self-judge", "shared.memory-retrieve", "navigator.nlq-to-api"]
 
 
 class Worker(BaseHTTPRequestHandler):

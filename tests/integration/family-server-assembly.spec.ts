@@ -56,13 +56,13 @@ import { startFamilyServer, logicalIdOfTool } from '../../family-agents/family-s
 /** 内联清单（hermetic）：2 active + 1 planned；id 与工具名按 gen-mcp-tools 映射对齐。 */
 const ENTRIES = [
   { id: 'shared.a2a-delegate', name: 'A2A 委托', description: '外部家人任务委托', scope: 'shared', version: '1.0.0' },
-  { id: 'qianhang.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '02', version: '1.0.0' },
+  { id: 'navigator.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '02', version: '1.0.0' },
   { id: 'shared.reserved-skill', name: '预留', description: '未实装', scope: 'shared', version: '1.0.0', status: 'planned' },
 ];
 
 const TOOLS = [
   { name: 'shared__a2a_delegate', description: 'A2A 委托', inputSchema: {}, logicalId: 'shared.a2a-delegate' },
-  { name: 'qianhang__intent_detection', description: '意图识别', inputSchema: {}, logicalId: 'qianhang.intent-detection' },
+  { name: 'navigator__intent_detection', description: '意图识别', inputSchema: {}, logicalId: 'navigator.intent-detection' },
 ];
 
 const SERVER_INFO = { name: 'yyc3-family', version: 'test' };
@@ -81,9 +81,9 @@ const call = (server, name, meta) =>
 
 describe('家族服务装配（P6-A · M14）', () => {
   it('A1 工具名 ↔ logicalId 逆映射锚点（`.`→`__`、`-`→`_` 的逆变换）', () => {
-    expect(logicalIdOfTool('qianhang__intent_detection')).toBe('qianhang.intent-detection');
+    expect(logicalIdOfTool('navigator__intent_detection')).toBe('navigator.intent-detection');
     expect(logicalIdOfTool('shared__a2a_delegate')).toBe('shared.a2a-delegate');
-    expect(logicalIdOfTool('bole__achievement_insight')).toBe('bole.achievement-insight');
+    expect(logicalIdOfTool('bolero__achievement_insight')).toBe('bolero.achievement-insight');
   });
 
   it('A2 端到端装配：装载记账 → tools/list → tools/call ok 计账', async () => {
@@ -103,7 +103,7 @@ describe('家族服务装配（P6-A · M14）', () => {
 
     const text = server.metrics.render();
     expect(text).toContain('family_capability_skills_loaded_total{skill="shared.a2a-delegate"} 1');
-    expect(text).toContain('family_capability_skills_loaded_total{skill="qianhang.intent-detection"} 1');
+    expect(text).toContain('family_capability_skills_loaded_total{skill="navigator.intent-detection"} 1');
     expect(text).toContain('family_capability_mcp_tool_calls_total{result="ok"} 1');
     await server.stop();
   });
@@ -154,7 +154,7 @@ describe('家族服务装配（P6-A · M14）', () => {
       manifestEntries: ENTRIES.slice(0, 1),
     });
 
-    const res = call(server, 'qianhang__intent_detection'); // 未装载（entries 只取 1 条）
+    const res = call(server, 'navigator__intent_detection'); // 未装载（entries 只取 1 条）
     expect(res.result.isError).toBe(true);
     expect(res.result.content[0].text).toContain('未注册技能');
     expect(server.metrics.capabilityMcpToolCalls.value({ result: 'error' })).toBe(1);
@@ -264,7 +264,7 @@ describe('家族服务装配（P6-A · M14）', () => {
           jsonrpc: '2.0',
           id: 2,
           method: 'tools/call',
-          params: { name: 'shared__a2a_delegate', arguments: { skillId: 'qianhang.nlq-to-api', input: {} } },
+          params: { name: 'shared__a2a_delegate', arguments: { skillId: 'navigator.nlq-to-api', input: {} } },
         }),
       ),
     );
@@ -283,7 +283,7 @@ describe('家族服务装配（P6-A · M14）', () => {
     });
     expect(server.learning).toBeTruthy();
     for (let i = 0; i < 4; i += 1) {
-      const res = call(server, 'qianhang__intent_detection');
+      const res = call(server, 'navigator__intent_detection');
       expect(res.result.isError).toBeFalsy();
     }
     await new Promise((resolve) => setImmediate(resolve)); // 异步 publish 微任务排空
@@ -335,7 +335,7 @@ describe('家族服务装配（P6-A · M14）', () => {
       },
       learning: { store: new InMemorySkillStore() },
     });
-    const res = call(server, 'qianhang__intent_detection');
+    const res = call(server, 'navigator__intent_detection');
     expect(res.result.isError).toBe(true);
     await new Promise((resolve) => setImmediate(resolve));
     expect(server.learning.bridge.stats.accepted).toBe(1); // 失败也记轨迹
@@ -357,7 +357,7 @@ describe('家族服务装配（P6-A · M14）', () => {
       learning: { store: new InMemorySkillStore(), nineLayer: {} },
     });
     expect(failing.situation).toBeTruthy();
-    call(failing, 'qianhang__intent_detection');
+    call(failing, 'navigator__intent_detection');
     await new Promise((resolve) => setImmediate(resolve));
     let report = await failing.learning.reportLayerHealth();
     let byId = new Map(report.map((r) => [r.id, r]));
@@ -404,7 +404,7 @@ describe('家族服务装配（P6-A · M14）', () => {
     });
     // ① 分派：4 次成功（轨迹入总线）
     for (let i = 0; i < 4; i += 1) {
-      const res = call(server, 'qianhang__intent_detection');
+      const res = call(server, 'navigator__intent_detection');
       expect(res.result.isError).toBeFalsy();
     }
     await new Promise((resolve) => setImmediate(resolve));

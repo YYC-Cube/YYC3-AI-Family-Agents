@@ -4,7 +4,7 @@
   "count": 45,
   "cases": [
     {
-      "id": "bole.achievement-insight",
+      "id": "bolero.achievement-insight",
       "input": "依据成就面板给出团队激励节奏建议",
       "expectTrigger": true,
       "requiredOutput": [
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "id": "bole.persona-profile",
+      "id": "bolero.persona-profile",
       "input": "生成“区域财务负责人”的决策偏好画像",
       "expectTrigger": true,
       "requiredOutput": [
@@ -22,7 +22,7 @@
       ]
     },
     {
-      "id": "bole.personalize",
+      "id": "bolero.personalize",
       "input": "为管理者推荐本周最应关注的三个指标",
       "expectTrigger": true,
       "requiredOutput": [
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "id": "bole.talent-match",
+      "id": "bolero.talent-match",
       "input": "为新设的区域运营岗匹配三位候选人",
       "expectTrigger": true,
       "requiredOutput": [
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "id": "grace.copywriting",
+      "id": "creative.copywriting",
       "input": "把经营结论改写成面向高管的 200 字摘要",
       "expectTrigger": true,
       "requiredOutput": [
@@ -49,7 +49,7 @@
       ]
     },
     {
-      "id": "grace.ideation",
+      "id": "creative.ideation",
       "input": "为新品发布给出六个创意方向并标注成本",
       "expectTrigger": true,
       "requiredOutput": [
@@ -58,7 +58,7 @@
       ]
     },
     {
-      "id": "grace.marketing-content",
+      "id": "creative.marketing-content",
       "input": "为区域促销设计三渠道内容节奏",
       "expectTrigger": true,
       "requiredOutput": [
@@ -67,7 +67,7 @@
       ]
     },
     {
-      "id": "grace.style-direction",
+      "id": "creative.style-direction",
       "input": "为季度报告给出配色与版式建议",
       "expectTrigger": true,
       "requiredOutput": [
@@ -76,7 +76,7 @@
       ]
     },
     {
-      "id": "grandmaster.knowledge-distill",
+      "id": "master.knowledge-distill",
       "input": "把三次同类故障的处置提炼为一条处置规则",
       "expectTrigger": true,
       "requiredOutput": [
@@ -85,7 +85,7 @@
       ]
     },
     {
-      "id": "grandmaster.quality-gate",
+      "id": "master.quality-gate",
       "input": "校验经营报告是否满足口径与引用完整性",
       "expectTrigger": true,
       "requiredOutput": [
@@ -94,7 +94,7 @@
       ]
     },
     {
-      "id": "grandmaster.regression-guard",
+      "id": "master.regression-guard",
       "input": "新版本意图准确率下降 2% 时拦截发布",
       "expectTrigger": true,
       "requiredOutput": [
@@ -103,7 +103,7 @@
       ]
     },
     {
-      "id": "grandmaster.retrospective",
+      "id": "master.retrospective",
       "input": "复盘一次误报并给出三条改进项",
       "expectTrigger": true,
       "requiredOutput": [
@@ -112,8 +112,8 @@
       ]
     },
     {
-      "id": "guardian.content-filter",
-      "input": "拦截含个人敏感信息的输出并提示脱敏",
+      "id": "meta-oracle.conflict-arbitration",
+      "input": "语枢·万物与预见·先知结论相左时给出裁决依据",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -121,8 +121,8 @@
       ]
     },
     {
-      "id": "guardian.incident-response",
-      "input": "识别提示词注入后隔离会话并上报元启·天枢",
+      "id": "meta-oracle.global-oversight",
+      "input": "汇总五支柱健康度并向人类高管上报异常",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -130,8 +130,8 @@
       ]
     },
     {
-      "id": "guardian.security-audit",
-      "input": "审计一次跨部门数据访问是否越权",
+      "id": "meta-oracle.strategy-orchestration",
+      "input": "为跨部门资源冲突给出三套方案并标注取舍",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -139,8 +139,44 @@
       ]
     },
     {
-      "id": "guardian.zero-trust",
-      "input": "拒绝未携带有效令牌的外部工具调用",
+      "id": "meta-oracle.task-decomposition",
+      "input": "把“降本 10%”拆成 5 个可执行子任务并派给对应家人",
+      "expectTrigger": true,
+      "requiredOutput": [
+        "skillId",
+        "ok"
+      ]
+    },
+    {
+      "id": "navigator.ambiguity-clarify",
+      "input": "“看看销售”歧义时追问是看数据还是看趋势",
+      "expectTrigger": true,
+      "requiredOutput": [
+        "skillId",
+        "ok"
+      ]
+    },
+    {
+      "id": "navigator.context-session",
+      "input": "第二轮“再按部门拆一下”继承首轮的分析对象",
+      "expectTrigger": true,
+      "requiredOutput": [
+        "skillId",
+        "ok"
+      ]
+    },
+    {
+      "id": "navigator.intent-detection",
+      "input": "识别“这月花了多少”为 analysis 意图并给置信度",
+      "expectTrigger": true,
+      "requiredOutput": [
+        "skillId",
+        "ok"
+      ]
+    },
+    {
+      "id": "navigator.nlq-to-api",
+      "input": "“上月华东区退货率”转成 region/month/metric 三元组",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -184,8 +220,8 @@
       ]
     },
     {
-      "id": "qianhang.ambiguity-clarify",
-      "input": "“看看销售”歧义时追问是看数据还是看趋势",
+      "id": "sentinel.content-filter",
+      "input": "拦截含个人敏感信息的输出并提示脱敏",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -193,8 +229,8 @@
       ]
     },
     {
-      "id": "qianhang.context-session",
-      "input": "第二轮“再按部门拆一下”继承首轮的分析对象",
+      "id": "sentinel.incident-response",
+      "input": "识别提示词注入后隔离会话并上报元启·天枢",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -202,8 +238,8 @@
       ]
     },
     {
-      "id": "qianhang.intent-detection",
-      "input": "识别“这月花了多少”为 analysis 意图并给置信度",
+      "id": "sentinel.security-audit",
+      "input": "审计一次跨部门数据访问是否越权",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -211,8 +247,8 @@
       ]
     },
     {
-      "id": "qianhang.nlq-to-api",
-      "input": "“上月华东区退货率”转成 region/month/metric 三元组",
+      "id": "sentinel.zero-trust",
+      "input": "拒绝未携带有效令牌的外部工具调用",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",
@@ -366,42 +402,6 @@
     {
       "id": "thinker.root-cause",
       "input": "定位响应时延升高的根因是缓存命中率下降",
-      "expectTrigger": true,
-      "requiredOutput": [
-        "skillId",
-        "ok"
-      ]
-    },
-    {
-      "id": "tianshu.conflict-arbitration",
-      "input": "语枢·万物与预见·先知结论相左时给出裁决依据",
-      "expectTrigger": true,
-      "requiredOutput": [
-        "skillId",
-        "ok"
-      ]
-    },
-    {
-      "id": "tianshu.global-oversight",
-      "input": "汇总五支柱健康度并向人类高管上报异常",
-      "expectTrigger": true,
-      "requiredOutput": [
-        "skillId",
-        "ok"
-      ]
-    },
-    {
-      "id": "tianshu.strategy-orchestration",
-      "input": "为跨部门资源冲突给出三套方案并标注取舍",
-      "expectTrigger": true,
-      "requiredOutput": [
-        "skillId",
-        "ok"
-      ]
-    },
-    {
-      "id": "tianshu.task-decomposition",
-      "input": "把“降本 10%”拆成 5 个可执行子任务并派给对应家人",
       "expectTrigger": true,
       "requiredOutput": [
         "skillId",

@@ -109,7 +109,7 @@ skills:
     description: 六类意图闭集分类、置信度评分与路由分发
     pillars: [自, 学]
     tags: [intent, routing]
-    kernel: family-agents/business-layer/member-qianhang/core/intent-classifier.service.ts
+    kernel: family-agents/business-layer/member-navigator/core/intent-classifier.service.ts
     steps:
       - 对用户输入做六类意图闭集分类
       - 输出意图、置信度与理由
@@ -284,7 +284,7 @@ skills:
 
   # ---------- 二、专用技能（8 位家人 × 4 项 = 32 项） ----------
 
-  - id: tianshu.strategy-orchestration
+  - id: meta-oracle.strategy-orchestration
     version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
@@ -300,7 +300,7 @@ skills:
     references:
       - 1200-提示词工程-AI-FAmily-Agent-拟人化协同架构
 
-  - id: tianshu.task-decomposition
+  - id: meta-oracle.task-decomposition
     version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
@@ -318,7 +318,7 @@ skills:
     examples:
       - 把“降本 10%”拆成 5 个可执行子任务并派给对应家人
 
-  - id: tianshu.conflict-arbitration
+  - id: meta-oracle.conflict-arbitration
     version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
@@ -332,7 +332,7 @@ skills:
     examples:
       - 语枢·万物与预见·先知结论相左时给出裁决依据
 
-  - id: tianshu.global-oversight
+  - id: meta-oracle.global-oversight
     version: "1.0.0"
     scope: dedicated
     owner: "010301-05"
@@ -350,14 +350,14 @@ skills:
     examples:
       - 汇总五支柱健康度并向人类高管上报异常
 
-  - id: qianhang.intent-detection
+  - id: navigator.intent-detection
     version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 意图检测
     description: 六类意图闭集识别，输出意图/置信度/理由
     tags: [intent, classification]
-    kernel: family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts
+    kernel: family-agents/business-layer/member-navigator/prompts/intent-detection.prompt.ts
     steps:
       - 加载六类意图闭集提示词
       - 对用户话语分类并打分
@@ -368,7 +368,7 @@ skills:
     examples:
       - 识别“这月花了多少”为 analysis 意图并给置信度
 
-  - id: qianhang.ambiguity-clarify
+  - id: navigator.ambiguity-clarify
     version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
@@ -382,14 +382,14 @@ skills:
     examples:
       - “看看销售”歧义时追问是看数据还是看趋势
 
-  - id: qianhang.context-session
+  - id: navigator.context-session
     version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 上下文会话管理
     description: 多轮会话状态维护与跨家人上下文传递
     tags: [context, session]
-    kernel: family-agents/business-layer/member-qianhang/core/context-manager.service.ts
+    kernel: family-agents/business-layer/member-navigator/core/context-manager.service.ts
     steps:
       - 维护多轮会话状态槽位
       - 跨家人传递上下文快照
@@ -400,14 +400,14 @@ skills:
     examples:
       - 第二轮“再按部门拆一下”继承首轮的分析对象
 
-  - id: qianhang.nlq-to-api
+  - id: navigator.nlq-to-api
     version: "1.0.0"
     scope: dedicated
     owner: "010301-01"
     name: 自然语言查询转 API
     description: 把管理者的自然语言转译为结构化查询参数
     tags: [nlq, mapping]
-    kernel: family-agents/business-layer/member-qianhang/nlq/query-to-api.mapper.ts
+    kernel: family-agents/business-layer/member-navigator/nlq/query-to-api.mapper.ts
     steps:
       - 解析自然语言查询要素
       - 映射为结构化查询参数
@@ -536,7 +536,7 @@ skills:
     examples:
       - 涨价 5% 与不涨价两种情景的毛利推演
 
-  - id: bole.talent-match
+  - id: bolero.talent-match
     version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
@@ -552,7 +552,7 @@ skills:
     references:
       - 120401-提示词工程-蓝图实战-资源管理-人力资源智能化
 
-  - id: bole.personalize
+  - id: bolero.personalize
     version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
@@ -566,7 +566,7 @@ skills:
     examples:
       - 为管理者推荐本周最应关注的三个指标
 
-  - id: bole.persona-profile
+  - id: bolero.persona-profile
     version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
@@ -580,14 +580,14 @@ skills:
     examples:
       - 生成“区域财务负责人”的决策偏好画像
 
-  - id: bole.achievement-insight
+  - id: bolero.achievement-insight
     version: "1.0.0"
     scope: dedicated
     owner: "010301-04"
     name: 成就与激励洞察
     description: 成就面板数据解读与激励建议
     tags: [achievement, incentive]
-    kernel: family-agents/business-layer/member-bole/emotion/achievement-panel.ts
+    kernel: family-agents/business-layer/member-bolero/emotion/achievement-panel.ts
     steps:
       - 读取成就面板数据
       - 解读成就与激励的关联
@@ -598,7 +598,7 @@ skills:
     examples:
       - 依据成就面板给出团队激励节奏建议
 
-  - id: guardian.security-audit
+  - id: sentinel.security-audit
     version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
@@ -614,7 +614,7 @@ skills:
     references:
       - 1209-提示词工程-蓝图实战-安全合规与伦理治理
 
-  - id: guardian.content-filter
+  - id: sentinel.content-filter
     version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
@@ -628,7 +628,7 @@ skills:
     examples:
       - 拦截含个人敏感信息的输出并提示脱敏
 
-  - id: guardian.zero-trust
+  - id: sentinel.zero-trust
     version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
@@ -642,7 +642,7 @@ skills:
     examples:
       - 拒绝未携带有效令牌的外部工具调用
 
-  - id: guardian.incident-response
+  - id: sentinel.incident-response
     version: "1.0.0"
     scope: dedicated
     owner: "010301-06"
@@ -656,7 +656,7 @@ skills:
     examples:
       - 识别提示词注入后隔离会话并上报元启·天枢
 
-  - id: grandmaster.quality-gate
+  - id: master.quality-gate
     version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
@@ -672,7 +672,7 @@ skills:
     references:
       - 1202-提示词工程-蓝图实战-能力建设智能化
 
-  - id: grandmaster.regression-guard
+  - id: master.regression-guard
     version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
@@ -690,7 +690,7 @@ skills:
     examples:
       - 新版本意图准确率下降 2% 时拦截发布
 
-  - id: grandmaster.knowledge-distill
+  - id: master.knowledge-distill
     version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
@@ -708,7 +708,7 @@ skills:
     examples:
       - 把三次同类故障的处置提炼为一条处置规则
 
-  - id: grandmaster.retrospective
+  - id: master.retrospective
     version: "1.0.0"
     scope: dedicated
     owner: "010301-07"
@@ -722,7 +722,7 @@ skills:
     examples:
       - 复盘一次误报并给出三条改进项
 
-  - id: grace.ideation
+  - id: creative.ideation
     version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
@@ -738,7 +738,7 @@ skills:
     references:
       - 120302-提示词工程-蓝图实战-价值创造-创新孵化智能化
 
-  - id: grace.copywriting
+  - id: creative.copywriting
     version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
@@ -752,7 +752,7 @@ skills:
     examples:
       - 把经营结论改写成面向高管的 200 字摘要
 
-  - id: grace.style-direction
+  - id: creative.style-direction
     version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
@@ -766,7 +766,7 @@ skills:
     examples:
       - 为季度报告给出配色与版式建议
 
-  - id: grace.marketing-content
+  - id: creative.marketing-content
     version: "1.0.0"
     scope: dedicated
     owner: "010301-08"
@@ -788,14 +788,14 @@ skills:
 #     A/B：同一提示词可按家人固定不同 version（id + version 即变体键）。
 # ------------------------------------------------------------
 prompts:
-  - id: qianhang.intent-detection
+  - id: navigator.intent-detection
     owner: "010301-01"
     version: "1.0.0"
-    file: family-agents/business-layer/member-qianhang/prompts/intent-detection.prompt.ts
-  - id: qianhang.query-parsing
+    file: family-agents/business-layer/member-navigator/prompts/intent-detection.prompt.ts
+  - id: navigator.query-parsing
     owner: "010301-01"
     version: "1.0.0"
-    file: family-agents/business-layer/member-qianhang/prompts/query-parsing.prompt.ts
+    file: family-agents/business-layer/member-navigator/prompts/query-parsing.prompt.ts
   - id: thinker.intent-detection
     owner: "010301-02"
     version: "1.0.0"
@@ -812,46 +812,46 @@ prompts:
     owner: "010301-03"
     version: "1.0.0"
     file: family-agents/business-layer/member-prophet/prompts/query-parsing.prompt.ts
-  - id: bole.intent-detection
+  - id: bolero.intent-detection
     owner: "010301-04"
     version: "1.0.0"
-    file: family-agents/business-layer/member-bole/prompts/intent-detection.prompt.ts
-  - id: bole.query-parsing
+    file: family-agents/business-layer/member-bolero/prompts/intent-detection.prompt.ts
+  - id: bolero.query-parsing
     owner: "010301-04"
     version: "1.0.0"
-    file: family-agents/business-layer/member-bole/prompts/query-parsing.prompt.ts
-  - id: tianshu.intent-detection
+    file: family-agents/business-layer/member-bolero/prompts/query-parsing.prompt.ts
+  - id: meta-oracle.intent-detection
     owner: "010301-05"
     version: "1.0.0"
-    file: family-agents/core-layer/member-tianshu/prompts/intent-detection.prompt.ts
-  - id: tianshu.query-parsing
+    file: family-agents/core-layer/member-meta-oracle/prompts/intent-detection.prompt.ts
+  - id: meta-oracle.query-parsing
     owner: "010301-05"
     version: "1.0.0"
-    file: family-agents/core-layer/member-tianshu/prompts/query-parsing.prompt.ts
-  - id: guardian.intent-detection
+    file: family-agents/core-layer/member-meta-oracle/prompts/query-parsing.prompt.ts
+  - id: sentinel.intent-detection
     owner: "010301-06"
     version: "1.0.0"
-    file: family-agents/core-layer/member-guardian/prompts/intent-detection.prompt.ts
-  - id: guardian.query-parsing
+    file: family-agents/core-layer/member-sentinel/prompts/intent-detection.prompt.ts
+  - id: sentinel.query-parsing
     owner: "010301-06"
     version: "1.0.0"
-    file: family-agents/core-layer/member-guardian/prompts/query-parsing.prompt.ts
-  - id: grandmaster.intent-detection
+    file: family-agents/core-layer/member-sentinel/prompts/query-parsing.prompt.ts
+  - id: master.intent-detection
     owner: "010301-07"
     version: "1.0.0"
-    file: family-agents/core-layer/member-grandmaster/prompts/intent-detection.prompt.ts
-  - id: grandmaster.query-parsing
+    file: family-agents/core-layer/member-master/prompts/intent-detection.prompt.ts
+  - id: master.query-parsing
     owner: "010301-07"
     version: "1.0.0"
-    file: family-agents/core-layer/member-grandmaster/prompts/query-parsing.prompt.ts
-  - id: grace.intent-detection
+    file: family-agents/core-layer/member-master/prompts/query-parsing.prompt.ts
+  - id: creative.intent-detection
     owner: "010301-08"
     version: "1.0.0"
-    file: family-agents/core-layer/member-grace/prompts/intent-detection.prompt.ts
-  - id: grace.query-parsing
+    file: family-agents/core-layer/member-creative/prompts/intent-detection.prompt.ts
+  - id: creative.query-parsing
     owner: "010301-08"
     version: "1.0.0"
-    file: family-agents/core-layer/member-grace/prompts/query-parsing.prompt.ts
+    file: family-agents/core-layer/member-creative/prompts/query-parsing.prompt.ts
 
 # ------------------------------------------------------------
 # 四、八位家人（编号升序：01→08）
@@ -859,14 +859,14 @@ prompts:
 agents:
   - id: "010301-01"
     name: 言启·千行
-    en: QianHang
+    en: Navigator
     en_role: Navigator
     role: 首席导航员 · 意图之门
     layer: L5
     layer_name: 言启千行
     group: business-layer
-    dir: family-agents/business-layer/member-qianhang
-    slug: qianhang
+    dir: family-agents/business-layer/member-navigator
+    slug: navigator
     motto: 我聆听万千言语，为您指引航向。
     hotline: "0379-0106"
     color: "#0088cc"
@@ -889,10 +889,10 @@ agents:
       - shared.intent-route
       - shared.llm-invoke
       - shared.observe-emit
-      - qianhang.intent-detection
-      - qianhang.ambiguity-clarify
-      - qianhang.context-session
-      - qianhang.nlq-to-api
+      - navigator.intent-detection
+      - navigator.ambiguity-clarify
+      - navigator.context-session
+      - navigator.nlq-to-api
 
   - id: "010301-02"
     name: 语枢·万物
@@ -967,14 +967,14 @@ agents:
 
   - id: "010301-04"
     name: 知遇·伯乐
-    en: Bole
-    en_role: Bole
+    en: Bolero
+    en_role: Bolero
     role: 首席推荐官 · 知遇之人
     layer: L2
     layer_name: 千里伯乐
     group: business-layer
-    dir: family-agents/business-layer/member-bole
-    slug: bole
+    dir: family-agents/business-layer/member-bolero
+    slug: bolero
     motto: 我知您之所需，荐您之所未识。
     hotline: "0379-0109"
     color: "#e67e22"
@@ -996,21 +996,21 @@ agents:
       - shared.memory-write
       - shared.experience-reflow
       - shared.observe-emit
-      - bole.talent-match
-      - bole.personalize
-      - bole.persona-profile
-      - bole.achievement-insight
+      - bolero.talent-match
+      - bolero.personalize
+      - bolero.persona-profile
+      - bolero.achievement-insight
 
   - id: "010301-05"
     name: 元启·天枢
-    en: TianShu
-    en_role: TianShu
+    en: MetaOracle
+    en_role: MetaOracle
     role: 总指挥 · 决策中枢
     layer: L9
     layer_name: 万象归元
     group: core-layer
-    dir: family-agents/core-layer/member-tianshu
-    slug: tianshu
+    dir: family-agents/core-layer/member-meta-oracle
+    slug: meta-oracle
     motto: 我观全局之流转，调度万物以归元。
     hotline: "0379-0206"
     color: "#d4ac0d"
@@ -1035,10 +1035,10 @@ agents:
       - shared.fault-heal
       - shared.observe-emit
       - shared.a2a-delegate
-      - tianshu.strategy-orchestration
-      - tianshu.task-decomposition
-      - tianshu.conflict-arbitration
-      - tianshu.global-oversight
+      - meta-oracle.strategy-orchestration
+      - meta-oracle.task-decomposition
+      - meta-oracle.conflict-arbitration
+      - meta-oracle.global-oversight
 
   - id: "010301-06"
     name: 智云·守护
@@ -1048,8 +1048,8 @@ agents:
     layer: L8
     layer_name: 智云守护
     group: core-layer
-    dir: family-agents/core-layer/member-guardian
-    slug: guardian
+    dir: family-agents/core-layer/member-sentinel
+    slug: sentinel
     motto: 我于无声处警戒，御威胁于国门之外。
     hotline: "0379-0207"
     color: "#27ae60"
@@ -1072,21 +1072,21 @@ agents:
       - shared.compliance-audit
       - shared.mcp-tool
       - shared.observe-emit
-      - guardian.security-audit
-      - guardian.content-filter
-      - guardian.zero-trust
-      - guardian.incident-response
+      - sentinel.security-audit
+      - sentinel.content-filter
+      - sentinel.zero-trust
+      - sentinel.incident-response
 
   - id: "010301-07"
     name: 格物·宗师
-    en: Grandmaster
-    en_role: Grandmaster
+    en: Master
+    en_role: Master
     role: 首席质量官 · 进化导师
     layer: L7
     layer_name: 格物致知
     group: core-layer
-    dir: family-agents/core-layer/member-grandmaster
-    slug: grandmaster
+    dir: family-agents/core-layer/member-master
+    slug: master
     motto: 我究万物之理，定标准以传世。
     hotline: "0379-0208"
     color: "#16a085"
@@ -1110,21 +1110,21 @@ agents:
       - shared.skill-consolidate
       - shared.fault-heal
       - shared.observe-emit
-      - grandmaster.quality-gate
-      - grandmaster.regression-guard
-      - grandmaster.knowledge-distill
-      - grandmaster.retrospective
+      - master.quality-gate
+      - master.regression-guard
+      - master.knowledge-distill
+      - master.retrospective
 
   - id: "010301-08"
     name: 创想·灵韵
-    en: Grace
-    en_role: Grace
+    en: Creative
+    en_role: Creative
     role: 首席创意官 · 灵感之源
     layer: L6
     layer_name: 创想灵韵
     group: core-layer
-    dir: family-agents/core-layer/member-grace
-    slug: grace
+    dir: family-agents/core-layer/member-creative
+    slug: creative
     motto: 我以灵感为墨，绘就无限可能。
     hotline: "0379-0209"
     color: "#e91e63"
@@ -1145,10 +1145,10 @@ agents:
       - shared.memory-write
       - shared.llm-invoke
       - shared.observe-emit
-      - grace.ideation
-      - grace.copywriting
-      - grace.style-direction
-      - grace.marketing-content
+      - creative.ideation
+      - creative.copywriting
+      - creative.style-direction
+      - creative.marketing-content
 
 # ------------------------------------------------------------
 # 五、协同矩阵（对齐蓝图 1207 §3.3，行=发起方，列=接收方）

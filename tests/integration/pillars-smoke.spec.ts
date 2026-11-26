@@ -47,7 +47,7 @@ if (__localShim) {
   });
 }
 
-import { createMemberSelfJudge } from '@members/core-layer/member-grandmaster/self-judge/index.js';
+import { createMemberSelfJudge } from '@members/core-layer/member-master/self-judge/index.js';
 import { CrossValidator } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/cross-validator.js';
 import { VerificationGateway } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/gateway.js';
 import { GroundTruthChecker } from '../../architecture-kernel/02-云枢核心引擎/cloud-pivot-orchestrator/verification-gateway/ground-truth-checker.js';
@@ -55,7 +55,7 @@ import { OracleRegistry } from '../../architecture-kernel/02-云枢核心引擎/
 import { InMemorySkillStore, LearningLoop } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
 
 let seq = 0;
-const grandmaster = createMemberSelfJudge();
+const master = createMemberSelfJudge();
 
 /** 构建独立网关（真值源 + 万物复核人），truth 为模拟世界状态。 */
 function buildGateway() {
@@ -85,8 +85,8 @@ async function judgeVerifyIngest(loop, gw, truth, { claimPassed, reallyPassed, t
   seq += 1;
   const buildId = `b-${seq}`;
   truth.set(buildId, reallyPassed);
-  const sig = grandmaster.judge({
-    agent: 'grandmaster',
+  const sig = master.judge({
+    agent: 'master',
     taskType: 'quality-judgment',
     candidates: [
       { label: 'passed', score: claimPassed ? 0.9 : 0.88 },
@@ -96,14 +96,14 @@ async function judgeVerifyIngest(loop, gw, truth, { claimPassed, reallyPassed, t
   });
   const rec = await gw.adjudicate(sig, {
     traceId: buildId,
-    agent: 'grandmaster',
+    agent: 'master',
     claim: `quality:passed@${buildId}`,
   });
   loop.ingest([
     {
       event: {
         traceId: buildId,
-        agent: 'grandmaster',
+        agent: 'master',
         taskType: 'quality-judgment',
         steps: tools.map((tool, i) => ({ order: i + 1, action: `step-${i + 1}`, tool, ok: true })),
         startedAt: seq * 10,

@@ -75,7 +75,7 @@ function safeJoin(root, relTarget) {
 }
 
 const BOLE_FLAGS = [
-  '--id', 'member-bole', '--name', '千里·伯乐', '--en-name', 'Bole',
+  '--id', 'member-bolero', '--name', '千里·伯乐', '--en-name', 'Bolero',
   '--role', '首席推荐官 · 知遇之人', '--layer', 'L2', '--number', '04',
   '--group', 'business-layer', '--hotline', '0379-0109', '--color', '#e67e22',
   '--motto', '「我知您之所需，荐您之所未识。」',
@@ -100,7 +100,7 @@ describe('家人模板脚手架契约（M33 · R4）', () => {
       cwd: ROOT,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-    const memberDir = safeJoin(out, 'business-layer/member-bole');
+    const memberDir = safeJoin(out, 'business-layer/member-bolero');
     const rels = walkRel(memberDir);
     expect(rels.length >= 15).toBeTruthy(); // 14 ts + agent.yaml（README 模板说明不入实例）
     expect(fs.existsSync(path.join(memberDir, 'core', 'intent-classifier.service.ts'))).toBeTruthy();
@@ -111,7 +111,7 @@ describe('家人模板脚手架契约（M33 · R4）', () => {
     expect(agentYaml).toContain('0379-0109');
     expect(agentYaml).toContain('千里·伯乐');
     const classifier = fs.readFileSync(path.join(memberDir, 'core', 'intent-classifier.service.ts'), 'utf8');
-    expect(classifier).toContain('member-bole');
+    expect(classifier).toContain('member-bolero');
     expect(classifier).not.toContain('member-thinker');
     expect(classifier).not.toContain('{{');
     fs.rmSync(out, { recursive: true, force: true });
@@ -126,12 +126,12 @@ describe('家人模板脚手架契约（M33 · R4）', () => {
         stdio: ['ignore', 'pipe', 'pipe'],
       });
     }
-    const relsA = walkRel(path.join(a, 'business-layer/member-bole')).sort();
-    const relsB = walkRel(path.join(b, 'business-layer/member-bole')).sort();
+    const relsA = walkRel(path.join(a, 'business-layer/member-bolero')).sort();
+    const relsB = walkRel(path.join(b, 'business-layer/member-bolero')).sort();
     expect(relsA.join('|')).toBe(relsB.join('|'));
     for (const rel of relsA) {
-      expect(fs.readFileSync(safeJoin(a, `business-layer/member-bole/${rel}`)).equals(
-        fs.readFileSync(safeJoin(b, `business-layer/member-bole/${rel}`)),
+      expect(fs.readFileSync(safeJoin(a, `business-layer/member-bolero/${rel}`)).equals(
+        fs.readFileSync(safeJoin(b, `business-layer/member-bolero/${rel}`)),
       )).toBeTruthy();
     }
     fs.rmSync(a, { recursive: true, force: true });
@@ -150,7 +150,7 @@ describe('家人模板脚手架契约（M33 · R4）', () => {
       badLayer = String(e.message);
     }
     expect(badLayer).toContain('Command failed'); // 非法层级被拒（非零退出）
-    const preExisting = path.join(out, 'business-layer', 'member-bole');
+    const preExisting = path.join(out, 'business-layer', 'member-bolero');
     fs.mkdirSync(preExisting, { recursive: true });
     let occupied = '';
     try {

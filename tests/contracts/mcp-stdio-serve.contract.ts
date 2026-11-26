@@ -48,9 +48,9 @@ import http from 'node:http';
 import { serveMcpStdio } from '../../family-agents/family-server.entry.js';
 
 const ENTRIES = [
-  { id: 'qianhang.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '02', version: '1.0.0' },
+  { id: 'navigator.intent-detection', name: '意图识别', description: '意图分类与路由', scope: 'dedicated', owner: '02', version: '1.0.0' },
 ];
-const TOOLS = [{ name: 'qianhang__intent_detection', description: '意图识别', inputSchema: {} }];
+const TOOLS = [{ name: 'navigator__intent_detection', description: '意图识别', inputSchema: {} }];
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -68,7 +68,7 @@ describe('MCP stdio 服务循环（M41.5 · host 接入）', () => {
     const rl = serveMcpStdio(server, { input, output });
     input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} })}\n`);
     input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' })}\n`);
-    input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'qianhang__intent_detection', arguments: {} } })}\n`);
+    input.write(`${JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'navigator__intent_detection', arguments: {} } })}\n`);
     await sleep(300);
     expect(frames.length).toBe(3);
     const byId = new Map(frames.map((f) => [JSON.parse(f).id, JSON.parse(f)]));

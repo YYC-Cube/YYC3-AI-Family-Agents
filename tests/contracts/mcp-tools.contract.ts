@@ -85,9 +85,9 @@ describe('MCP 工具目录契约（P4-T5）', () => {
       }
       if (!tool.inputSchema || tool.inputSchema.type !== 'object') throw new Error(`${tool.name} inputSchema 非对象`);
     }
-    const sample = artifact.tools.find((t) => t.logicalId === 'qianhang.intent-detection');
-    if (!sample) throw new Error('目录缺少锚点工具 qianhang.intent-detection');
-    globalThis.expect(sample.name).toBe('qianhang__intent_detection');
+    const sample = artifact.tools.find((t) => t.logicalId === 'navigator.intent-detection');
+    if (!sample) throw new Error('目录缺少锚点工具 navigator.intent-detection');
+    globalThis.expect(sample.name).toBe('navigator__intent_detection');
     globalThis.expect(report.names.includes(sample.name)).toBeTruthy();
   });
 

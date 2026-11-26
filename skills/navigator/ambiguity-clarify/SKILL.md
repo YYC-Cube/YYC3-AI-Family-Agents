@@ -1,0 +1,33 @@
+---
+name: 歧义澄清
+description: 候选间隔过小时登记假设并生成澄清提问
+version: 1.0.0
+id: navigator.ambiguity-clarify
+scope: dedicated
+owner: navigator
+---
+
+# 歧义澄清（`navigator.ambiguity-clarify`）
+
+> 本文件由 [`family-manifest.yaml`](../../presets/family-manifest.yaml) 生成，**勿手改**；
+> 以 `pnpm skills:check` 做零漂移校验（范式与 Agent Card 同构）。
+
+| 属性 | 值 |
+| ---- | -- |
+| 技能 id | `navigator.ambiguity-clarify` |
+| 归属（owner） | navigator |
+| scope | dedicated |
+| 版本 | 1.0.0 |
+| 支柱 | — |
+| 标签 | `clarify` `assumption` |
+| 实现锚点（kernel） | （纯描述，暂无锚点） |
+
+## 步骤（steps）
+
+1. 检测意图候选间隔过小
+2. 登记假设与候选集
+3. 生成澄清提问
+
+## 示例
+
+- “看看销售”歧义时追问是看数据还是看趋势

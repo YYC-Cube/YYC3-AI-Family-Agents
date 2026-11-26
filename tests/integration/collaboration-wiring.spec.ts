@@ -49,7 +49,7 @@ if (__localShim) {
   });
 }
 
-import { IntentGatewayService } from '../../family-agents/business-layer/member-qianhang/core/intent-gateway.service.js';
+import { IntentGatewayService } from '../../family-agents/business-layer/member-navigator/core/intent-gateway.service.js';
 import { EscalationPolicy } from '../../family-agents/shared-core/self-judge-kit/escalation-policy.js';
 import { ComplianceAudit } from '../../architecture-kernel/06-治理中心/compliance-audit/compliance-audit.js';
 import { InMemorySkillStore } from '../../architecture-kernel/05-持续学习引擎/learning-loop.js';
@@ -68,7 +68,7 @@ let seq = 0;
 function publishTask(bus, traceId, overrides = {}) {
   seq += 1;
   return bus.publish({
-    key: { traceId, agentId: 'grandmaster', seq },
+    key: { traceId, agentId: 'master', seq },
     topic: 'task.executed',
     mode: 'broadcast',
     payload: {

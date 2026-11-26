@@ -399,7 +399,7 @@ export const FAMILY_LICENSE = "Apache-2.0 · 永久开源";
 export const FAMILY_ROSE = "🌹";
 
 export const MEMBERS = {
-  TianShu: { name: "元启·天枢", role: "总指挥", ext: "0379-0206" },
+  MetaOracle: { name: "元启·天枢", role: "总指挥", ext: "0379-0206" },
   ShouHu: { name: "智云·守护", role: "安全官", ext: "0379-0207" },
   // ... 其余成员
 };
@@ -446,7 +446,7 @@ import os
 
 badges = {
     "family": "assets/badges/family-badge.svg",
-    "tianshu": "assets/badges/tianshu-badge.svg",
+    "meta-oracle": "assets/badges/meta-oracle-badge.svg",
     "shouhu": "assets/badges/shouhu-badge.svg",
     # ... 所有成员
 }
@@ -701,10 +701,10 @@ jobs:
 ### 18.2 成员徽章 SVG 示例（元启·天枢）
 
 ```svg
-<!-- badges/tianshu.svg -->
+<!-- badges/meta-oracle.svg -->
 <svg xmlns="http://www.w3.org/2000/svg" width="380" height="80" viewBox="0 0 380 80">
   <defs>
-    <linearGradient id="gradTianShu" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="gradMetaOracle" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#5e2c8a"/>
       <stop offset="100%" style="stop-color:#3d1a5e"/>
     </linearGradient>
@@ -712,10 +712,10 @@ jobs:
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
     </filter>
   </defs>
-  <rect width="380" height="80" rx="40" fill="url(#gradTianShu)" filter="url(#shadow)"/>
+  <rect width="380" height="80" rx="40" fill="url(#gradMetaOracle)" filter="url(#shadow)"/>
   <text x="60" y="36" font-size="30" text-anchor="middle">🧠</text>
   <text x="140" y="34" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="22" font-weight="bold" fill="#fff">元启·天枢</text>
-  <text x="140" y="56" font-family="Arial, sans-serif" font-size="13" fill="rgba(255,255,255,0.8)">TianShu · 总指挥</text>
+  <text x="140" y="56" font-family="Arial, sans-serif" font-size="13" fill="rgba(255,255,255,0.8)">MetaOracle · 总指挥</text>
   <line x1="240" y1="20" x2="240" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
   <text x="310" y="36" font-family="'PingFang SC',sans-serif" font-size="14" font-weight="bold" fill="#ffd700">决策中枢</text>
   <text x="310" y="56" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.7)">Core Commander</text>
@@ -733,7 +733,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const members = [
-  { name: 'tianshu', svg: 'badges/tianshu.svg' },
+  { name: 'meta-oracle', svg: 'badges/meta-oracle.svg' },
   { name: 'shouhu', svg: 'badges/shouhu.svg' },
   // ... 全部8个
 ];

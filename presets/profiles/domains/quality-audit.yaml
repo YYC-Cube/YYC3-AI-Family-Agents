@@ -1,7 +1,7 @@
 # 业务域卡 · 格物·宗师（E4a · 质量域画像）
 id: quality-audit
 domain: quality-gate
-owner: grandmaster
+owner: master
 scenario: deliverable-review
 preferences:
   tier: reasoning

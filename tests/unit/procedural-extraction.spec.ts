@@ -113,7 +113,7 @@ describe('Phase A · 记忆条目提取（prompt-rule-extractor）', () => {
   });
 
   it('T4 分类提取：行为/禁止/工具三类均被识别', () => {
-    const r = extractRules(PROMPT, { source: 'qianhang/system-prompt.md' });
+    const r = extractRules(PROMPT, { source: 'navigator/system-prompt.md' });
     const kinds = Object.fromEntries(r.entries.map((e) => [e.kind, true]));
     expect(kinds.behavior).toBe(true);
     expect(kinds.constraint).toBe(true);
@@ -128,10 +128,10 @@ describe('Phase A · 记忆条目提取（prompt-rule-extractor）', () => {
   });
 
   it('T6 溯源：source 与行号精确（L3→3，L7→7）', () => {
-    const r = extractRules(PROMPT, { source: 'qianhang/system-prompt.md' });
+    const r = extractRules(PROMPT, { source: 'navigator/system-prompt.md' });
     const behavior = r.entries.find((e) => e.kind === 'behavior' && e.provenance.line === 3);
     const constraint = r.entries.find((e) => e.kind === 'constraint');
-    expect(behavior.provenance.source).toBe('qianhang/system-prompt.md');
+    expect(behavior.provenance.source).toBe('navigator/system-prompt.md');
     expect(behavior.provenance.line).toBe(3);
     expect(constraint.provenance.line).toBe(7);
   });

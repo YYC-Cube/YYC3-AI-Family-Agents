@@ -52,7 +52,7 @@ const DOMAIN_IDS = new Set([
   'brand-content', 'quality-audit', 'compliance-scan', 'ops-decision',
 ]);
 const FAMILY_SLUGS = new Set([
-  'tianshu', 'qianhang', 'thinker', 'prophet', 'bole', 'guardian', 'grandmaster', 'grace',
+  'meta-oracle', 'navigator', 'thinker', 'prophet', 'bolero', 'sentinel', 'master', 'creative',
 ]);
 
 function loadVolume(name) {

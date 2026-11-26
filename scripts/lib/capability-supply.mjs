@@ -19,7 +19,7 @@ export const PLUGINS_DIR = 'plugins';
 
 /**
  * 统一 id → MCP 工具名：`.` → `__`，`-` → `_`（MCP 要求 ^[a-zA-Z0-9_-]+$）。
- * 示例：qianhang.intent-detection → qianhang__intent_detection。
+ * 示例：navigator.intent-detection → navigator__intent_detection。
  */
 export function toMcpToolName(logicalId) {
   return logicalId.replace('.', '__').replace(/-/g, '_');

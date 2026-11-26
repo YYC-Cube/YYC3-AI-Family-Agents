@@ -75,7 +75,7 @@ const CREATE_ARGV = [
   '--id', 'worker-xtest',
   '--name', '试验·外部 Worker',
   '--port', '3141',
-  '--skills', 'shared.self-judge,qianhang.nlq-to-api',
+  '--skills', 'shared.self-judge,navigator.nlq-to-api',
 ];
 
 describe('外部 Worker 模板契约（M34 · R5 本地）', () => {

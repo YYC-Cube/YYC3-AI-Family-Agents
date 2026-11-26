@@ -1,7 +1,7 @@
 # 业务域卡 · 知遇·伯乐（E4a · 推荐域画像）
 id: talent-matching
 domain: talent-recommendation
-owner: bole
+owner: bolero
 scenario: candidate-screening
 preferences:
   tier: flagship

@@ -91,12 +91,12 @@ describe('裂变管线契约（M39 · E2a · 门禁全自动）', () => {
   it('F2 技能查重负例：与家族清单重复被拒且明示', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yyc3-fission-f2-'));
     const card = writeCard(dir, {
-      skills: [{ slug: 'qianhang.intent-detection', description: '与家族清单重复' }],
+      skills: [{ slug: 'navigator.intent-detection', description: '与家族清单重复' }],
     });
     const r = runScaffold(card, dir);
     expect(r.status !== 0).toBeTruthy();
     expect(r.text).toContain('技能查重');
-    expect(r.text).toContain('qianhang.intent-detection');
+    expect(r.text).toContain('navigator.intent-detection');
     fs.rmSync(dir, { recursive: true, force: true });
   });
 

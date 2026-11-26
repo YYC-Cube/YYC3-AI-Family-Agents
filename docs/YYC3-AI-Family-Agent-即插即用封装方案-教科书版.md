@@ -155,7 +155,7 @@ scope: 适用 v2.54.0+ · 承接《可复用性分析》v1.2.0 · 证据基《�
 | --- | --- | --- | --- | --- |
 | B1 | 技能安装落地 | 解包 `yyc3-ai-family-coding.skill` → `~/.zcode/skills/yyc3-ai-family-coding/`（目录形态·四级发现路径最高级） | 会话提及「千行」即触发 | **P0** ✅ |
 | B2 | 规范润色 | description 按 skill-creator 约定 pushy 化（触发信号前置、含成员名号与流程关键词）；核对 name 唯一性（与 brev-cli 等共存无冲突） | 重开会话元数据加载 | **P0** ✅ 重打包 32641 B |
-| B3 | 成员技能组（可选拆） | 主技能保持路由表（8 员一张表）；衍生 8 个 granular 成员技能供深度协同（如 `yyc3-qianhang`）——**人格定义单一事实源仍在 family-manifest.yaml**，技能只是视图 | `manifest:check` 零漂移 | P1 ✅ `gen-member-skills` 8 员视图已装 |
+| B3 | 成员技能组（可选拆） | 主技能保持路由表（8 员一张表）；衍生 8 个 granular 成员技能供深度协同（如 `yyc3-navigator`）——**人格定义单一事实源仍在 family-manifest.yaml**，技能只是视图 | `manifest:check` 零漂移 | P1 ✅ `gen-member-skills` 8 员视图已装 |
 | B4 | marketplace 分发 | `.zcode-plugin/plugin.json` + marketplace.json，对齐 anthropics/skills 的 `/plugin marketplace add` 模式 | 外部仓库一键装 | P1 ✅ `gen-plugin` 自包含插件（本地目录装） |
 
 ### 形态 C · 本地开发即插即用——开发者体验层（embed）

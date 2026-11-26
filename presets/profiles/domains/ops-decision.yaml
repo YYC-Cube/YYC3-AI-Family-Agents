@@ -1,7 +1,7 @@
 # 业务域卡 · 元启·天枢（E4a · 决策统筹域画像）
 id: ops-decision
 domain: ops-arbitration
-owner: tianshu
+owner: meta-oracle
 scenario: five-step-decision
 preferences:
   tier: reasoning

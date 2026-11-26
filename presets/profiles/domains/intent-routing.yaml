@@ -1,7 +1,7 @@
 # 业务域卡 · 言启·千行（E4a · 换档演示卡：日常运营 → 速度档）
 id: intent-routing
 domain: ops-daily
-owner: qianhang
+owner: navigator
 scenario: front-desk
 preferences:
   tier: speed

@@ -94,14 +94,14 @@ YanYuCloudCube家族的运转，不依赖于僵化的流程，而遵循五大内
 
 ```
 AI-Family  YYC³      ☎️ ：0379-0379
-言启·千行  QianHang   ☎️ ：0379-0106
+言启·千行  Navigator   ☎️ ：0379-0106
 语枢·万物  All Things ☎️ ：0379-0107
 预见·先知  Prophet    ☎️ ：0379-0108
-千里·伯乐  Bole       ☎️ ：0379-0109
-元启·天枢  TianShu    ☎️ ：0379-0206
+千里·伯乐  Bolero       ☎️ ：0379-0109
+元启·天枢  MetaOracle    ☎️ ：0379-0206
 智云·守护  Guardian   ☎️ ：0379-0207
-格物·宗师  Grandmaster☎️ ：0379-0208
-创想·灵韵  Grace      ☎️ ：0379-0209
+格物·宗师  Master☎️ ：0379-0208
+创想·灵韵  Creative      ☎️ ：0379-0209
 ```
 
 **通话体验**：
@@ -158,7 +158,7 @@ interface CallMessage {
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌─────────────────────────────────────────────────────┐   │
-│  │              🧠 元启·天枢 TianShu                 │   │
+│  │              🧠 元启·天枢 MetaOracle                 │   │
 │  │              总指挥 · 决策中枢                        │   │
 │  │              推理类型: 规则推理、模式匹配               │   │
 │  └─────────────────────────────────────────────────────┘   │
@@ -288,7 +288,7 @@ interface CallMessage {
 - 专属文件架构：
 
 ```plaintext
-/modules/ai-analysis/members/bolero/
+/modules/ai-analysis/members/boleroro/
 ├── core/
 │   ├── recommendation.service.ts      # 🎯 推荐服务主入口
 │   └── user-profiling.service.ts      # 👤 用户画像服务
@@ -494,7 +494,7 @@ interface CallMessage {
 │  └── 日志可视化：ELK Stack                                  │
 │                                                             │
 │  🧠 智能化 (Intelligence)                                    │
-│  ├── 智能推荐：Bolero个性化推荐                             │
+│  ├── 智能推荐：Boleroro个性化推荐                             │
 │  ├── 智能决策：Meta-Oracle决策引擎                          │
 │  ├── 智能优化：Master质量优化                               │
 │  └── 智能预警：Prophet趋势预测                              │

@@ -18,8 +18,8 @@ export interface LabelSignal {
   readonly goldenPass?: boolean;
   /** 对话连贯性间接验证：coherenceOk。 */
   readonly coherenceOk?: boolean;
-  /** 守护误报：guardianFalsePositive。 */
-  readonly guardianFalsePositive?: boolean;
+  /** 守护误报：sentinelFalsePositive。 */
+  readonly sentinelFalsePositive?: boolean;
 }
 
 /** 标注结果。 */

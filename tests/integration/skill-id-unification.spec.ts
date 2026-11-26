@@ -101,35 +101,35 @@ describe('统一技能 id 与加载器（P3-T3）', () => {
   });
 
   it('互查① manifest → registry：findByLogicalId 与 latest 同源', () => {
-    const hit = registry.findByLogicalId('qianhang.intent-detection');
+    const hit = registry.findByLogicalId('navigator.intent-detection');
     globalThis.expect(hit === undefined).toBe(false);
     globalThis.expect(hit.name).toBe('意图检测');
     globalThis.expect(hit.version).toBe('1.0.0');
     globalThis.expect(hit.steps.length).toBe(0); // 契约装载为描述态，步骤待 P3-T3 后续补全
-    globalThis.expect(registry.latest('qianhang.intent-detection')).toBe(hit);
+    globalThis.expect(registry.latest('navigator.intent-detection')).toBe(hit);
   });
 
   it('互查② 归属抽查：shared 与专用技能前缀 = 家人 slug', () => {
     globalThis.expect(registry.findByLogicalId('shared.self-judge') === undefined).toBe(false);
-    for (const prefix of ['qianhang', 'bole', 'grandmaster']) {
+    for (const prefix of ['navigator', 'bolero', 'master']) {
       const skills = registry.list().filter((s) => s.id.startsWith(`${prefix}.`));
       if (skills.length !== 4) throw new Error(`${prefix} 专用技能应为 4，实际 ${skills.length}`);
     }
   });
 
   it('skill-id 帮助器：派生 / 往返 / 非法即抛', () => {
-    globalThis.expect(manifestSkillId('qianhang', 'intent-detection')).toBe('qianhang.intent-detection');
-    globalThis.expect(learnedSkillId('qianhang', 'intent-detection')).toBe('learned.qianhang.intent-detection');
+    globalThis.expect(manifestSkillId('navigator', 'intent-detection')).toBe('navigator.intent-detection');
+    globalThis.expect(learnedSkillId('navigator', 'intent-detection')).toBe('learned.navigator.intent-detection');
     globalThis.expect(isLearnedId('learned.shared.self-judge')).toBe(true);
-    globalThis.expect(isLearnedId('qianhang.intent-detection')).toBe(false);
-    globalThis.expect(canonicalOfLearned('learned.qianhang.intent-detection')).toBe('qianhang.intent-detection');
-    globalThis.expect(canonicalOfLearned('qianhang.intent-detection')).toBe(null);
+    globalThis.expect(isLearnedId('navigator.intent-detection')).toBe(false);
+    globalThis.expect(canonicalOfLearned('learned.navigator.intent-detection')).toBe('navigator.intent-detection');
+    globalThis.expect(canonicalOfLearned('navigator.intent-detection')).toBe(null);
     globalThis.expect(isFnvSkillId('skill-1a2b3c4d')).toBe(true);
-    globalThis.expect(isFnvSkillId('qianhang.intent-detection')).toBe(false);
+    globalThis.expect(isFnvSkillId('navigator.intent-detection')).toBe(false);
     globalThis.expect(legacyLearnedId('skill-1a2b3c4d')).toBe('learned.skill-1a2b3c4d');
     let threw = false;
     try {
-      manifestSkillId('QianHang', 'Bad Slug!');
+      manifestSkillId('Navigator', 'Bad Slug!');
     } catch {
       threw = true;
     }
@@ -139,7 +139,7 @@ describe('统一技能 id 与加载器（P3-T3）', () => {
   it('SkillStore 显式 logicalId：命中且内部主键不变', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yyc3-skill-id-'));
     const store = new FileSkillStore(dir);
-    const learned = learnedSkillId('qianhang', 'intent-detection');
+    const learned = learnedSkillId('navigator', 'intent-detection');
     store.replaceHistory('skill-aaaa1111', [kernelSkill('skill-aaaa1111', { logicalId: learned })]);
     const hit = store.findByLogicalId(learned);
     globalThis.expect(hit === undefined).toBe(false);
@@ -157,12 +157,12 @@ describe('统一技能 id 与加载器（P3-T3）', () => {
   });
 
   it('三套闭环：学习沉淀 → 规范 id → manifest 契约 → registry 全连通', () => {
-    const learned = 'learned.qianhang.context-session';
+    const learned = 'learned.navigator.context-session';
     const canonical = canonicalOfLearned(learned);
-    globalThis.expect(canonical).toBe('qianhang.context-session');
+    globalThis.expect(canonical).toBe('navigator.context-session');
     const inRegistry = registry.findByLogicalId(canonical);
     globalThis.expect(inRegistry === undefined).toBe(false);
-    globalThis.expect(inRegistry.id).toBe('qianhang.context-session');
+    globalThis.expect(inRegistry.id).toBe('navigator.context-session');
   });
 
   it('幂等重载：同版本覆盖不产生重复', () => {

@@ -43,7 +43,7 @@ const manifestSkills = [];
 {
   const yaml = readFileSync(path.join(ROOT, 'presets/family-manifest.yaml'), 'utf8');
   const section = yaml.slice(yaml.indexOf('\nskills:\n'), yaml.indexOf('\nprompts:\n'));
-  for (const m of section.matchAll(/- id: ([a-z0-9]+\.[a-z0-9-]+)\n\s+version: "(\d+\.\d+\.\d+)"\n\s+scope: ([a-z]+)/g)) {
+  for (const m of section.matchAll(/- id: ([a-z0-9][a-z0-9-]*\.[a-z0-9-]+)\n\s+version: "(\d+\.\d+\.\d+)"\n\s+scope: ([a-z]+)/g)) {
     manifestSkills.push({ id: m[1], scope: m[3], version: m[2] });
   }
 }

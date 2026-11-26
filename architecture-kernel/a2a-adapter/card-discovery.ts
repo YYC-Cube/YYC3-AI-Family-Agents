@@ -10,7 +10,7 @@
 export interface A2aAgentCard {
   readonly name: string;
   readonly description: string;
-  /** 服务基址（如 https://matrix.yyc3.top/family/tianshu）。 */
+  /** 服务基址（如 https://matrix.yyc3.top/family/meta-oracle）。 */
   readonly url: string;
   readonly version: string;
   readonly skills: readonly {

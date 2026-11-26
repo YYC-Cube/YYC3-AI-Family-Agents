@@ -28,7 +28,7 @@ const WORKERS_DIR = 'presets/external-worker';
 const MANIFEST_FILE = 'presets/family-manifest.yaml';
 /** 八家人 slug（外部 worker id 命名空间隔离）。 */
 const FAMILY_SLUGS = new Set([
-  'tianshu', 'qianhang', 'thinker', 'prophet', 'bole', 'guardian', 'grandmaster', 'grace',
+  'meta-oracle', 'navigator', 'thinker', 'prophet', 'bolero', 'sentinel', 'master', 'creative',
 ]);
 /** 模板必需键（结构级）。 */
 const TPL_REQUIRED = [

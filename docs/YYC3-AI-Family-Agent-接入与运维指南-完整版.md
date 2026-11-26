@@ -113,7 +113,7 @@ pnpm regression       # 全量门禁（364+ 例 · 变更后必跑）
 ```bash
 # ① host 日志（stderr）应见：
 #    YYC³ 家族服务已就绪（MCP stdio · 技能 N · /metrics …）
-# ② host 对话里调用任一工具（如 qianhang 的意图分类）
+# ② host 对话里调用任一工具（如 navigator 的意图分类）
 # ③ 计量落点（判据量具）：
 cat data/metrics-usage.json
 # → totals.calls 递增 · buckets 按 skill_id/scenario 分桶
